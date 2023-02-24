@@ -8,11 +8,11 @@ def home():
     return render_template('index.html')
 
 
-@app.route('/login-register')
+@app.route('/login')
 def login_register():
-    return render_template('login-register.html')
+    return render_template('login.html')
 
-@app.route('/login-register', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
@@ -20,4 +20,4 @@ def login():
             error = 'Invalid Credentials. Please try again.'
         else:
             return redirect(url_for('home'))
-    return render_template('login-register.html', error = error)
+    return render_template('login.html', error = error)
