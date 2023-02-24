@@ -1,5 +1,5 @@
 from unittest import TestCase
-from domain.entities import Patient, Doctor, Consultation
+from app.domain.entities import Patient, Doctor
 from datetime import datetime
 
 
