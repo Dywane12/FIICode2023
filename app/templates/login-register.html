@@ -11,7 +11,7 @@
 <body>
     <section class="header">
         <nav>
-            <a href="index.html"><img src="../static/logo.png"></a>
+            <a href="/home"><img src="../static/logo.png"></a>
         </nav>
         <div class="hero">
             <div class="form-box">
@@ -21,9 +21,15 @@
                     <button type="button" class="toggle-btn" onclick="register()">Register</button>
                 </div>
                 <form id="login" class="input-group">
-                    <input type="text" class="input-field" placeholder="Username" required>
-                    <input type="text" class="input-field" placeholder="Password" required>
-                    <input type="checkbox" class="check-box"><span>Remember Password</span>
+                    <label>
+                        <input type="text" class="input-field" placeholder="Username" required>
+                    </label>
+                    <label>
+                        <input type="text" class="input-field" placeholder="Password" required>
+                    </label>
+                    <label>
+                        <input type="checkbox" class="check-box">
+                    </label><span>Remember Password</span>
                     <button type="submit" class="submit-btn">Login</button>
                 </form>
                 <form id="register" class="input-group">
