@@ -15,16 +15,16 @@
         </nav>
         <div class="hero">
             <div class="form-box">
-                <h2>Login</h2>
+                <div class="login-text">
+                    <h2>Login</h2>
+                </div>
                 <form id="login" class="input-group" action="" method="post">
                     <input type="text" class="input-field" placeholder="Username" name="username" value="{{request.form.username }}">
                     <input type="password" class="input-field" placeholder="Password" name="password" value="{{request.form.password}}">
                     <input type="checkbox" class="check-box"><span>Remember password</span>
-                    <input type="submit" class="submit-btn" value="Login">
+                    <input type="submit" class="submit-btn" value="Login"><br><br>
                 </form>
-                <div class="button-box">
-                    <div id="btn"></div>
-                    <button type="button" class="toggle-btn">Don't have an account?</button>
+                <a href="/register" class="register-in-login">Don't have an account?</a>
                 </div>
             </div>
         </div>
