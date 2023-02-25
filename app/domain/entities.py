@@ -1,15 +1,23 @@
-import itertools
+from app import db
 
+class Patient(db.Model):
+    __id = db.Column(db.Integer, primary_key=True)
+    __username = db.Column(db.String(64), index=True, unique=True)
+    __first_name = db.Column(db.String(64), index=True)
+    __last_name = db.Column(db.String(64), index=True)
+    __phone_number = db.Column(db.Integer, index=True, unique=True)
+    __email = db.Column(db.String(128), index=True, unique=True)
+    __address = db.Column(db.String(256), index=True)
+    __serie_buletin = db.Column(db.String(32), index=True, unique=True)
+    __cnp = db.Column(db.Integer, index=True, unique=True)
+    __birth_date = db.Column(db.Date(), index=True)
+    __marital_status = db.Column(db.String(16), index=True)
+    __gender = db.Column(db.String(8), index=True)
+    __medical_record_id = db.Column(db.Integer, index=True, unique=True)
 
-class Patient:
-    __auto_iterative_id = itertools.count()
-
-    def __init__(self, first_name, last_name, phone_number, email, address, serie_buletin, cnp,
-                 birth_date, marital_status, gender, medical_record_id, id=None):
-        if id is None:
-            self.__id = next(self.__auto_iterative_id)
-        else:
-            self.__id = id
+    def __init__(self, username, first_name, last_name, phone_number, email, address, serie_buletin, cnp,
+                 birth_date, marital_status, gender, medical_record_id):
+        self.__username = username
         self.__first_name = first_name
         self.__last_name = last_name
         self.__phone_number = phone_number
@@ -22,9 +30,14 @@ class Patient:
         self.__gender = gender
         self.__medical_record_id = medical_record_id
 
+
     @property
     def id(self):
         return self.__id
+
+    @property
+    def username(self):
+        return self.__username
 
     @property
     def first_name(self):
@@ -70,6 +83,10 @@ class Patient:
     def medical_record_id(self):
         return self.__medical_record_id
 
+    @username.setter
+    def username(self, value):
+        self.__username = value
+
     @first_name.setter
     def first_name(self, value):
         self.__first_name = value
@@ -102,35 +119,28 @@ class Patient:
     def birth_date(self, value):
         self.__birth_date = value
 
-    @marital_status.setter
-    def marital_status(self, value):
-        self.__marital_status = value
-
-    @gender.setter
-    def gender(self, value):
-        self.__gender = value
-
-    @marital_status.setter
-    def marital_status(self, value):
-        self.__marital_status = value
-
-    @gender.setter
-    def gender(self, value):
-        self.__gender = value
-
-    @medical_record_id.setter
-    def medical_record_id(self, value):
-        self.__medical_record_id = value
+    def __repr__(self):
+        return f'patient {self.__username}'
 
 
-class Doctor:
-    __auto_iterative_id = itertools.count()
 
-    def __init__(self, first_name, last_name, phone_number, email, address, birth_date, gender, consultation_schedule_office, consultation_schedule_away, assistants_schedule, id=None):
-        if id is None:
-            self.__id = next(self.__auto_iterative_id)
-        else:
-            self.__id = id
+class Doctor(db.Model):
+    __id = db.Column(db.Integer, primary_key=True)
+    __username = db.Column(db.String(64), index=True, unique=True)
+    __first_name = db.Column(db.String(64), index=True)
+    __last_name = db.Column(db.String(64), index=True)
+    __phone_number = db.Column(db.Integer, index=True, unique=True)
+    __email = db.Column(db.String(128), index=True, unique=True)
+    __address = db.Column(db.String(256), index=True)
+    __birth_date = db.Column(db.Date(), index=True)
+    __gender = db.Column(db.String(8), index=True)
+    __consultation_schedule_office = db.Column(db.String(128), index=True)
+    __consultation_schedule_away = db.Column(db.String(128), index=True)
+    __assistants_schedule = db.Column(db.String(128), index=True)
+
+    def __init__(self, username,  first_name, last_name, phone_number, email, address, birth_date,
+                 gender, consultation_schedule_office, consultation_schedule_away, assistants_schedule):
+        self.__username = username
         self.__first_name = first_name
         self.__last_name = last_name
         self.__phone_number = phone_number
@@ -145,6 +155,10 @@ class Doctor:
     @property
     def id(self):
         return self.__id
+
+    @property
+    def username(self):
+        return self.__username
 
     @property
     def first_name(self):
@@ -186,6 +200,10 @@ class Doctor:
     def assistants_schedule(self):
         return self.__assistants_schedule
 
+    @username.setter
+    def username(self, value):
+        self.__username = value
+
     @first_name.setter
     def first_name(self, value):
         self.__first_name = value
@@ -226,15 +244,18 @@ class Doctor:
     def assistants_schedule(self, value):
         self.__assistants_schedule = value
 
+    def __repr__(self):
+        return f'doctor: {self.__username}'
 
-class Consultation:
-    __auto_iterative_id = itertools.count()
 
-    def __init__(self, patient_id, doctor_id, time, id=None):
-        if id is None:
-            self.__id = next(self.__auto_iterative_id)
-        else:
-            self.__id = id
+class Consultation(db.Model):
+    __id = db.Column(db.Integer, index=True, primary_key=True)
+    __patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
+    __doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
+    __time = db.Column(db.String(128), index=True, unique=True)
+
+
+    def __init__(self, patient_id, doctor_id, time):
         self.__patient_id = patient_id
         self.__doctor_id = doctor_id
         self.__time = time
