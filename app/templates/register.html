@@ -22,8 +22,16 @@
                     <input type="text" class="input-field" placeholder="Username" name="username" value="{{request.form.username }}">
                     <input type="text" class="input-field" placeholder="Email" name="email" value="{{request.form.email }}">
                     <input type="password" class="input-field" placeholder="Password" name="password" value="{{request.form.password}}"> <br><br>
-                    <input type="submit" class="submit-btn" value="Register">
+                      <select name="persoana" id="subject" class="select-menu">
+                          <option value="" selected>Alege</option>
+                          <option value="medic">Medic</option>
+                          <option value="pacient">Pacient</option>
+                        </select>
+                    <input type="submit" class="register-btn" value="Register">
                 </form>
+                    {% if error %}
+                    <p class="error"><strong>Error:</strong> {{ error }}
+                      {% endif %}</p>
                 <a href="/login" class="back-to-login">Already have an account?</a>
             </div>
         </div>

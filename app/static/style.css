@@ -136,12 +136,25 @@ nav img{
     background: transparent;
 }
 
-.submit-btn{
+.login-btn{
     width: 85%;
     padding: 20px 30px;
     cursor: pointer;
     display: block;
     margin: auto;
+    background: linear-gradient(to right, #5B8FB9, #B6EADA);
+    border: 0;
+    outline: none;
+    border-radius: 30px;
+    font-size: 18px
+}
+
+.register-btn{
+    width: 85%;
+    padding: 20px 30px;
+    cursor: pointer;
+    display: block;
+    margin: 10px auto;
     background: linear-gradient(to right, #5B8FB9, #B6EADA);
     border: 0;
     outline: none;
@@ -157,6 +170,7 @@ nav img{
     width: 90%;
     color: #000;
     top: 40px;
+    left: 13px;
     position: absolute;
     text-align: center;
 }
@@ -164,7 +178,7 @@ nav img{
 span{
     color: #777;
     font-size: 12px;
-    bottom: 130px;
+    bottom: 129px;
     position: absolute;
 }
 
@@ -190,6 +204,14 @@ span{
     margin: 15px 0;
     cursor: pointer;
     position: absolute;
-    bottom: 60px;
+    bottom: 40px;
     left: 50px;
+}
+
+.error{
+        top: 80px;
+        left: 45px;
+        position: absolute;
+        text-align: center;
+        color: #FF0000;
 }
