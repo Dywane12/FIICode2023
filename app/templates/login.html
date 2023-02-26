@@ -16,18 +16,18 @@
         <div class="hero">
             <div class="form-box">
                 <div class="login-text">
-                    <h2>Login</h2>
+                    <h2>Autentificare</h2>
                 </div>
                 <form id="login" class="input-group" action="" method="post">
-                    <input type="text" class="input-field" placeholder="Username" name="username" value="{{request.form.username }}">
-                    <input type="password" class="input-field" placeholder="Password" name="password" value="{{request.form.password}}">
-                    <input type="checkbox" class="check-box"><span>Remember password</span>
-                    <input type="submit" class="login-btn" value="Login"><br><br>
+                    <input type="text" class="input-field" placeholder="Nume de utilizator" name="username" value="{{request.form.username }}">
+                    <input type="password" class="input-field" placeholder="Parola" name="password" value="{{request.form.password}}">
+                    <input type="checkbox" class="check-box"><span>Salveaza parola</span>
+                    <input type="submit" class="login-btn" value="Autentifica-te"><br><br>
                 </form>
                     {% if error %}
                     <p class="error"><strong>Error:</strong> {{ error }}
                       {% endif %}</p>
-                <a href="/register" class="register-in-login">Don't have an account?</a>
+                <a href="/choice" class="register-in-login">Nu ai cont?</a>
                 </div>
             </div>
         </div>

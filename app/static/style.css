@@ -99,6 +99,17 @@ nav img{
     overflow: hidden;
 }
 
+.form-patient{
+    width: 850px;
+    height: 480px;
+    position: relative;
+    margin: 6% auto;
+    background: #fff;
+    padding: 5px;
+    overflow: hidden;
+}
+
+
 .button-box{
     width: 220px;
     margin: 35px auto;
@@ -124,6 +135,13 @@ nav img{
     transition: .5s;
 }
 
+.patient-group{
+    top: 100px;
+    position: absolute;
+    width: 800px;
+    transition: .5s;
+}
+
 .input-field{
     width: 100%;
     padding: 15px 0;
@@ -134,6 +152,20 @@ nav img{
     border-bottom: 1px solid #999;
     outline: none;
     background: transparent;
+}
+
+.patient-field{
+    width: 30%;
+    padding: 15px 0;
+    margin: 5px 0;
+    border-left: 0;
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 1px solid #999;
+    outline: none;
+    background: transparent;
+    display: inline-block;
+    text-align: center;
 }
 
 .login-btn{
@@ -150,16 +182,16 @@ nav img{
 }
 
 .register-btn{
-    width: 85%;
+    width: 40%;
     padding: 20px 30px;
     cursor: pointer;
     display: block;
-    margin: 10px auto;
+    margin: 10px 220px auto;
     background: linear-gradient(to right, #5B8FB9, #B6EADA);
     border: 0;
     outline: none;
     border-radius: 30px;
-    font-size: 18px
+    font-size: 18px;
 }
 
 .check-box{
@@ -167,10 +199,9 @@ nav img{
 }
 
 .login-text{
-    width: 90%;
+    width: 100%;
     color: #000;
     top: 40px;
-    left: 13px;
     position: absolute;
     text-align: center;
 }
@@ -209,9 +240,54 @@ span{
 }
 
 .error{
-        top: 80px;
-        left: 45px;
-        position: absolute;
-        text-align: center;
-        color: #FF0000;
+    width: 100%;
+    top: 80px;
+    position: absolute;
+    text-align: center;
+    color: #FF0000;
+}
+
+.medic{
+    width: 60%;
+    padding: 20px 30px;
+    cursor: pointer;
+    display: block;
+    margin: 150px auto 0px auto;
+    background: linear-gradient(to right, #5B8FB9, #B6EADA);
+    border: 0;
+    outline: none;
+    border-radius: 30px;
+    font-size: 20px;
+    text-align: center;
+    outline: none;
+    text-decoration: none;
+    color: #000;
+}
+
+.pacient{
+    width: 60%;
+    padding: 20px 30px;
+    cursor: pointer;
+    display: block;
+    margin: 50px auto;
+    background: linear-gradient(to right, #5B8FB9, #B6EADA);
+    border: 0;
+    outline: none;
+    border-radius: 30px;
+    font-size: 20px;
+    text-align: center;
+    outline: none;
+    text-decoration: none;
+    color: #000;
+}
+
+.back-btn{
+    color: #777;
+    font-size: 12px;
+    padding: 10px 0;
+    margin: 10px 0;
+    cursor: pointer;
+    position: absolute;
+    bottom: 20px;
+    left: 50px;
 }
