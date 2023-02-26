@@ -1,7 +1,7 @@
 from app import db
 
 class Patient(db.Model):
-    __id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     __username = db.Column(db.String(64), index=True, unique=True)
     __first_name = db.Column(db.String(64), index=True)
     __last_name = db.Column(db.String(64), index=True)
@@ -125,7 +125,7 @@ class Patient(db.Model):
 
 
 class Doctor(db.Model):
-    __id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     __username = db.Column(db.String(64), index=True, unique=True)
     __first_name = db.Column(db.String(64), index=True)
     __last_name = db.Column(db.String(64), index=True)
@@ -249,7 +249,7 @@ class Doctor(db.Model):
 
 
 class Consultation(db.Model):
-    __id = db.Column(db.Integer, index=True, primary_key=True)
+    id = db.Column(db.Integer, index=True, primary_key=True)
     __patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
     __doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
     __time = db.Column(db.String(128), index=True, unique=True)
