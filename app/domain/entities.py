@@ -14,9 +14,10 @@ class Patient(db.Model):
     marital_status = db.Column(db.String(16), index=True)
     gender = db.Column(db.String(8), index=True)
     medical_record_id = db.Column(db.Integer, index=True, unique=True)
+    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
 
     def __init__(self, username, first_name, last_name, phone_number, email, address, serie_buletin, cnp,
-                 birth_date, marital_status, gender, medical_record_id):
+                 birth_date, marital_status, gender, medical_record_id, doctor_id):
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
@@ -29,7 +30,7 @@ class Patient(db.Model):
         self.marital_status = marital_status
         self.gender = gender
         self.medical_record_id = medical_record_id
-
+        self.doctor_id = doctor_id
 
 class Doctor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -44,6 +45,7 @@ class Doctor(db.Model):
     consultation_schedule_office = db.Column(db.String(128), index=True)
     consultation_schedule_away = db.Column(db.String(128), index=True)
     assistants_schedule = db.Column(db.String(128), index=True)
+    patients = db.relationship('Patient', backref='Fullname', lazy='dynamic')
 
     def __init__(self, username,  first_name, last_name, phone_number, email, address, birth_date,
                  gender, consultation_schedule_office, consultation_schedule_away, assistants_schedule):
