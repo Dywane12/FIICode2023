@@ -1,4 +1,5 @@
 from app import db
+from datetime import datetime
 
 
 class Patient(db.Model):
@@ -12,7 +13,7 @@ class Patient(db.Model):
     id_series = db.Column(db.String(8), index=True, unique=True, nullable=False)
     id_number = db.Column(db.String(16), index=True, unique=True, nullable=False)
     cnp = db.Column(db.Integer, index=True, unique=True,  nullable=False)
-    birth_date = db.Column(db.Date(), index=True,  nullable=False)
+    birth_date = db.Column(db.String(128), index=True,  nullable=False)
     marital_status = db.Column(db.String(16), index=True,  nullable=False)
     gender = db.Column(db.String(8), index=True, nullable=False)
     medical_record_id = db.Column(db.Integer, index=True, unique=True,  nullable=False)
@@ -45,7 +46,7 @@ class Doctor(db.Model):
     phone_number = db.Column(db.Integer, index=True, unique=True, nullable=False)
     email = db.Column(db.String(128), index=True, unique=True, nullable=False)
     address = db.Column(db.String(256), index=True, nullable=False)
-    birth_date = db.Column(db.Date(), index=True, nullable=False)
+    birth_date = db.Column(db.String(128), index=True, nullable=False)
     gender = db.Column(db.String(8), index=True, nullable=False)
     consultation_schedule_office = db.Column(db.String(128), index=True, nullable=False)
     consultation_schedule_away = db.Column(db.String(128), index=True, nullable=False)

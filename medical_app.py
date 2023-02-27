@@ -9,4 +9,5 @@ if __name__ == '__main__':
         return {'db': db, 'Patient': Patient, 'Doctor': Doctor, 'Consultation': Consultation}
     with app.app_context():
         db = Database(db)
+
     app.run()
