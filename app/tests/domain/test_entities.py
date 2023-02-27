@@ -15,7 +15,7 @@ class TestPatient(TestCase):
         self.assertEqual(self.patient.phone_number, '123456789')
         self.assertEqual(self.patient.email, 'johndoe@example.com')
         self.assertEqual(self.patient.address, '123 Main St')
-        self.assertEqual(self.patient.serie_buletin, '123456')
+        self.assertEqual(self.patient.id_series, '123456')
         self.assertEqual(self.patient.cnp, '1234567890123')
         self.assertEqual(self.patient.birth_date, datetime(1990, 1, 1))
         self.assertEqual(self.patient.marital_status, 'Married')
@@ -38,8 +38,8 @@ class TestPatient(TestCase):
         self.patient.address = '456 Elm St'
         self.assertEqual(self.patient.address, '456 Elm St')
 
-        self.patient.serie_buletin = '654321'
-        self.assertEqual(self.patient.serie_buletin, '654321')
+        self.patient.id_series = '654321'
+        self.assertEqual(self.patient.id_series, '654321')
 
         self.patient.cnp = '9876543210123'
         self.assertEqual(self.patient.cnp, '9876543210123')
