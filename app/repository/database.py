@@ -9,7 +9,6 @@ class Database:
 
     def add_entity(self, entity):
         self.db.session.add(entity)
-        self.db.session.commit()
 
     @staticmethod
     def get_all_doctors():
@@ -22,3 +21,6 @@ class Database:
     @staticmethod
     def get_all_consultations():
         return Consultation.query.all()
+
+    def save_to_database(self):
+        self.db.session.commit()
