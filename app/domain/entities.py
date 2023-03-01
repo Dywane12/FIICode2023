@@ -22,7 +22,7 @@ class Patient(db.Model):
     consultation = db.relationship('Consultation', backref='patient', lazy='dynamic')
 
     def __init__(self, username, first_name, last_name, phone_number, email, address, id_series, id_number, cnp,
-                 birth_date, marital_status, gender, medical_record_id, doctor_id,password_hash):
+                 birth_date, marital_status, gender, medical_record_id, doctor_id, password_hash):
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
