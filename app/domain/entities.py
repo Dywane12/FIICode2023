@@ -10,9 +10,9 @@ class Patient(db.Model):
     phone_number = db.Column(db.Integer, index=True, unique=True,  nullable=False)
     email = db.Column(db.String(128), index=True, unique=True,  nullable=False)
     address = db.Column(db.String(256), index=True,  nullable=False)
-    id_series = db.Column(db.String(8), index=True, unique=True, nullable=False)
+    id_series = db.Column(db.String(8), index=True, nullable=False)
     id_number = db.Column(db.String(16), index=True, unique=True, nullable=False)
-    cnp = db.Column(db.Integer, index=True, unique=True,  nullable=False)
+    cnp = db.Column(db.Integer, index=True,  nullable=False)
     birth_date = db.Column(db.String(128), index=True,  nullable=False)
     marital_status = db.Column(db.String(16), index=True,  nullable=False)
     gender = db.Column(db.String(8), index=True, nullable=False)
@@ -75,8 +75,8 @@ class Doctor(db.Model):
         self.gender = gender
         self.consultation_schedule_office = consultation_schedule_office
         self.consultation_schedule_away = consultation_schedule_away
-        self.password_hash = password_hash
         self.assistants_schedule = assistants_schedule
+        self.password_hash = password_hash
 
     def __repr__(self):
         return f'doctor: {self.username}'
@@ -89,7 +89,7 @@ class Consultation(db.Model):
     id = db.Column(db.Integer, index=True, primary_key=True)
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'), nullable=False)
-    time = db.Column(db.String(128), index=True, unique=True, nullable=False)
+    time = db.Column(db.String(128), index=True, nullable=False)
     pdf = db.Column(db.String(128), nullable=True)
 
     def __init__(self, patient_id, doctor_id, time, pdf):
