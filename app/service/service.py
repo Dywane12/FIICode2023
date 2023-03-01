@@ -1,6 +1,8 @@
 from faker import Faker
 from random import randint
 from cnpgen import Cnp, Gender, Region
+
+
 from app import Patient
 
 
@@ -52,3 +54,6 @@ class Service:
                 email=fake.email())
             db.session.add(user)
         db.session.commit()
+
+
+

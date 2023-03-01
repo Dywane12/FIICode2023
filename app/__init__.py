@@ -19,3 +19,7 @@ migrate = Migrate(app, db, render_as_batch=True)
 
 from app import routes
 from app.domain.entities import Patient, Doctor, Consultation
+from flask_login import LoginManager
+
+app = Flask(__name__)
+login = LoginManager(app)

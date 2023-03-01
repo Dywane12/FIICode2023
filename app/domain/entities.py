@@ -1,6 +1,7 @@
 from app import db
 from datetime import datetime
-
+from flask_login import UserMixin
+from app import login
 
 class Patient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -97,3 +98,9 @@ class Consultation(db.Model):
         self.doctor_id = doctor_id
         self.time = time
         self.pdf = pdf
+
+
+class Login(UserMixin, db.Model):
+    @login.user_loader
+    def load_user(id):
+        return Login.query.get(int(id))
