@@ -13,9 +13,9 @@ class Service:
         self.db = db
         if choice:
             self.__add_fake_doctors(50)
-            doctors_ids = self.db.get_all_doctors_ids()
+            doctors_ids = self.db.find_all_doctors_ids()
             self.__add_fake_patients(100, doctors_ids)
-            patients_ids = self.db.get_all_patients_ids()
+            patients_ids = self.db.find_all_patients_ids()
             self.__add_fake_consultations(300, patients_ids, doctors_ids)
 
     def __add_fake_patients(self, n, doctor_ids):
@@ -27,7 +27,7 @@ class Service:
             phone_number = fake.phone_number()
             email = first_name + '_' + last_name + f'{randint(1, 420)}' + '@gmail.com'
             address = fake.address()
-            id_series = 'MM'
+            id_series = ['AX', 'TR', 'AR', 'XC', 'MM', 'XB', 'XT', 'BV', 'XR', 'DP', 'DR', 'DT', 'RD', 'RR', 'RT', 'RX', 'IF', 'XZ', 'KL', 'KX', 'KT', 'KZ', 'DX', 'HD', 'VN', 'GL', 'GG', 'MX', 'MZ', 'MH', 'HR', 'XH', 'NT', 'AS', 'KS', 'VX', 'PH', 'PX', 'SM', 'KV', 'SB', 'OT', 'SZ', 'SV', 'TM', 'TZ', 'DD', 'GZ', 'MS', 'TC', 'VS', 'SX']
             id_number = randint(100000, 1000000 - 1)
             birth_date = self.__random_date(date(1940, 1, 1), date(2008, 12, 30))
             if gender == "Male":
@@ -105,3 +105,11 @@ class Service:
         for day in self.__random_working_days():
             schedule.append(f'{day}: {self.__random_working_hours()}')
         return schedule
+
+    def doctor_username_in_database(self, username):
+        return self.db.find_doctor_username(username)
+
+    def patient_username_in_database(self, username):
+        return self.db.find_patient_username(username)
+
+

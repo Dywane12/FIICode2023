@@ -17,9 +17,9 @@ db = SQLAlchemy(app, metadata=metadata)
 migrate = Migrate(app, db, render_as_batch=True)
 
 
-from app import routes
+from app import ui
 from app.domain.entities import Patient, Doctor, Consultation
 from flask_login import LoginManager
 
-app = Flask(__name__)
+#app_login = Flask(__name__)
 login = LoginManager(app)
