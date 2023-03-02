@@ -105,3 +105,9 @@ class Service:
         for day in self.__random_working_days():
             schedule.append(f'{day}: {self.__random_working_hours()}')
         return schedule
+
+    def get_doctor_username_from_database(self, username):
+        return self.db.find_doctor_username(username)
+
+    def get_patient_username_from_database(self, username):
+        return self.db.find_patient_username(username)
