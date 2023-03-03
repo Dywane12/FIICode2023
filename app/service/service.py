@@ -5,7 +5,7 @@ import names
 from faker import Faker
 from random import randint
 from cnpgen import Cnp, Gender, Region
-from app import Patient, Doctor, Consultation
+from app.domain.entities import Patient, Doctor, Consultation
 
 
 class Service:
@@ -111,3 +111,6 @@ class Service:
 
     def get_patient_username_from_database(self, username):
         return self.db.find_patient_username(username)
+
+    def get_all_doctors(self):
+        return self.db.find_all_doctors()

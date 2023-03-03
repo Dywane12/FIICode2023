@@ -1,4 +1,4 @@
-from app import Doctor, Patient, Consultation
+from app.domain.entities import Doctor, Patient, Consultation
 
 
 class Database:
@@ -11,26 +11,26 @@ class Database:
         self.db.session.add(entity)
 
     @staticmethod
-    def get_all_doctors():
+    def find_all_doctors():
         return Doctor.query.all()
 
     @staticmethod
-    def get_all_patients():
+    def find_all_patients():
         return Patient.query.all()
 
     @staticmethod
-    def get_all_consultations():
+    def find_all_consultations():
         return Consultation.query.all()
 
-    def get_all_doctors_ids(self):
+    def find_all_doctors_ids(self):
         ids = []
-        for doctor in self.get_all_doctors():
+        for doctor in self.find_all_doctors():
             ids.append(doctor.id)
         return ids
 
-    def get_all_patients_ids(self):
+    def find_all_patients_ids(self):
         ids = []
-        for patient in self.get_all_patients():
+        for patient in self.find_all_patients():
             ids.append(patient.id)
         return ids
 

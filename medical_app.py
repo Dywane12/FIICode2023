@@ -1,17 +1,16 @@
 from app import app, db
 from app.domain.entities import Patient, Doctor, Consultation
-from app.repository.database import Database
-from app.service.service import Service
+from app.ui.ui import Routes
+from repository.database import Database
+from service.service import Service
 
 if __name__ == '__main__':
-    @app.shell_context_processor
-    def make_shell_context():
-        return {'db': db, 'Patient': Patient, 'Doctor': Doctor, 'Consultation': Consultation}
-
-
     app.run(debug=True)
-    db_1 = Database(db)
-    service = Service(db_1, choice=False)
+    routes = Routes()
+
     # db_1.clear_patients_table()
     # db_1.clear_consultation_table()
     # db_1.clear_doctors_table()
+    @app.shell_context_processor
+    def make_shell_context():
+        return {'db': db, 'Patient': Patient, 'Doctor': Doctor, 'Consultation': Consultation}
