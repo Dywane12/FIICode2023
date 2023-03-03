@@ -8,3 +8,5 @@ if __name__ == '__main__':
     @app.shell_context_processor
     def make_shell_context():
         return {'db': db, 'Patient': Patient, 'Doctor': Doctor, 'Consultation': Consultation}
+
+    # TODO continue on service get patients for doctor, implement exception

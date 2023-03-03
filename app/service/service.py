@@ -40,9 +40,10 @@ class Service:
             medical_record_id = randint(100000, 1000000 - 1)
             doctor_id = random.choice(doctor_ids)
             password_hash = randint(10000000000, 100000000000 - 1)
-            patient = Patient(username, first_name, last_name, phone_number, email,
-                              address, id_series, id_number, str(cnp), birth_date, marital_status, gender,
-                              medical_record_id, password_hash, doctor_id
+            patient = Patient(username=username, first_name=first_name, last_name=last_name, phone_number=phone_number,
+                              email=email, address=address, id_series=id_series, id_number=id_number, cnp=str(cnp),
+                              birth_date=birth_date, marital_status=marital_status, gender=gender,
+                              medical_record_id=medical_record_id, password_hash=password_hash, doctor_id=doctor_id
                               )
             self.db.add_entity(patient)
         self.db.save_to_database()

@@ -5,9 +5,9 @@ from app.service.service import Service
 from app.domain.entities import Patient, Doctor, Consultation
 with app.app_context():
     db_1 = Database(db)
-    """db_1.clear_patients_table()
-    db_1.clear_consultation_table()
-    db_1.clear_doctors_table()"""
+    #db_1.clear_patients_table()
+    #db_1.clear_consultation_table()
+    #db_1.clear_doctors_table()
     service = Service(db_1, choice=False)
 
 class Routes:
@@ -99,9 +99,8 @@ class Routes:
     @staticmethod
     @app.route('/lista-pacienti')
     def __lista_pacienti():
-        patients = service.get_all_patients()
-        doctor = Doctor.query.get(10)
-        #patients = service.get_doctor_patients(doctor)
+        doctor = db.session.get(Doctor,13)
+        patients = service.get_doctor_patients(doctor)
         #patients = db.find_all_doctors_ids()
         return render_template('lista-pacienti.html',patients=patients)
 
