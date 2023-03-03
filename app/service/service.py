@@ -13,9 +13,9 @@ class Service:
         self.db = db
         if choice:
             self.__add_fake_doctors(50)
-            doctors_ids = self.db.get_all_doctors_ids()
+            doctors_ids = self.db.find_all_doctors_ids()
             self.__add_fake_patients(100, doctors_ids)
-            patients_ids = self.db.get_all_patients_ids()
+            patients_ids = self.db.find_all_patients_ids()
             self.__add_fake_consultations(300, patients_ids, doctors_ids)
 
     def __add_fake_patients(self, n, doctor_ids):
