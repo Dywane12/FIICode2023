@@ -10,12 +10,9 @@ convention = {
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
     "pk": "pk_%(table_name)s"
 }
-app = Flask(__name__,template_folder='templates')
+app = Flask(__name__)
 app.config.from_object(Config)
 metadata = MetaData(naming_convention=convention)
 db = SQLAlchemy(app, metadata=metadata)
 migrate = Migrate(app, db, render_as_batch=True)
 
-
-from app import routes
-from app.domain.entities import Patient, Doctor, Consultation

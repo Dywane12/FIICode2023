@@ -25,7 +25,11 @@
                     </div>
                 </div>
             </div>
-
+            <ul>
+                {% for patient in patients %}
+                <li><a href="#">{{ patient }}</a></li>
+                {% endfor %}
+            </ul>
     </section>
 </body>
 
