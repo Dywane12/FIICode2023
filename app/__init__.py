@@ -1,5 +1,5 @@
 from flask import Flask
-from app.config import Config
+from config import Config
 from sqlalchemy import MetaData
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -16,5 +16,5 @@ metadata = MetaData(naming_convention=convention)
 db = SQLAlchemy(app, metadata=metadata)
 migrate = Migrate(app, db, render_as_batch=True)
 
-from app.ui import routes
+from app import routes
 from app.domain.entities import Patient, Doctor, Consultation
