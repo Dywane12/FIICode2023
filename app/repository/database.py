@@ -48,3 +48,29 @@ class Database:
     def clear_consultation_table(self):
         self.db.session.query(Consultation).delete()
         self.db.session.commit()
+
+    def find_doctor_username(self, username):
+        """
+
+        :param username: type string
+        :return:
+        """
+        name = username
+        doctor = Doctor.query.filter_by(username=username).first()
+        if name == doctor:
+            return True
+        else:
+            return False
+
+    def find_patient_username(self, username):
+        """
+
+        :param username: type string
+        :return:
+        """
+        name = username
+        patient = Patient.query.filter_by(username=username).first()
+        if name == patient:
+            return True
+        else:
+            return False
