@@ -117,3 +117,12 @@ class Service:
 
     def get_all_patients(self):
         return self.db.find_all_patients()
+
+    def get_doctor_patients(self,doctor):
+        patients = self.get_all_patients()
+        doctor_patients = []
+        for patient in patients:
+            if patient.doctor_id == doctor.id:
+                doctor_patients.append(patient)
+        return doctor_patients
+
