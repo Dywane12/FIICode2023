@@ -96,8 +96,8 @@ class Routes:
     @staticmethod
     @app.route('/lista-pacienti')
     def lista_pacienti():
-        service.get_all
-        return render_template('lista-pacienti.html')
+        patients = service.get_all_patients()
+        return render_template('lista-pacienti.html',patients=patients)
 
     @staticmethod
     @app.route('/transfer-pacienti')

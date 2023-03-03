@@ -1,8 +1,6 @@
 from app import app, db
 from app.domain.entities import Patient, Doctor, Consultation
 from app.ui.ui import Routes
-from repository.database import Database
-from service.service import Service
 
 if __name__ == '__main__':
     app.run(debug=True)

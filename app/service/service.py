@@ -114,3 +114,6 @@ class Service:
 
     def get_all_doctors(self):
         return self.db.find_all_doctors()
+
+    def get_all_patients(self):
+        return self.db.find_all_patients()
