@@ -13,9 +13,9 @@ class Service:
         self.db = db
         if choice:
             self.__add_fake_doctors(50)
-            doctors_ids = self.db.get_all_doctors_ids()
+            doctors_ids = self.db.find_all_doctors_ids()
             self.__add_fake_patients(100, doctors_ids)
-            patients_ids = self.db.get_all_patients_ids()
+            patients_ids = self.db.find_all_patients_ids()
             self.__add_fake_consultations(300, patients_ids, doctors_ids)
 
     def __add_fake_patients(self, n, doctor_ids):
@@ -40,9 +40,10 @@ class Service:
             medical_record_id = randint(100000, 1000000 - 1)
             doctor_id = random.choice(doctor_ids)
             password_hash = randint(10000000000, 100000000000 - 1)
-            patient = Patient(username, first_name, last_name, phone_number, email,
-                              address, id_series, id_number, str(cnp), birth_date, marital_status, gender,
-                              medical_record_id, password_hash, doctor_id
+            patient = Patient(username=username, first_name=first_name, last_name=last_name, phone_number=phone_number,
+                              email=email, address=address, id_series=id_series, id_number=id_number, cnp=str(cnp),
+                              birth_date=birth_date, marital_status=marital_status, gender=gender,
+                              medical_record_id=medical_record_id, password_hash=password_hash, doctor_id=doctor_id
                               )
             self.db.add_entity(patient)
         self.db.save_to_database()
@@ -117,3 +118,12 @@ class Service:
 
     def get_all_patients(self):
         return self.db.find_all_patients()
+
+    def get_doctor_patients(self,doctor):
+        patients = self.get_all_patients()
+        doctor_patients = []
+        for patient in patients:
+            if patient.doctor_id == doctor.id:
+                doctor_patients.append(patient)
+        return doctor_patients
+
