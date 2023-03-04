@@ -24,11 +24,13 @@ def register_page_pacient():
 def login():
     error = None
     if request.method == 'POST':
-        if request.form['username'] != 'admin' and request.form['password'] != 'admin':
-            error = 'Date gresite. Incearca din nou.'
+        if request.form['username'] == 'medic' and request.form['password'] == 'admin':
+            return redirect(url_for('medic_home'))
+        elif request.form['username'] == 'pacient' and request.form['password'] == 'admin':
+            return redirect(url_for('pacient_home'))
         else:
-            return redirect(url_for('home'))
-    return render_template('login.html', error = error)
+            error = 'Date gresite. Incearca din nou.'
+            return render_template('login.html', error = error)
 
 @app.route('/register-medic', methods=['GET', 'POST'])
 def register_medic():
@@ -73,3 +75,7 @@ def invita_pacienti():
 @app.route('/medic-profil')
 def medic_profil():
     return render_template('medic-profil.html')
+
+@app.route('/pacient-home')
+def pacient_home():
+    return render_template('principal-pacient.html')
