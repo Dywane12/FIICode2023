@@ -1,7 +1,7 @@
 from sqlalchemy.sql.functions import user
 from app import app, db
-from flask import render_template, redirect, url_for, request
-from flask_login import current_user, login_user
+from flask import render_template, redirect, url_for, request, flash
+from flask_login import current_user, login_user, login_required
 from app.repository.database import Database
 from app.service.service import Service
 from app.domain.entities import Patient, Doctor, Consultation
@@ -59,6 +59,21 @@ class Routes:
     @staticmethod
     @app.route('/login', methods=['GET', 'POST'])
     def login():
+        """if current_user.is_authenticated:
+            return redirect(url_for('index'))
+        form = LoginForm()
+        if form.validate_on_submit():
+            doctor = Doctor.query.filter_by(username=form.username.data).first()
+            if doctor is None:
+                patient = Patient.query.filter_by(username=form.username.data).first()
+                if patient is None or not patient.check_password(form.password.data):
+                    flash('Date gresite. Incearca din nou.')
+                    return redirect(url_for('login'))
+            elif doctor.check_password(form.password.data):
+                flash('Date gresite. Incearca din nou.')
+                return redirect(url_for('login'))
+            login_user(user, remember=form.remember_me.data)
+            return redirect(url_for('index'))"""
         error = None
         if service.check_existence_doctor_username(request.form['username']):
             if current_user.is_authenticated:
@@ -124,11 +139,13 @@ class Routes:
         return render_template('choice.html')
 
     @staticmethod
+    @login_required
     @app.route('/medic-home')
     def medic_home():
         return render_template('principal-medic.html')
 
     @staticmethod
+    @login_required
     @app.route('/lista-pacienti')
     def lista_pacienti():
         patients = service.get_doctor_patients()
@@ -136,16 +153,19 @@ class Routes:
         return render_template('lista-pacienti.html', patients=patients)
 
     @staticmethod
+    @login_required
     @app.route('/transfer-pacienti')
     def transfer_pacienti():
         return render_template('transfer-pacienti.html')
 
     @staticmethod
+    @login_required
     @app.route('/invita-pacienti')
     def invita_pacienti():
         return render_template('invita-pacienti.html')
 
     @staticmethod
+    @login_required
     @app.route('/medic-profil')
     def medic_profil():
         return render_template('medic-profil.html')

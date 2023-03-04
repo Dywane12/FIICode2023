@@ -1,6 +1,6 @@
 import random
 from datetime import date, timedelta, datetime
-
+from app import login_manager
 import names
 from faker import Faker
 from random import randint
@@ -138,4 +138,14 @@ class Service:
         :return: True/False
         """
         return self.db.find_patient_username(username)
+
+    @staticmethod
+    @login_manager.user_loader
+    def load_doctor(id):
+        return Doctor.query.get(int(id))
+
+    @staticmethod
+    @login_manager.user_loader
+    def load_patient(id):
+        return Patient.query.get(int(id))
 
