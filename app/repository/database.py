@@ -4,11 +4,29 @@ from app.domain.entities import Doctor, Patient, Consultation
 class Database:
 
     def __init__(self, db):
-        self.__db = db
-        self.__db.create_all()
+        self.db = db
+        self.db.create_all()
 
     def add_entity(self, entity):
-        self.__db.session.add(entity)
+        self.db.session.add(entity)
+
+    def find_doctor_by_id(self, doctor_id):
+        doctor = self.db.session.get(Doctor, doctor_id)
+        if doctor is None:
+            raise ValueError("Doctor not found")
+        return doctor
+
+    def find_consultation_by_id(self, consultation_id):
+        consultation = self.db.session.get(Consultation, consultation_id)
+        if consultation is None:
+            raise ValueError("Doctor not found")
+        return consultation
+
+    def find_patient_by_id(self, patient_id):
+        patient = self.db.session.get(Patient, patient_id)
+        if patient is None:
+            raise ValueError("Doctor not found")
+        return patient
 
     @staticmethod
     def find_all_doctors():
@@ -35,23 +53,17 @@ class Database:
         return ids
 
     def save_to_database(self):
-        self.__db.session.commit()
+        self.db.session.commit()
 
     def clear_patients_table(self):
-        self.__db.session.query(Patient).delete()
-        self.__db.session.commit()
+        self.db.session.query(Patient).delete()
+        self.db.session.commit()
 
     def clear_doctors_table(self):
-        self.__db.session.query(Doctor).delete()
-        self.__db.session.commit()
+        self.db.session.query(Doctor).delete()
+        self.db.session.commit()
 
     def clear_consultation_table(self):
-        self.__db.session.query(Consultation).delete()
-        self.__db.session.commit()
+        self.db.session.query(Consultation).delete()
+        self.db.session.commit()
 
-    def find_entity_by_id(self, entity_id):
-        entity = self.__db.query.filter_by(id=entity_id).first()
-        if entity is None:
-            return None
-        else:
-            return entity

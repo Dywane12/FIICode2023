@@ -119,11 +119,28 @@ class Service:
     def get_all_patients(self):
         return self.db.find_all_patients()
 
-    def get_doctor_patients(self,doctor):
+    def get_all_consultations(self):
+        return self.db.find_all_consultations()
+
+    def get_doctor_patients(self, doctor):
+        if type(doctor) != Doctor:
+            raise ValueError("This is not a doctor")
+        self.db.find_doctor_by_id(doctor.id)
         patients = self.get_all_patients()
         doctor_patients = []
         for patient in patients:
             if patient.doctor_id == doctor.id:
                 doctor_patients.append(patient)
         return doctor_patients
+
+    def get_patient_consultation(self, patient):
+        if type(patient) != Patient:
+            raise ValueError("This is not a patient")
+        self.db.find_patient_by_id(patient.id)
+        consultations = self.get_all_consultations()
+        consultation_history = []
+        for consultation in consultations:
+            if consultation.patient_id == patient.id:
+                consultation_history.append(consultation)
+        return consultation_history
 
