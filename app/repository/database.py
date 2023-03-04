@@ -67,3 +67,26 @@ class Database:
         self.db.session.query(Consultation).delete()
         self.db.session.commit()
 
+    def find_doctor_username(self, username):
+        """
+                The function returns True if there is any existing doctor with the given username and False otherwise
+                :param username: str
+                :return: True/False
+                """
+        doctor = Doctor.query.filter_by(username=username).first()
+        if doctor is not None and username == doctor.username:
+            return True
+        else:
+            return False
+
+    def find_patient_username(self, username):
+        """
+        The function returns True if there is any existing patient with the given username and False otherwise
+        :param username: str
+        :return: True/False
+        """
+        patient = Patient.query.filter_by(username=username).first()
+        if patient is not None and username == patient.username:
+            return True
+        else:
+            return False
