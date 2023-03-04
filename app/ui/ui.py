@@ -1,14 +1,18 @@
 from app import app, db
 from flask import render_template, redirect, url_for, request
+from flask_login import current_user, login_user
 from app.repository.database import Database
 from app.service.service import Service
 from app.domain.entities import Patient, Doctor, Consultation
+from werkzeug.security import check_password_hash
+
 with app.app_context():
     db_1 = Database(db)
-    #db_1.clear_patients_table()
-    #db_1.clear_consultation_table()
-    #db_1.clear_doctors_table()
+    # db_1.clear_patients_table()
+    # db_1.clear_consultation_table()
+    # db_1.clear_doctors_table()
     service = Service(db_1, choice=False)
+
 
 class Routes:
 
@@ -33,38 +37,41 @@ class Routes:
     @staticmethod
     @app.route('/')
     @app.route('/home')
-    def __home():
+    def home():
         return render_template('index.html')
 
     @staticmethod
     @app.route('/login')
-    def __login_page():
+    def login_page():
         return render_template('login.html')
 
     @staticmethod
     @app.route('/register-medic')
-    def __register_page_medic():
+    def register_page_medic():
         return render_template('register_medic.html')
 
     @staticmethod
     @app.route('/register-pacient')
-    def __register_page_pacient():
+    def register_page_pacient():
         return render_template('register_pacient.html')
 
     @staticmethod
     @app.route('/login', methods=['GET', 'POST'])
-    def __login():
+    def login():
+        if current_user.is_authenticated:
+            return redirect(url_for('medic_home'))
         error = None
         if request.method == 'POST':
-            if request.form['username'] != 'admin' and request.form['password'] != 'admin':
+            if service.check_existence_doctor_username(request.form['username']) == False :
                 error = 'Date gresite. Incearca din nou.'
             else:
+
                 return redirect(url_for('home'))
         return render_template('login.html', error=error)
 
     @staticmethod
     @app.route('/register-medic', methods=['GET', 'POST'])
-    def __register_medic():
+    def register_medic():
         error = None
         if request.method == 'POST':
             if request.form['username'] != 'admin' and request.form['password'] != 'admin' \
@@ -76,7 +83,7 @@ class Routes:
 
     @staticmethod
     @app.route('/register-pacient', methods=['GET', 'POST'])
-    def __register_pacient():
+    def register_pacient():
         error = None
         if request.method == 'POST':
             if request.form['username'] != 'admin' and request.form['password'] != 'admin' \
@@ -88,21 +95,21 @@ class Routes:
 
     @staticmethod
     @app.route('/choice')
-    def __choice():
+    def choice():
         return render_template('choice.html')
 
     @staticmethod
     @app.route('/medic-home')
-    def __medic_home():
+    def medic_home():
         return render_template('principal-medic.html')
 
     @staticmethod
     @app.route('/lista-pacienti')
     def __lista_pacienti():
-        doctor = db.session.get(Doctor,13)
+        doctor = db.session.get(Doctor, 13)
         patients = service.get_doctor_patients(doctor)
-        #patients = db.find_all_doctors_ids()
-        return render_template('lista-pacienti.html',patients=patients)
+        # patients = db.find_all_doctors_ids()
+        return render_template('lista-pacienti.html', patients=patients)
 
     @staticmethod
     @app.route('/transfer-pacienti')

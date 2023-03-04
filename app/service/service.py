@@ -107,12 +107,6 @@ class Service:
             schedule.append(f'{day}: {self.__random_working_hours()}')
         return schedule
 
-    def get_doctor_username_from_database(self, username):
-        return self.db.find_doctor_username(username)
-
-    def get_patient_username_from_database(self, username):
-        return self.db.find_patient_username(username)
-
     def get_all_doctors(self):
         return self.db.find_all_doctors()
 
@@ -126,4 +120,20 @@ class Service:
             if patient.doctor_id == doctor.id:
                 doctor_patients.append(patient)
         return doctor_patients
+
+    def check_existence_doctor_username(self, username):
+        """
+        Calls the find_doctor_username function from the repository
+        :param username: str
+        :return: True/False
+        """
+        return self.db.find_doctor_username(username)
+
+    def check_existence_patient_username(self, username):
+        """
+        Calls the find_patient_username function from the repository
+        :param username: str
+        :return: True/False
+        """
+        return self.db.find_patient_username(username)
 
