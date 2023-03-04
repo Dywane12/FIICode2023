@@ -79,3 +79,16 @@ def medic_profil():
 @app.route('/pacient-home')
 def pacient_home():
     return render_template('principal-pacient.html')
+
+
+@app.route('/invita-pacienti', methods=['GET', 'POST'])
+def invitatie():
+    error = None
+    if request.method == 'POST':
+        if request.form['email'] == 'admin@admin.com' and request.form['phone_number'] == '0722123123':
+            message = 'Invitatia a fost trimisa!'
+            return render_template('invita-pacienti.html', message = message)
+        else:
+            error = 'Date gresite. Incearca din nou.'
+            return render_template('invita-pacienti.html', error = error)
+
