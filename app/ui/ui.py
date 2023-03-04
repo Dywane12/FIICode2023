@@ -25,6 +25,7 @@ class Routes:
         self.__lista_pacienti()
         self.__invita_pacienti()
         self.__medic_home()
+        self.__pacient_home()
         self.__register_pacient()
         self.__register_medic()
         self.__register_page_pacient()
@@ -57,10 +58,12 @@ class Routes:
     def __login():
         error = None
         if request.method == 'POST':
-            if request.form['username'] != 'admin' and request.form['password'] != 'admin':
-                error = 'Date gresite. Incearca din nou.'
+            if request.form['username'] == 'medic' and request.form['password'] == 'admin':
+                return redirect(url_for('__medic_home'))
+            elif request.form['username'] == 'pacient' and request.form['password'] == 'admin':
+                return redirect(url_for('pacient-home'))
             else:
-                return redirect(url_for('home'))
+                error = 'Date gresite. Incearca din nou.'
         return render_template('login.html', error=error)
 
     @staticmethod
@@ -72,7 +75,7 @@ class Routes:
                     and request.form['email'] != 'admin@admin.com':
                 error = 'Date gresite. Incearca din nou.'
             else:
-                return redirect(url_for('medic_home'))
+                return redirect(url_for('__medic_home'))
         return render_template('register_medic.html', error=error)
 
     @staticmethod
@@ -84,7 +87,7 @@ class Routes:
                     and request.form['email'] != 'admin@admin.com':
                 error = 'Date gresite. Incearca din nou.'
             else:
-                return redirect(url_for('home'))
+                return redirect(url_for('__pacient_home'))
         return render_template('register_pacient.html', error=error)
 
     @staticmethod
@@ -96,6 +99,11 @@ class Routes:
     @app.route('/medic-home')
     def __medic_home():
         return render_template('principal-medic.html')
+
+    @staticmethod
+    @app.route('/pacient-home')
+    def __pacient_home():
+        return render_template('principal-pacient.html')
 
     @staticmethod
     @app.route('/lista-pacienti')
@@ -119,3 +127,15 @@ class Routes:
     @app.route('/medic-profil')
     def __medic_profil():
         return render_template('medic-profil.html')
+
+    @staticmethod
+    @app.route('/invita-pacienti', methods=['GET', 'POST'])
+    def __invitatie():
+        error = None
+        if request.method == 'POST':
+            if request.form['email'] == 'admin@admin.com' and request.form['phone_number'] == '0722123123':
+                message = 'Invitatia a fost trimisa!'
+                return render_template('invita-pacienti.html', message=message)
+            else:
+                error = 'Date gresite. Incearca din nou.'
+                return render_template('invita-pacienti.html', error=error)
