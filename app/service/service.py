@@ -10,6 +10,8 @@ from app.domain.entities import Patient, Doctor, Consultation
 
 class Service:
     def __init__(self, db, choice=False):
+        self.doctor = None
+        self.patient = None
         self.db = db
         if choice:
             self.__add_fake_doctors(50)
@@ -113,11 +115,11 @@ class Service:
     def get_all_patients(self):
         return self.db.find_all_patients()
 
-    def get_doctor_patients(self,doctor):
+    def get_doctor_patients(self):
         patients = self.get_all_patients()
         doctor_patients = []
         for patient in patients:
-            if patient.doctor_id == doctor.id:
+            if patient.doctor_id == self.doctor.id:
                 doctor_patients.append(patient)
         return doctor_patients
 
