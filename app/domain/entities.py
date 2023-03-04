@@ -15,7 +15,7 @@ class Patient(db.Model):
     birth_date = db.Column(db.String(128), index=True,  nullable=False)
     marital_status = db.Column(db.String(16), index=True,  nullable=False)
     gender = db.Column(db.String(8), index=True, nullable=False)
-    medical_record_id = db.Column(db.Integer, index=True, unique=True,  nullable=False)
+    medical_record_id = db.Column(db.Integer, db.ForeignKey('medical_record.id'), unique=True,  nullable=False)
     password_hash = db.Column(db.String(256), index=True, unique=False , nullable=False)
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'),  nullable=False)
     consultation = db.relationship('Consultation', backref='patient', lazy='dynamic')
@@ -96,3 +96,20 @@ class Consultation(db.Model):
         self.doctor_id = doctor_id
         self.time = time
         self.pdf = pdf
+
+    def __repr__(self):
+        return f'Consultation {self.id}'
+
+    def __str__(self):
+        return f'Consultation {self.id}: {self.time}'
+
+
+class MedicalRecord(db.Model):
+    id = db.Column(db.Integer, index=True, primary_key=True)
+    pdf = db.Column(db.String(128), unique=True, nullable=False)
+    patient = db.relationship('Patient', backref='Medical_Record', lazy='dynamic')
+
+    def __init__(self, pdf):
+        self.pdf = pdf
+
+
