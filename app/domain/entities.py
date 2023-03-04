@@ -1,8 +1,9 @@
 from app import db
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask_login import UserMixin
 
 
-class Patient(db.Model):
+class Patient(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True, nullable=False)
     first_name = db.Column(db.String(64), index=True, nullable=False)
@@ -52,7 +53,7 @@ class Patient(db.Model):
         return f'Patient: {self.username}'
 
 
-class Doctor(db.Model):
+class Doctor(UserMixin,db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True, nullable=False)
     first_name = db.Column(db.String(64), index=True, nullable=False)

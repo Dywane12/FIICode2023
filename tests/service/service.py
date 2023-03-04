@@ -1,3 +1,4 @@
+
 from app import db
 from app.repository.database import Database
 from app.domain.entities import Doctor, Consultation, Patient
