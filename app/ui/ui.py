@@ -8,7 +8,8 @@ with app.app_context():
     #db_1.clear_patients_table()
     #db_1.clear_consultation_table()
     #db_1.clear_doctors_table()
-    service = Service(db_1, choice=False)
+    service = Service(db_1, choice=True)
+
 
 class Routes:
 
