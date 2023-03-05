@@ -21,7 +21,8 @@
 }
 
 /* Links inside the navbar */
-.navbar a {
+.navbar a{
+  left: 80px;
   float: left;
   font-size: 16px;
   color: white;
@@ -81,4 +82,154 @@
 /* Show the dropdown menu on hover */
 .dropdown:hover .dropdown-content {
   display: block;
+}
+
+.main-box{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    width: 1480px;
+    height: 720px;
+    position: relative;
+    margin: 3% auto;
+    background: #fff;
+    padding: 5px;
+    overflow: hidden;
+    text-align: center;
+}
+
+.name{
+    margin: 3% auto;
+    font-size: 40px;
+}
+
+.contact-btn {
+  position: relative;
+  top: 40px;
+  border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+button:hover, a:hover {
+  opacity: 0.7;
+}
+
+.profile-img{
+    width: 200px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    border-radius: 50%;
+}
+
+.profile-box{
+    width: 900px;
+    height: 450px;
+    border: 1px solid #000;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    position: relative;
+    margin: 3% auto;
+    background: #fff;
+    padding: 5px;
+    overflow: hidden;
+    text-align: center;
+}
+
+.medic-table, th, td{
+    margin: 20px auto;
+    padding: 5px;
+}
+
+.lista-table{
+    margin: 40px;
+    padding: 5px;
+    border: 1px solid #000;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    display: inline-table;
+}
+
+.lista-table:hover{
+    box-shadow: 0 0 5px 3px #000;
+}
+
+.form-box{
+    width: 380px;
+    height: 480px;
+    position: relative;
+    margin: 6% auto;
+    background: #fff;
+    padding: 5px;
+    overflow: hidden;
+}
+
+.login-text{
+    width: 100%;
+    color: #000;
+    top: 40px;
+    position: absolute;
+    text-align: center;
+}
+
+.error{
+    width: 100%;
+    top: 80px;
+    position: absolute;
+    text-align: center;
+    color: #FF0000;
+}
+
+.message{
+    width: 100%;
+    top: 80px;
+    position: absolute;
+    text-align: center;
+    color: #32CD32;
+}
+
+.login-btn{
+    width: 80%;
+    padding: 20px 30px;
+    cursor: pointer;
+    display: block;
+    margin: 60px auto;
+    background: linear-gradient(to right, #5B8FB9, #B6EADA);
+    border: 0;
+    outline: none;
+    border-radius: 30px;
+    font-size: 18px;
+}
+
+.input-field{
+    width: 100%;
+    padding: 15px 0;
+    margin: 5px 0;
+    border-left: 0;
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 1px solid #999;
+    outline: none;
+    background: transparent;
+}
+
+.hero{
+    height: 100%;
+    width: 100%;
+}
+
+.input-group{
+    top: 110px;
+    position: absolute;
+    width: 280px;
+    transition: .5s;
+}
+
+#login{
+    left: 50px;
 }
