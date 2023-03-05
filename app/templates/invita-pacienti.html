@@ -13,6 +13,7 @@
     <section class="header">
             <!-- The navigation menu -->
             <div class="navbar">
+                <a href="/medic-home">Calendar</a>
                 <a href="/medic-profil">Profil</a>
                 <div class="dropdown">
                     <button class="dropbtn">Pacienti
@@ -25,7 +26,24 @@
                     </div>
                 </div>
             </div>
-
+        <div class="hero">
+            <div class="form-box">
+               <div class="login-text">
+                    <h2>Invita Pacient</h2>
+                    <form id="login" class="input-group" action="" method="post">
+                        <input type="text" class="input-field" placeholder="Email pacient" name="email" value="{{request.form.email }}">
+                        <input type="text" class="input-field" placeholder="Numar de telefon pacient" name="phone_number" value="{{request.form.phone_number}}">
+                        <input type="submit" class="login-btn" value="Trimite invitatie"><br><br>
+                    </form>
+                   {% if message %}
+                    <p class="message">{{ message }}
+                      {% endif %}</p>
+                   {% if error %}
+                    <p class="error"><strong>Error:</strong> {{ error }}
+                      {% endif %}</p>
+                </div>
+            </div>
+        </div>
     </section>
 </body>
 

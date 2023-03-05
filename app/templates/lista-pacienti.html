@@ -13,6 +13,7 @@
     <section class="header">
             <!-- The navigation menu -->
             <div class="navbar">
+                <a href="/medic-home">Calendar</a>
                 <a href="/medic-profil">Profil</a>
                 <div class="dropdown">
                     <button class="dropbtn">Pacienti
@@ -25,11 +26,24 @@
                     </div>
                 </div>
             </div>
-            <ul>
-                {% for patient in patients %}
-                <li><a href="#">{{ patient }}</a></li>
-                {% endfor %}
-            </ul>
+            <div class="main-box">
+                <h1 class="name">Lista Pacienti</h1>
+                <table class="lista-table">
+                    <tr>
+                        <th>Nume Pacient:</th>
+                        <td>Seu</td>
+                    </tr>
+                    <tr>
+                        <th>Prenume Pacient:</th>
+                        <td>David</td>
+                    </tr>
+                    <tr>
+                        <th>Fisa Medicala:</th>
+                        <td>smth.pdf</td>
+                    </tr>
+                </table>
+            </div>
+
     </section>
 </body>
 
