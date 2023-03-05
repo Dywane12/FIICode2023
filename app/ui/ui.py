@@ -61,9 +61,12 @@ class Routes:
     @app.route('/login', methods=['GET', 'POST'])
     def login():
         error = None
-        if service.check_existence_doctor_username(request.form['username']):
-            if current_user.is_authenticated:
+        if current_user.is_authenticated:
+            if service.check_existence_doctor_username(current_user.username):
                 return redirect(url_for('medic_home'))
+            else:
+                return redirect(url_for('pacient_home'))
+        if service.check_existence_doctor_username(request.form['username']):
             if request.method == 'POST':
                 username = request.form['username']
                 password = request.form['password']
@@ -78,8 +81,7 @@ class Routes:
                     flask.flash("Conectare cu succes")
                     return redirect(url_for('medic_home'))
         elif service.check_existence_patient_username(request.form['username']):
-            if current_user.is_authenticated:
-                return redirect(url_for('pacient_home'))
+
             if request.method == 'POST':
                 username = request.form['username']
                 password = request.form['password']
