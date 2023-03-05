@@ -62,10 +62,10 @@ class Routes:
     def login():
         error = None
         if current_user.is_authenticated:
-            if service.check_existence_doctor_username(current_user.username):
-                return redirect(url_for('medic_home'))
+            return redirect(url_for('medic_home'))
+        '''if service.check_existence_doctor_username(current_user.username):
             else:
-                return redirect(url_for('pacient_home'))
+                return redirect(url_for('pacient_home'))'''
         if service.check_existence_doctor_username(request.form['username']):
             if request.method == 'POST':
                 username = request.form['username']
@@ -76,12 +76,11 @@ class Routes:
                 elif not check_password_hash(doctor.password_hash, password):
                     error = 'Date gresite. Incearca din nou.'
                 else:
-                    service.doctor = doctor
-                    login_user(doctor)
+                    service.doctor = Doctor.query.filter_by(username=username).first()
+                    login_user(doctor, remember=True)
                     flask.flash("Conectare cu succes")
                     return redirect(url_for('medic_home'))
         elif service.check_existence_patient_username(request.form['username']):
-
             if request.method == 'POST':
                 username = request.form['username']
                 password = request.form['password']
@@ -91,8 +90,8 @@ class Routes:
                 elif not check_password_hash(patient.password_hash, password):
                     error = 'Date gresite. Incearca din nou.'
                 else:
-                    service.patient = patient
-                    login_user(patient)
+                    service.patient = Patient.query.filter_by(username=username).first()
+                    login_user(patient, remember=True)
                     flask.flash("Conectare cu succes")
                     return redirect(url_for('medic_home'))
         else:
