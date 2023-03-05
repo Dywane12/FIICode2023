@@ -1,3 +1,4 @@
+import flask
 from sqlalchemy.sql.functions import user
 from app import app, db
 from flask import render_template, redirect, url_for, request, flash
@@ -74,6 +75,7 @@ class Routes:
                 else:
                     service.doctor = doctor
                     login_user(doctor)
+                    flask.flash("Conectare cu succes")
                     return redirect(url_for('medic_home'))
         elif service.check_existence_patient_username(request.form['username']):
             if current_user.is_authenticated:
@@ -89,6 +91,7 @@ class Routes:
                 else:
                     service.patient = patient
                     login_user(patient)
+                    flask.flash("Conectare cu succes")
                     return redirect(url_for('medic_home'))
         else:
             error = 'Date gresite. Incearca din nou.'
