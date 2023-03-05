@@ -6,7 +6,8 @@ from faker import Faker
 from random import randint
 from cnpgen import Cnp, Gender, Region
 from app.domain.entities import Patient, Doctor, Consultation
-
+import smtplib
+from twilio.rest import Client
 
 class Service:
     def __init__(self, db, choice=False):
@@ -148,4 +149,33 @@ class Service:
     @login_manager.user_loader
     def load_patient(id):
         return Patient.query.get(int(id))
+
+    def generate_random_code(self):
+        n = 0
+        for _ in range(7):
+            k = random.randint(0, 9)
+            n = n * 10 + k
+        return n
+
+    def send_welcome_email(self, email_patient, email_companie):
+        sender_account = email_companie
+        reciever_account = email_patient
+        cod = self.generate_random_code()
+        message = f"Subject: BUN VENIT IN CLINICA NOASTRA!!\n Ne bucuram ca ati ales servicile noastre.\nCodul dumneavoastra de autentificare este:{cod}"
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(sender_account, "your_password")
+            server.sendmail(sender_account, reciever_account, message)
+
+    def send_welcome_sms(self, sender_number, destination_number):
+        account_sid = "account_sid"  # gasim pe twilio
+        auth_token = "auth_token"
+        client = Client(account_sid, auth_token)
+        cod = self.generate_random_code()
+        message_body = f"Subject: BUN VENIT IN CLINICA NOASTRA!!\n Ne bucuram ca ati ales servicile noastre.\nCodul dumneavoastra de autentificare este:{cod}"
+        destination_number = "+04" + destination_number
+        client.messages.create(
+            to=destination_number,
+            from_=sender_number,
+            body=message_body)
 
