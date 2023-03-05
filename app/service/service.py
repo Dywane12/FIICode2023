@@ -1,6 +1,6 @@
 import random
 from datetime import date, timedelta, datetime
-
+from app import login_manager
 import names
 from faker import Faker
 from random import randint
@@ -10,6 +10,8 @@ from app.domain.entities import Patient, Doctor, Consultation
 
 class Service:
     def __init__(self, db, choice=False):
+        self.doctor = None
+        self.patient = None
         self.db = db
         if choice:
             self.__add_fake_doctors(50)
@@ -107,40 +109,43 @@ class Service:
             schedule.append(f'{day}: {self.__random_working_hours()}')
         return schedule
 
-    def get_doctor_username_from_database(self, username):
-        return self.db.find_doctor_username(username)
-
-    def get_patient_username_from_database(self, username):
-        return self.db.find_patient_username(username)
-
     def get_all_doctors(self):
         return self.db.find_all_doctors()
 
     def get_all_patients(self):
         return self.db.find_all_patients()
 
-    def get_all_consultations(self):
-        return self.db.find_all_consultations()
-
-    def get_doctor_patients(self, doctor):
-        if type(doctor) != Doctor:
-            raise ValueError("This is not a doctor")
-        self.db.find_doctor_by_id(doctor.id)
+    def get_doctor_patients(self):
         patients = self.get_all_patients()
         doctor_patients = []
         for patient in patients:
-            if patient.doctor_id == doctor.id:
+            if patient.doctor_id == self.doctor.id:
                 doctor_patients.append(patient)
         return doctor_patients
 
-    def get_patient_consultation(self, patient):
-        if type(patient) != Patient:
-            raise ValueError("This is not a patient")
-        self.db.find_patient_by_id(patient.id)
-        consultations = self.get_all_consultations()
-        consultation_history = []
-        for consultation in consultations:
-            if consultation.patient_id == patient.id:
-                consultation_history.append(consultation)
-        return consultation_history
+    def check_existence_doctor_username(self, username):
+        """
+        Calls the find_doctor_username function from the repository
+        :param username: str
+        :return: True/False
+        """
+        return self.db.find_doctor_username(username)
+
+    def check_existence_patient_username(self, username):
+        """
+        Calls the find_patient_username function from the repository
+        :param username: str
+        :return: True/False
+        """
+        return self.db.find_patient_username(username)
+
+    @staticmethod
+    @login_manager.user_loader
+    def load_doctor(id):
+        return Doctor.query.get(int(id))
+
+    @staticmethod
+    @login_manager.user_loader
+    def load_patient(id):
+        return Patient.query.get(int(id))
 
