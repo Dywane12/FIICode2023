@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="with=device-width, initial-scale=1.0">
+    <title>FIICode2023 Challenge</title>
+    <link rel="stylesheet" href="../static/main-style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <section class="header">
+            <!-- The navigation menu -->
+            <div class="navbar">
+                <a href="/medic-home">Calendar</a>
+                <a href="/medic-profil">Profil</a>
+                <div class="dropdown">
+                    <button class="dropbtn">Pacienti
+                        <i class="fa fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="/lista-pacienti">Lista pacienti</a>
+                        <a href="/invita-pacienti">Invita pacienti</a>
+                        <a href="/transfer-pacienti">Transfer pacienti</a>
+                    </div>
+                </div>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        <div class="form-patient">
+            <div class="form-patient">
+                <div class="login-text">
+                    <h2>Editeaza profil</h2>
+                </div>
+                <form id="login" class="patient-group" action="" method="post">
+                    <input type="text" class="patient-field" placeholder="Nume de utilizator" name="username" value="{{request.form.username }}">
+                    <input type="text" class="patient-field" placeholder="Prenume" name="first_name" value="{{request.form.first_name}}">
+                    <input type="text" class="patient-field" placeholder="Nume" name="last_name" value="{{request.form.last_name}}">
+                    <input type="tel" class="patient-field" placeholder="Numar de telefon" name="phone_number" value="{{request.form.phone_number}}">
+                    <input type="text" class="patient-field" placeholder="Email" name="email" value="{{request.form.email }}">
+                    <input type="text" class="patient-field" placeholder="Adresa" name="address" value="{{request.form.address}}">
+                    <input type="text" class="patient-field" placeholder="Data nasterii (dd/mm/yyyy)" name="birth_date" value="{{request.form.birth_date}}">
+                    <input type="text" class="patient-field" placeholder="Sex (M/F)" name="gender" value="{{request.form.gender}}">
+                    <input type="text" class="patient-field" placeholder="Birou de consultatii" name="consultation_schedule_office" value="{{request.form.consultation_schedule_office}}">
+                    <input type="text" class="patient-field" placeholder="Consultatii acasa" name="consultation_schedule_away" value="{{request.form.consultation_schedule_away}}">
+                    <input type="text" class="patient-field" placeholder="Program asistenti" name="assistants_schedule" value="{{request.form.assistants_schedule}}">
+                    <input type="password" class="patient-field" placeholder="Parola" name="password" value="{{request.form.password}}"> <br><br>
+                    <input type="submit" class="register-btn" value="Salveaza schimbarile">
+                </form>
+                    {% if error %}
+                    <p class="error"><strong>Error:</strong> {{ error }}
+                      {% endif %}</p>
+                <a href="/medic-profil" class="back-btn">Inapoi</a>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

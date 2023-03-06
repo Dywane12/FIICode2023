@@ -175,9 +175,10 @@ class Routes:
     @staticmethod
     @app.route('/medic-profil')
     def medic_profil():
+        doctor = service.get_doctor_by_id(service.session['doctor'])
         if "doctor" not in service.session:
             return redirect(url_for('login'))
-        return render_template('medic-profil.html')
+        return render_template('medic-profil.html', doctor=doctor)
 
     @staticmethod
     @app.route('/invita-pacienti', methods=['GET', 'POST'])
@@ -192,3 +193,8 @@ class Routes:
             else:
                 error = 'Date gresite. Incearca din nou.'
                 return render_template('invita-pacienti.html', error=error)
+
+    @staticmethod
+    @app.route('/edit-medic', methods=['GET', 'POST'])
+    def edit_medic():
+        return render_template('edit-medic.html')
