@@ -17,5 +17,6 @@ metadata = MetaData(naming_convention=convention)
 db = SQLAlchemy(app, metadata=metadata)
 migrate = Migrate(app, db, render_as_batch=True)
 login_manager = LoginManager(app)
+login_manager.init_app(app)
 login_manager.login_view = 'login'
 

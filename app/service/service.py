@@ -9,9 +9,8 @@ from app.domain.entities import Patient, Doctor, Consultation
 
 
 class Service:
-    def __init__(self, db, choice=False):
-        self.doctor = None
-        self.patient = None
+    def __init__(self, db, session, choice=False):
+        self.session = session
         self.db = db
         if choice:
             self.__add_fake_doctors(50)
@@ -119,11 +118,11 @@ class Service:
         patients = self.get_all_patients()
         doctor_patients = []
         for patient in patients:
-            if patient.doctor_id == self.db.db.session.get(Doctor, 21).id:
+            if patient.doctor_id == self.session['doctor']:
                 doctor_patients.append(patient)
         return doctor_patients
 
-    def check_existence_doctor_username(self, username):
+    def get_doctor_by_username(self, username):
         """
         Calls the find_doctor_username function from the repository
         :param username: str
@@ -131,7 +130,7 @@ class Service:
         """
         return self.db.find_doctor_username(username)
 
-    def check_existence_patient_username(self, username):
+    def get_patient_by_username(self, username):
         """
         Calls the find_patient_username function from the repository
         :param username: str
@@ -139,13 +138,8 @@ class Service:
         """
         return self.db.find_patient_username(username)
 
-    @staticmethod
-    @login_manager.user_loader
-    def load_doctor(id):
-        return Doctor.query.get(int(id))
+    def get_doctor_by_id(self, doctor_id):
+        return self.db.find_doctor_by_id(doctor_id)
 
-    @staticmethod
-    @login_manager.user_loader
-    def load_patient(id):
-        return Patient.query.get(int(id))
-
+    def get_patient_by_id(self, patient_id):
+        return self.db.find_patient_by_id(patient_id)

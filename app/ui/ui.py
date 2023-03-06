@@ -1,6 +1,6 @@
 from sqlalchemy.sql.functions import user
 from app import app, db
-from flask import render_template, redirect, url_for, request, flash
+from flask import render_template, redirect, url_for, request, flash, session
 from flask_login import current_user, login_user, login_required, logout_user
 from app.repository.database import Database
 from app.service.service import Service
@@ -12,8 +12,7 @@ with app.app_context():
     # db_1.clear_patients_table()
     # db_1.clear_consultation_table()
     # db_1.clear_doctors_table()
-    service = Service(db_1, choice=False)
-
+    service = Service(db_1, session, choice=False)
 
 class Routes:
 
@@ -21,9 +20,8 @@ class Routes:
         self.__run_all_routes()
 
     def __run_all_routes(self):
-<<<<<<<<< Temporary merge branch 1
         self.home()
-        self.login_page()
+        #self.login_page()
         self.choice()
         self.medic_profil()
         self.transfer_pacienti()
@@ -34,18 +32,28 @@ class Routes:
         self.register_medic()
         self.register_page_pacient()
         self.register_page_medic()
-        self.login_page()
+        self.login()
 
     @staticmethod
     @app.route('/')
     @app.route('/home')
     def home():
+        if "doctor" in service.session:
+            return redirect(url_for('medic_home'))
+        elif "pacient" in service.session:
+            return redirect(url_for('pacient_home'))
         return render_template('index.html')
 
-    @staticmethod
+    """@staticmethod
     @app.route('/login')
     def login_page():
-        return render_template('login.html')
+        if "doctor" in service.session:
+            flash("Deja logat")
+            return redirect(url_for('medic_home'))
+        elif "pacient" in service.session:
+            flash("Deja logat")
+            return redirect(url_for('pacient_home'))
+        return render_template('login.html')"""
 
     @staticmethod
     @app.route('/register-medic')
@@ -61,48 +69,42 @@ class Routes:
     @app.route('/login', methods=['GET', 'POST'])
     def login():
         error = None
-        if current_user.is_authenticated:
+        if "doctor" in service.session:
             return redirect(url_for('medic_home'))
-        '''if service.check_existence_doctor_username(current_user.username):
+        elif "pacient" in service.session:
+            return redirect(url_for('pacient_home'))
+        if request.method == 'POST':
+            username = request.form['username']
+            password = request.form['password']
+            doctor = service.get_doctor_by_username(username)
+            patient = service.get_patient_by_username(username)
+            if doctor is not None:
+                if check_password_hash(doctor.password_hash, password):
+                    service.session['doctor'] = doctor.id
+                    login_user(doctor)
+                    return redirect(url_for('medic_home'))
+                else:
+                    error = 'Parola gresita. Incearca din nou.'
+            elif patient is not None:
+                if not check_password_hash(patient.password_hash, password):
+                    service.session['pacient'] = patient.id
+                    login_user(patient)
+                    return redirect(url_for('pacient_home'))
+                else:
+                    error = 'Parola gresita. Incearca din nou.'
             else:
-                return redirect(url_for('pacient_home'))'''
-        if service.check_existence_doctor_username(request.form['username']):
-            if request.method == 'POST':
-                username = request.form['username']
-                password = request.form['password']
-                doctor = Doctor.query.filter_by(username=username).first()
-                if doctor is None:
-                    error = 'Date gresite. Incearca din nou.'
-                elif not check_password_hash(doctor.password_hash, password):
-                    error = 'Date gresite. Incearca din nou.'
-                else:
-                    service.doctor = Doctor.query.filter_by(username=username).first()
-                    login_user(doctor, remember=True)
-                    flask.flash("Conectare cu succes")
-                    return redirect(url_for('medic_home'))
-        elif service.check_existence_patient_username(request.form['username']):
-            if request.method == 'POST':
-                username = request.form['username']
-                password = request.form['password']
-                patient = Patient.query.filter_by(username=username).first()
-                if patient is None:
-                    error = 'Date gresite. Incearca din nou.'
-                elif not check_password_hash(patient.password_hash, password):
-                    error = 'Date gresite. Incearca din nou.'
-                else:
-                    service.patient = Patient.query.filter_by(username=username).first()
-                    login_user(patient, remember=True)
-                    flask.flash("Conectare cu succes")
-                    return redirect(url_for('medic_home'))
-        else:
-            error = 'Date gresite. Incearca din nou.'
+                error = 'Username nu exista. Incearca din nou.'
         return render_template('login.html', error=error)
 
     @staticmethod
     @app.route('/logout')
     def logout():
+        if 'doctor' in service.session:
+            service.session.pop('doctor', None)
+        else:
+            service.session.pop('pacient', None)
         logout_user()
-        return redirect(url_for('index'))
+        return redirect(url_for('login'))
 
     @staticmethod
     @app.route('/register-medic', methods=['GET', 'POST'])
@@ -136,16 +138,22 @@ class Routes:
     @staticmethod
     @app.route('/medic-home')
     def medic_home():
+        if "doctor" not in service.session:
+            return redirect(url_for('login'))
         return render_template('principal-medic.html')
 
     @staticmethod
     @app.route('/pacient-home')
     def pacient_home():
+        if "pacient" not in service.session:
+            return redirect(url_for('login'))
         return render_template('principal-pacient.html')
 
     @staticmethod
     @app.route('/lista-pacienti')
     def lista_pacienti():
+        if "doctor" not in service.session:
+            return redirect(url_for('login'))
         patients = service.get_doctor_patients()
         # patients = db.find_all_doctors_ids()
         return render_template('lista-pacienti.html', patients=patients)
@@ -153,21 +161,29 @@ class Routes:
     @staticmethod
     @app.route('/transfer-pacienti')
     def transfer_pacienti():
+        if "doctor" not in service.session:
+            return redirect(url_for('login'))
         return render_template('transfer-pacienti.html')
 
     @staticmethod
     @app.route('/invita-pacienti')
     def invita_pacienti():
+        if "doctor" not in service.session:
+            return redirect(url_for('login'))
         return render_template('invita-pacienti.html')
 
     @staticmethod
     @app.route('/medic-profil')
     def medic_profil():
+        if "doctor" not in service.session:
+            return redirect(url_for('login'))
         return render_template('medic-profil.html')
 
     @staticmethod
     @app.route('/invita-pacienti', methods=['GET', 'POST'])
     def invitatie():
+        if "doctor" not in service.session:
+            return redirect(url_for('login'))
         error = None
         if request.method == 'POST':
             if request.form['email'] == 'admin@admin.com' and request.form['phone_number'] == '0722123123':

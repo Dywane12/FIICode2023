@@ -1,6 +1,7 @@
 from app import db
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
+from app import login_manager
 
 
 class Patient(UserMixin, db.Model):
@@ -22,6 +23,8 @@ class Patient(UserMixin, db.Model):
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'), nullable=False)
     consultation = db.relationship('Consultation', backref='patient', lazy='dynamic')
 
+    # profile = db.image_attachment("PatientPicture")
+
     def __init__(self, username, first_name, last_name, phone_number, email, address, id_series, id_number, cnp,
                  birth_date, marital_status, gender, medical_record_id, doctor_id, password_hash):
         self.username = username
@@ -40,6 +43,42 @@ class Patient(UserMixin, db.Model):
         self.password_hash = password_hash
         self.doctor_id = doctor_id
 
+    def set_username(self, value):
+        self.username = value
+
+    def set_first_name(self, value):
+        self.first_name = value
+
+    def set_last_name(self, value):
+        self.last_name = value
+
+    def set_phone_number(self, value):
+        self.phone_number = value
+
+    def set_email(self, value):
+        self.email = value
+
+    def set_address(self, value):
+        self.address = value
+
+    def set_id_series(self, value):
+        self.id_series = value
+
+    def set_id_number(self, value):
+        self.id_number = value
+
+    def set_cnp(self, value):
+        self.cnp = value
+
+    def set_birth_date(self, value):
+        self.birth_date = value
+
+    def set_marital_status(self, value):
+        self.marital_status = value
+
+    def set_gender(self, value):
+        self.gender = value
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -53,7 +92,7 @@ class Patient(UserMixin, db.Model):
         return f'Patient: {self.username}'
 
 
-class Doctor(UserMixin,db.Model):
+class Doctor(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True, nullable=False)
     first_name = db.Column(db.String(64), index=True, nullable=False)
@@ -85,6 +124,39 @@ class Doctor(UserMixin,db.Model):
         self.assistants_schedule = assistants_schedule
         self.password_hash = password_hash
 
+    def set_username(self, value):
+        self.username = value
+
+    def set_first_name(self, value):
+        self.first_name = value
+
+    def set_last_name(self, value):
+        self.last_name = value
+
+    def set_phone_number(self, value):
+        self.phone_number = value
+
+    def set_email(self, value):
+        self.email = value
+
+    def set_address(self, value):
+        self.address = value
+
+    def set_birth_date(self, value):
+        self.birth_date = value
+
+    def set_gender(self, value):
+        self.gender = value
+
+    def set_consultation_schedule_office(self, value):
+        self.consultation_schedule_office = value
+
+    def set_consultation_schedule_away(self, value):
+        self.consultation_schedule_away = value
+
+    def set_assistants_schedule(self, value):
+        self.assistants_schedule = value
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -96,6 +168,11 @@ class Doctor(UserMixin,db.Model):
 
     def __str__(self):
         return f'doctor: {self.username}'
+
+
+@login_manager.user_loader
+def load_user(id):
+    return Doctor.query.get(int(id))
 
 
 class Consultation(db.Model):
