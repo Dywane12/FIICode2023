@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
 </head>
 <body>
     <section class="header">
@@ -27,24 +28,38 @@
                 </div>
             </div>
             <div class="main-box">
-                <h1 class="name">Lista Pacienti</h1>
-                <table class="lista-table">
-                    <tr>
-                        <th>Nume Pacient:</th>
-                        <td>Seu</td>
-                    </tr>
-                    <tr>
-                        <th>Prenume Pacient:</th>
-                        <td>David</td>
-                    </tr>
-                    <tr>
-                        <th>Fisa Medicala:</th>
-                        <td>smth.pdf</td>
-                    </tr>
-                </table>
+                <div>
+                    <h1 class="name">Lista Pacienti</h1>
+                    <hr>
+                    <div id="table"></div>
+                </div>
             </div>
 
     </section>
+    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+    <script>
+                      new gridjs.Grid({
+                        columns: [
+                          { id: 'fname', name: 'Prenume' },
+                          { id: 'lname', name: 'Nume' },
+                          { id: 'fisa_medicala', name: 'Fisa Medicala', sort: false }
+                        ],
+                        data: [
+                          {% for patient in patients %}
+                            {
+                              fname: '{{ patient.first_name }}',
+                              lname: '{{ patient.last_name }}',
+                              fisa_medicala: '{{ patient.cnp }}'
+                            },
+                          {% endfor %}
+                        ],
+                        search: {
+                          selector: (cell, rowIndex, cellIndex) => [0, 1, 2].includes(cellIndex) ? cell : null,
+                        },
+                        sort: true,
+                        pagination: true,
+                      }).render(document.getElementById('table'));
+    </script>
 </body>
 
 </html>

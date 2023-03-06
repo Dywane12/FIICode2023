@@ -233,3 +233,8 @@ button:hover, a:hover {
 #login{
     left: 50px;
 }
+
+#table{
+    margin: 15px;
+    border-radius: 10px;
+}

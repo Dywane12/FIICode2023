@@ -119,7 +119,7 @@ class Service:
         patients = self.get_all_patients()
         doctor_patients = []
         for patient in patients:
-            if patient.doctor_id == self.doctor.id:
+            if patient.doctor_id == self.db.db.session.get(Doctor, 21).id:
                 doctor_patients.append(patient)
         return doctor_patients
 
