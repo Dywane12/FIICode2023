@@ -197,4 +197,10 @@ class Routes:
     @staticmethod
     @app.route('/edit-medic', methods=['GET', 'POST'])
     def edit_medic():
+        if request.method == "POST":
+            doctor = service.get_doctor_by_id(service.session['doctor'])
+            if request.form['username'] != "":
+                doctor.username = request.form['username']
+            if 
+
         return render_template('edit-medic.html')

@@ -143,3 +143,4 @@ class Service:
 
     def get_patient_by_id(self, patient_id):
         return self.db.find_patient_by_id(patient_id)
+
