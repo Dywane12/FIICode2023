@@ -1,6 +1,5 @@
 import random
 from datetime import date, timedelta, datetime
-from app import login_manager
 import names
 from faker import Faker
 from random import randint
@@ -131,12 +130,7 @@ class Service:
         return self.db.find_all_patients()
 
     def get_doctor_patients(self):
-        patients = self.get_all_patients()
-        doctor_patients = []
-        for patient in patients:
-            if patient.doctor_id == self.session['doctor']:
-                doctor_patients.append(patient)
-        return doctor_patients
+        return self.get_doctor_by_id(self.session['doctor']).patients
 
     def get_doctor_by_username(self, username):
         """
@@ -186,7 +180,8 @@ class Service:
         if update_data[PASSWORD] != "":
             doctor.set_password(update_data[PASSWORD])
 
-    def update_patient_profile(self, patient, update_data):
+    @staticmethod
+    def update_patient_profile(patient, update_data):
         if update_data[USERNAME] != "":
             patient.username = update_data[USERNAME]
         if update_data[FIRST_NAME] != "":

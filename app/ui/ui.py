@@ -1,10 +1,8 @@
-from sqlalchemy.sql.functions import user
 from app import app, db
-from flask import render_template, redirect, url_for, request, flash, session
-from flask_login import current_user, login_user, login_required, logout_user
+from flask import render_template, redirect, url_for, request, session
+from flask_login import login_user, logout_user
 from app.repository.database import Database
 from app.service.service import Service
-from app.domain.entities import Patient, Doctor, Consultation
 from werkzeug.security import check_password_hash
 
 with app.app_context():
@@ -185,7 +183,6 @@ class Routes:
     def invitatie():
         if "doctor" not in service.session:
             return redirect(url_for('login'))
-        error = None
         if request.method == 'POST':
             if request.form['email'] == 'admin@admin.com' and request.form['phone_number'] == '0722123123':
                 message = 'Invitatia a fost trimisa!'
