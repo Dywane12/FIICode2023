@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="with=device-width, initial-scale=1.0">
+    <title>FIICode2023 Challenge</title>
+    <link rel="stylesheet" href="../static/main-style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <section class="header">
+            <!-- The navigation menu -->
+            <div class="navbar">
+                <a href="/medic-home">Calendar</a>
+                <a href="/medic-profil">Profil</a>
+                <div class="dropdown">
+                    <button class="dropbtn">Pacienti
+                        <i class="fa fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="/lista-pacienti">Lista pacienti</a>
+                        <a href="/invita-pacienti">Invita pacienti</a>
+                        <a href="/transfer-pacienti">Transfer pacienti</a>
+                    </div>
+                </div>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+            <div class="main-box">
+                  <img src="../static/doctor.jpg" class="profile-img" alt="John">
+                  <h1 class="name">{{doctor.first_name}} {{doctor.last_name}}</h1>
+                  <div class="profile-box">
+                    <table class="medic-table">
+                        <tr>
+                            <th>Nume de utilizator:</th>
+                            <td>{{doctor.username}}</td>
+                        </tr>
+                        <tr>
+                            <th>Nume:</th>
+                            <td>{{doctor.last_name}}</td>
+                        </tr>
+                        <tr>
+                            <th>Prenume:</th>
+                            <td>{{doctor.first_name}}</td>
+                        </tr>
+                        <tr>
+                            <th>Telefon:</th>
+                            <td>{{doctor.phone_number}}</td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>{{doctor.email}}</td>
+                        </tr>
+                        <tr>
+                            <th>Adresa:</th>
+                            <td>{{doctor.address}}</td>
+                        </tr>
+                        <tr>
+                            <th>Data nasterii:</th>
+                            <td>{{doctor.birth_date}}</td>
+                        </tr>
+                        <tr>
+                            <th>Sex:</th>
+                            <td>{{doctor.gender}}</td>
+                        </tr>
+                        <tr>
+                            <th>Birou de consultatii:</th>
+                            <td>{{doctor.consultation_schedule_office}}</td>
+                        </tr>
+                        <tr>
+                            <th>Orar consultatii acasa:</th>
+                            <td>{{doctor.consultation_schedule_away}}</td>
+                        </tr>
+                        <tr>
+                            <th>Program asistenti:</th>
+                            <td>{{doctor.assistants_schedule}}</td>
+                        </tr>
+                        <tr>
+                            <th>Parola:</th>
+                            <td>********</td>
+                        </tr>
+                    </table>
+                  </div>
+                  <p><a href="/edit-medic" class="contact-btn">Editeaza profil</a></p>
+            </div>
+
+    </section>
+</body>
+
+</html>

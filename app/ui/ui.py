@@ -203,3 +203,9 @@ class Routes:
             service.update_doctor_profile(doctor, form_data)
             service.update_database()
         return render_template('edit-medic.html')
+
+    @staticmethod
+    @app.route('/profil-lista-pacient')
+    def profil_lista_pacient():
+        doctor = service.get_doctor_by_id(service.session['doctor'])
+        return render_template('profil-pacient-lista.html', doctor=doctor)
