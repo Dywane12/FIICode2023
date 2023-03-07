@@ -18,6 +18,7 @@ class Patient(UserMixin, db.Model):
     birth_date = db.Column(db.String(128), index=True, nullable=False)
     marital_status = db.Column(db.String(16), index=True, nullable=False)
     gender = db.Column(db.String(8), index=True, nullable=False)
+    occupation = db.Column(db.String(256), nullable=True)
     medical_record_id = db.Column(db.Integer, index=True, unique=True, nullable=False)
     password_hash = db.Column(db.String(256), index=True, unique=False, nullable=False)
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'), nullable=False)

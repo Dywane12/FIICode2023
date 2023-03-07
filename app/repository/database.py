@@ -83,3 +83,7 @@ class Database:
         :return: True/False
         """
         return Patient.query.filter_by(username=username).first()
+
+    def update_doctor(self, doctor_id, updated):
+        pass
+

@@ -7,6 +7,22 @@ from random import randint
 from cnpgen import Cnp, Gender, Region
 from app.domain.entities import Patient, Doctor, Consultation
 
+USERNAME = 0
+FIRST_NAME = 1
+LAST_NAME = 2
+EMAIL = 3
+PHONE_NUMBER = 4
+ADDRESS = 5
+BIRTH_DATE = 6
+ID_SERIES = 6
+ID_NUMBER = 7
+CNP = 8
+MARITAL_STATUS = 9
+CONSULTATION_SCHEDULE_OFFICE = 7
+CONSULTATION_SCHEDULE_AWAY = 8
+ASSISTANTS_SCHEDULE = 9
+PASSWORD = 10
+
 
 class Service:
     def __init__(self, db, session, choice=False):
@@ -143,4 +159,56 @@ class Service:
 
     def get_patient_by_id(self, patient_id):
         return self.db.find_patient_by_id(patient_id)
+
+    def update_database(self):
+        self.db.save_to_database()
+
+    @staticmethod
+    def update_doctor_profile(self,doctor,update_data):
+        if update_data[USERNAME] != "":
+            doctor.username = update_data[USERNAME]
+        if update_data[FIRST_NAME] != "":
+            doctor.first_name = update_data[FIRST_NAME]
+        if update_data[LAST_NAME] != "":
+            doctor.last_name = update_data[LAST_NAME]
+        if update_data[EMAIL] != "":
+            doctor.email = update_data[EMAIL]
+        if update_data[PHONE_NUMBER] != "":
+            doctor.phone_number = update_data[PHONE_NUMBER]
+        if update_data[ADDRESS] != "":
+            doctor.address = update_data[ADDRESS]
+        if update_data[BIRTH_DATE] != "":
+            doctor.birth_date = update_data[BIRTH_DATE]
+        if update_data[CONSULTATION_SCHEDULE_OFFICE] != "":
+            doctor.consultation_schedule_office = update_data[CONSULTATION_SCHEDULE_OFFICE]
+        if update_data[CONSULTATION_SCHEDULE_AWAY] != "":
+            doctor.consultation_schedule_away = update_data[CONSULTATION_SCHEDULE_AWAY]
+        if update_data[PASSWORD] != "":
+            doctor.set_password(update_data[PASSWORD])
+
+    def update_patient_profile(self, patient, update_data):
+        if update_data[USERNAME] != "":
+            patient.username = update_data[USERNAME]
+        if update_data[FIRST_NAME] != "":
+            patient.first_name = update_data[FIRST_NAME]
+        if update_data[LAST_NAME] != "":
+            patient.last_name = update_data[LAST_NAME]
+        if update_data[EMAIL] != "":
+            patient.email = update_data[EMAIL]
+        if update_data[PHONE_NUMBER] != "":
+            patient.phone_number = update_data[PHONE_NUMBER]
+        if update_data[ADDRESS] != "":
+            patient.address = update_data[ADDRESS]
+        if update_data[ID_SERIES] != "":
+            patient.id_series = update_data[ID_SERIES]
+        if update_data[ID_NUMBER] != "":
+            patient.id_number = update_data[ID_NUMBER]
+        if update_data[CNP] != "":
+            patient.cnp = update_data[CNP]
+        if update_data[MARITAL_STATUS] != "":
+            patient.martial_status = update_data[MARITAL_STATUS]
+        if update_data[PASSWORD] != "":
+            patient.set_password(update_data[PASSWORD])
+
+
 

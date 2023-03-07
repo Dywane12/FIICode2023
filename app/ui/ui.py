@@ -199,8 +199,10 @@ class Routes:
     def edit_medic():
         if request.method == "POST":
             doctor = service.get_doctor_by_id(service.session['doctor'])
-            if request.form['username'] != "":
-                doctor.username = request.form['username']
-            if 
-
+            form_data = [request.form['username'], request.form['first_name'], request.form['last_name'],
+                         request.form['email'], request.form['phone_number'], request.form['address'],
+                         request.form['birth_date'], request.form['consultation_schedule_office'], request.form['consultation_schedule_away'],
+                         request.form['assistants_schedule'], request.form['password']]
+            service.update_doctor_profile(doctor, form_data)
+            service.update_database()
         return render_template('edit-medic.html')
