@@ -164,7 +164,7 @@ class Service:
         self.db.save_to_database()
 
     @staticmethod
-    def update_doctor_profile(self,doctor,update_data):
+    def update_doctor_profile(doctor,update_data):
         if update_data[USERNAME] != "":
             doctor.username = update_data[USERNAME]
         if update_data[FIRST_NAME] != "":
