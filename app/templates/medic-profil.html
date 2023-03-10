@@ -28,7 +28,7 @@
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>
             <div class="main-box">
-                  <img src="../static/doctor.jpg" class="profile-img" alt="John">
+                  <img src="{{ doctor.avatar(128) }}" class="profile-img" alt={{ doctor.username }}>
                   <h1 class="name">{{doctor.first_name}} {{doctor.last_name}}</h1>
                   <div class="profile-box">
                     <table class="medic-table">

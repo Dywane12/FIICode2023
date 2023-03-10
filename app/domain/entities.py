@@ -2,6 +2,7 @@ from app import db
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
 from app import login_manager
+from hashlib import md5
 
 
 class Patient(UserMixin, db.Model):
@@ -26,8 +27,8 @@ class Patient(UserMixin, db.Model):
 
     # profile = db.image_attachment("PatientPicture")
 
-    def __init__(self, username, first_name, last_name, phone_number, email, address, id_series, id_number, cnp,
-                 birth_date, marital_status, gender, medical_record_id, doctor_id, password_hash):
+    def __init__(self, username=None, first_name=None, last_name=None, phone_number=None, email=None, address=None, id_series=None, id_number=None, cnp=None,
+                 birth_date=None, marital_status=None, gender=None, occupation=None, medical_record_id=None, doctor_id=None, password_hash=None):
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
@@ -40,51 +41,21 @@ class Patient(UserMixin, db.Model):
         self.birth_date = birth_date
         self.marital_status = marital_status
         self.gender = gender
+        self.occupation = occupation
         self.medical_record_id = medical_record_id
         self.password_hash = password_hash
         self.doctor_id = doctor_id
-
-    def set_username(self, value):
-        self.username = value
-
-    def set_first_name(self, value):
-        self.first_name = value
-
-    def set_last_name(self, value):
-        self.last_name = value
-
-    def set_phone_number(self, value):
-        self.phone_number = value
-
-    def set_email(self, value):
-        self.email = value
-
-    def set_address(self, value):
-        self.address = value
-
-    def set_id_series(self, value):
-        self.id_series = value
-
-    def set_id_number(self, value):
-        self.id_number = value
-
-    def set_cnp(self, value):
-        self.cnp = value
-
-    def set_birth_date(self, value):
-        self.birth_date = value
-
-    def set_marital_status(self, value):
-        self.marital_status = value
-
-    def set_gender(self, value):
-        self.gender = value
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
+            digest, size)
 
     def __repr__(self):
         return f'Patient: {self.username}'
@@ -110,8 +81,8 @@ class Doctor(UserMixin, db.Model):
     patients = db.relationship('Patient', backref='doctor', lazy='dynamic')
     consultations = db.relationship('Consultation', backref='doctor', lazy='dynamic')
 
-    def __init__(self, username, first_name, last_name, phone_number, email, address, birth_date,
-                 gender, consultation_schedule_office, consultation_schedule_away, assistants_schedule, password_hash):
+    def __init__(self, username=None, first_name=None, last_name=None, phone_number=None, email=None, address=None, birth_date=None,
+                 gender=None, consultation_schedule_office=None, consultation_schedule_away=None, assistants_schedule=None, password_hash=None):
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
@@ -125,44 +96,16 @@ class Doctor(UserMixin, db.Model):
         self.assistants_schedule = assistants_schedule
         self.password_hash = password_hash
 
-    def set_username(self, value):
-        self.username = value
-
-    def set_first_name(self, value):
-        self.first_name = value
-
-    def set_last_name(self, value):
-        self.last_name = value
-
-    def set_phone_number(self, value):
-        self.phone_number = value
-
-    def set_email(self, value):
-        self.email = value
-
-    def set_address(self, value):
-        self.address = value
-
-    def set_birth_date(self, value):
-        self.birth_date = value
-
-    def set_gender(self, value):
-        self.gender = value
-
-    def set_consultation_schedule_office(self, value):
-        self.consultation_schedule_office = value
-
-    def set_consultation_schedule_away(self, value):
-        self.consultation_schedule_away = value
-
-    def set_assistants_schedule(self, value):
-        self.assistants_schedule = value
-
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
+            digest, size)
 
     def __repr__(self):
         return f'doctor: {self.username}'
@@ -188,3 +131,7 @@ class Consultation(db.Model):
         self.doctor_id = doctor_id
         self.time = time
         self.pdf = pdf
+
+
+class InviteCode(db.Model):
+    invite_code = db.Column(db.Integer, index=True, primary_key=True)
