@@ -183,6 +183,7 @@ class Routes:
     def invita_pacienti():
         if "doctor" not in service.session:
             return redirect(url_for('home'))
+        
         return render_template('invita-pacienti.html')
 
     @staticmethod

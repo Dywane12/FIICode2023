@@ -223,28 +223,28 @@ class Service:
 
     @staticmethod
     def update_doctor_profile(doctor, update_data):
-        if update_data[USERNAME] != "":
-            doctor.username = update_data[USERNAME]
-        if update_data[FIRST_NAME] != "":
-            doctor.first_name = update_data[FIRST_NAME]
-        if update_data[LAST_NAME] != "":
-            doctor.last_name = update_data[LAST_NAME]
-        if update_data[EMAIL] != "":
-            doctor.email = update_data[EMAIL]
-        if update_data[PHONE_NUMBER] != "":
-            doctor.phone_number = update_data[PHONE_NUMBER]
-        if update_data[ADDRESS] != "":
-            doctor.address = update_data[ADDRESS]
-        if update_data[BIRTH_DATE] != "":
-            doctor.birth_date = update_data[BIRTH_DATE]
-        if update_data[CONSULTATION_SCHEDULE_OFFICE] != "":
-            doctor.consultation_schedule_office = update_data[CONSULTATION_SCHEDULE_OFFICE]
-        if update_data[CONSULTATION_SCHEDULE_AWAY] != "":
-            doctor.consultation_schedule_away = update_data[CONSULTATION_SCHEDULE_AWAY]
-        if update_data[ASSISTANTS_SCHEDULE] != "":
-            doctor.assistants_schedule = update_data[ASSISTANTS_SCHEDULE]
-        if update_data[PASSWORD] != "":
-            doctor.set_password(update_data[PASSWORD])
+        if update_data[USERNAME_DOCTOR] != "":
+            doctor.username = update_data[USERNAME_DOCTOR]
+        if update_data[FIRST_NAME_DOCTOR] != "":
+            doctor.first_name = update_data[FIRST_NAME_DOCTOR]
+        if update_data[LAST_NAME_DOCTOR] != "":
+            doctor.last_name = update_data[LAST_NAME_DOCTOR]
+        if update_data[EMAIL_DOCTOR] != "":
+            doctor.email = update_data[EMAIL_DOCTOR]
+        if update_data[PHONE_NUMBER_DOCTOR] != "":
+            doctor.phone_number = update_data[PHONE_NUMBER_DOCTOR]
+        if update_data[ADDRESS_DOCTOR] != "":
+            doctor.address = update_data[ADDRESS_DOCTOR]
+        if update_data[BIRTH_DATE_DOCTOR] != "":
+            doctor.birth_date = update_data[BIRTH_DATE_DOCTOR]
+        if update_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR] != "":
+            doctor.consultation_schedule_office = update_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR]
+        if update_data[CONSULTATION_SCHEDULE_AWAY_DOCTOR] != "":
+            doctor.consultation_schedule_away = update_data[CONSULTATION_SCHEDULE_AWAY_DOCTOR]
+        if update_data[ASSISTANTS_SCHEDULE_DOCTOR] != "":
+            doctor.assistants_schedule = update_data[ASSISTANTS_SCHEDULE_DOCTOR]
+        if update_data[PASSWORD_DOCTOR] != "":
+            doctor.set_password(update_data[PASSWORD_DOCTOR])
 
     @staticmethod
     def update_patient_profile(patient, update_data):
@@ -270,3 +270,32 @@ class Service:
             patient.martial_status = update_data[MARITAL_STATUS_PATIENT]
         if update_data[PASSWORD_PATIENT] != "":
             patient.set_password(update_data[PASSWORD_PATIENT])
+
+    def generate_random_code(self):
+        n = 0
+        for _ in range(7):
+            k = random.randint(0, 9)
+            n = n * 10 + k
+        return n
+
+    def send_welcome_email(self, email_patient, email_companie):
+        sender_account = email_companie
+        reciever_account = email_patient
+        cod = self.generate_random_code()
+        message = f"Subject: BUN VENIT IN CLINICA NOASTRA!!\n Ne bucuram ca ati ales servicile noastre.\nCodul dumneavoastra de autentificare este:{cod}"
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(sender_account, "your_password")
+            server.sendmail(sender_account, reciever_account, message)
+
+    def send_welcome_sms(self, sender_number, destination_number):
+        account_sid = "account_sid"  # gasim pe twilio
+        auth_token = "auth_token"
+        client = Client(account_sid, auth_token)
+        cod = self.generate_random_code()
+        message_body = f"Subject: BUN VENIT IN CLINICA NOASTRA!!\n Ne bucuram ca ati ales servicile noastre.\nCodul dumneavoastra de autentificare este:{cod}"
+        destination_number = "+04" + destination_number
+        client.messages.create(
+            to=destination_number,
+            from_=sender_number,
+            body=message_body)
