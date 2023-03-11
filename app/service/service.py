@@ -6,22 +6,6 @@ from random import randint
 from cnpgen import Cnp, Gender, Region
 from app.domain.entities import Patient, Doctor, Consultation
 
-USERNAME = 0
-FIRST_NAME = 1
-LAST_NAME = 2
-EMAIL = 3
-PHONE_NUMBER = 4
-ADDRESS = 5
-BIRTH_DATE = 6
-ID_SERIES = 6
-ID_NUMBER = 7
-CNP = 8
-MARITAL_STATUS = 9
-CONSULTATION_SCHEDULE_OFFICE = 7
-CONSULTATION_SCHEDULE_AWAY = 8
-ASSISTANTS_SCHEDULE = 9
-PASSWORD = 10
-
 
 class Service:
     def __init__(self, db, session, choice=False):
@@ -206,4 +190,33 @@ class Service:
             patient.set_password(update_data[PASSWORD])
 
 
+
+    def generate_random_code(self):
+        n = 0
+        for _ in range(7):
+            k = random.randint(0, 9)
+            n = n * 10 + k
+        return n
+
+    def send_welcome_email(self, email_patient, email_companie):
+        sender_account = email_companie
+        reciever_account = email_patient
+        cod = self.generate_random_code()
+        message = f"Subject: BUN VENIT IN CLINICA NOASTRA!!\n Ne bucuram ca ati ales servicile noastre.\nCodul dumneavoastra de autentificare este:{cod}"
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(sender_account, "your_password")
+            server.sendmail(sender_account, reciever_account, message)
+
+    def send_welcome_sms(self, sender_number, destination_number):
+        account_sid = "account_sid"  # gasim pe twilio
+        auth_token = "auth_token"
+        client = Client(account_sid, auth_token)
+        cod = self.generate_random_code()
+        message_body = f"Subject: BUN VENIT IN CLINICA NOASTRA!!\n Ne bucuram ca ati ales servicile noastre.\nCodul dumneavoastra de autentificare este:{cod}"
+        destination_number = "+04" + destination_number
+        client.messages.create(
+            to=destination_number,
+            from_=sender_number,
+            body=message_body)
 

@@ -181,10 +181,10 @@ class Routes:
     @staticmethod
     @app.route('/invita-pacienti', methods=['GET', 'POST'])
     def invitatie():
-        if "doctor" not in service.session:
-            return redirect(url_for('login'))
+
         if request.method == 'POST':
-            if request.form['email'] == 'admin@admin.com' and request.form['phone_number'] == '0722123123':
+            if email_patient == 'admin@admin.com' :
+                service.send_welcome_email(email_companie, email_patient)
                 message = 'Invitatia a fost trimisa!'
                 return render_template('invita-pacienti.html', message=message)
             else:
