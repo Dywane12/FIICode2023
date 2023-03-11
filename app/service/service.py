@@ -302,3 +302,14 @@ class Service:
             from_=sender_number,
             body=message_body)
 
+    def get_medical_history(self, patient_id):
+        medical_history = []
+        patient = Patient.query.get(patient_id)
+        if not patient:
+            raise ValueError("Invalid patient ID")
+        for consultation in patient.medical_history.consultations:
+            medical_history.append({
+                'time': consultation.time,
+                'pdf': consultation.pdf
+            })
+        return medical_history

@@ -24,6 +24,7 @@ class Patient(UserMixin, db.Model):
     password_hash = db.Column(db.String(256), index=True, unique=False, nullable=False)
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'), nullable=False)
     consultation = db.relationship('Consultation', backref='patient', lazy='dynamic')
+    #medical_history = db.relationship('MedicalHistory', backref='patient', uselist=False)
 
     # profile = db.image_attachment("PatientPicture")
 
@@ -135,3 +136,8 @@ class Consultation(db.Model):
 
 class InviteCode(db.Model):
     invite_code = db.Column(db.Integer, index=True, primary_key=True)
+
+"""class MedicalHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+    consultations = db.relationship('Consultation', backref='medical_history', lazy=True)"""

@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, redirect, url_for, request, session
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user
 from app.repository.database import Database
 from app.service.service import Service
 from werkzeug.security import check_password_hash
@@ -233,3 +233,10 @@ class Routes:
             return redirect(url_for('home'))
         doctor = service.get_doctor_by_id(service.session['doctor'])
         return render_template('profil-pacient-lista.html', doctor=doctor)
+
+    @staticmethod
+    @app.route('/medical-history')
+    def patient_medical_history():
+        patient_id = current_user.id
+        medical_history = service.get_medical_history(patient_id)
+        return render_template('medical_history.html', medical_history=medical_history)
