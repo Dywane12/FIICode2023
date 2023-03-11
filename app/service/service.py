@@ -1,10 +1,12 @@
 import random
+import smtplib
 from datetime import date, timedelta, datetime
 import names
 from faker import Faker
 from random import randint
 from cnpgen import Cnp, Gender, Region
 from app.domain.entities import Patient, Doctor, Consultation
+from twilio.rest import Client
 
 USERNAME_DOCTOR = 0
 FIRST_NAME_DOCTOR = 1
@@ -299,3 +301,4 @@ class Service:
             to=destination_number,
             from_=sender_number,
             body=message_body)
+
