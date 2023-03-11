@@ -6,15 +6,45 @@ from random import randint
 from cnpgen import Cnp, Gender, Region
 from app.domain.entities import Patient, Doctor, Consultation
 
+USERNAME_DOCTOR = 0
+FIRST_NAME_DOCTOR = 1
+LAST_NAME_DOCTOR = 2
+EMAIL_DOCTOR = 3
+PHONE_NUMBER_DOCTOR = 4
+ADDRESS_DOCTOR = 5
+BIRTH_DATE_DOCTOR = 6
+CONSULTATION_SCHEDULE_OFFICE_DOCTOR = 7
+CONSULTATION_SCHEDULE_AWAY_DOCTOR = 8
+ASSISTANTS_SCHEDULE_DOCTOR = 9
+PASSWORD_DOCTOR = 10
+GENDER_DOCTOR = 11
+
+
+USERNAME_PATIENT = 0
+FIRST_NAME_PATIENT = 1
+LAST_NAME_PATIENT = 2
+EMAIL_PATIENT = 3
+PHONE_NUMBER_PATIENT = 4
+ADDRESS_PATIENT = 5
+BIRTH_DATE_PATIENT = 6
+ID_SERIES_PATIENT = 6
+ID_NUMBER_PATIENT= 7
+CNP_PATIENT = 8
+MARITAL_STATUS_PATIENT = 9
+GENDER_PATIENT  = 10
+MEDICAL_RECORD_ID_PATIENT = 11
+PASSWORD_PATIENT = 12
+INVITE_CODE_PATIENT = 13
+
 
 class Service:
     def __init__(self, db, session, choice=False):
         self.session = session
         self.db = db
         if choice:
-            self.__add_fake_doctors(50)
+            self.__add_fake_doctors(25)
             doctors_ids = self.db.find_all_doctors_ids()
-            self.__add_fake_patients(100, doctors_ids)
+            self.__add_fake_patients(200, doctors_ids)
             patients_ids = self.db.find_all_patients_ids()
             self.__add_fake_consultations(300, patients_ids, doctors_ids)
 
@@ -39,12 +69,14 @@ class Service:
                 marital_status += 'ă'
             medical_record_id = randint(100000, 1000000 - 1)
             doctor_id = random.choice(doctor_ids)
-            password_hash = randint(10000000000, 100000000000 - 1)
+            password = 'nacho'
+
             patient = Patient(username=username, first_name=first_name, last_name=last_name, phone_number=phone_number,
                               email=email, address=address, id_series=id_series, id_number=id_number, cnp=str(cnp),
                               birth_date=birth_date, marital_status=marital_status, gender=gender,
-                              medical_record_id=medical_record_id, password_hash=password_hash, doctor_id=doctor_id
+                              medical_record_id=medical_record_id, doctor_id=doctor_id, occupation='Glovo delivery'
                               )
+            patient.set_password(password)
             self.db.add_entity(patient)
         self.db.save_to_database()
 
@@ -62,13 +94,14 @@ class Service:
             consultation_schedule_away = consultation_schedule_office
             while consultation_schedule_office == consultation_schedule_away:
                 consultation_schedule_away = self.__random_schedule()
-            password_hash = randint(10000000000, 100000000000 - 1)
+            password = 'nacho'
             assistants_schedule = self.__random_schedule()
-            doctor = Doctor(username, first_name, last_name, phone_number, email, address, birth_date, gender,
-                            ', '.join(day for day in consultation_schedule_office),
-                            ', '.join(day for day in consultation_schedule_away),
-                            ' , '.join(day for day in assistants_schedule),
-                            password_hash)
+            doctor = Doctor(username=username, first_name=first_name, last_name=last_name, phone_number=phone_number,
+                            email=email, address=address, birth_date=birth_date, gender=gender,
+                            consultation_schedule_office=', '.join(day for day in consultation_schedule_office),
+                            consultation_schedule_away=', '.join(day for day in consultation_schedule_away),
+                            assistants_schedule=' , '.join(day for day in assistants_schedule))
+            doctor.set_password(password)
             self.db.add_entity(doctor)
         self.db.save_to_database()
 
@@ -77,7 +110,7 @@ class Service:
             patient_id = random.choice(patients_ids)
             doctor_id = random.choice(doctors_ids)
             time = f'{self.__random_date(date(2015, 1, 1), datetime.now().date())}'
-            pdf = randint(100, 1000-1)
+            pdf = randint(100, 1000 - 1)
             consultation = Consultation(patient_id, doctor_id, time, pdf)
             self.db.add_entity(consultation)
         self.db.save_to_database()
@@ -91,7 +124,7 @@ class Service:
     @staticmethod
     def __random_working_hours():
         start_hour = randint(8, 14)
-        end_hour = randint(start_hour+2, 18)
+        end_hour = randint(start_hour + 2, 18)
         return f'{start_hour}:00-{end_hour}:00'
 
     @staticmethod
@@ -106,6 +139,53 @@ class Service:
         for day in self.__random_working_days():
             schedule.append(f'{day}: {self.__random_working_hours()}')
         return schedule
+
+    def register_medic(self, register_data):
+        doctor = Doctor()
+        if (register_data[USERNAME_DOCTOR] == "" or register_data[PASSWORD_DOCTOR] == "" or register_data[FIRST_NAME_DOCTOR] == "" or
+                register_data[LAST_NAME_DOCTOR] == "" or
+                register_data[EMAIL_DOCTOR] == "" or register_data[PHONE_NUMBER_DOCTOR] == "" or register_data[ADDRESS_DOCTOR] == "" or
+                register_data[BIRTH_DATE_DOCTOR] == "" or
+                register_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR] == "" or register_data[CONSULTATION_SCHEDULE_AWAY_DOCTOR] == "" or
+                register_data[ASSISTANTS_SCHEDULE_DOCTOR] == "" or register_data[GENDER_DOCTOR] == ""):
+            raise ValueError
+        doctor.username = register_data[USERNAME_DOCTOR]
+        doctor.first_name = register_data[FIRST_NAME_DOCTOR]
+        doctor.last_name = register_data[LAST_NAME_DOCTOR]
+        doctor.email = register_data[EMAIL_DOCTOR]
+        doctor.phone_number = register_data[PHONE_NUMBER_DOCTOR]
+        doctor.address = register_data[ADDRESS_DOCTOR]
+        doctor.birth_date = register_data[BIRTH_DATE_DOCTOR]
+        doctor.consultation_schedule_office = register_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR]
+        doctor.consultation_schedule_away = register_data[CONSULTATION_SCHEDULE_AWAY_DOCTOR]
+        doctor.assistants_schedule = register_data[ASSISTANTS_SCHEDULE_DOCTOR]
+        doctor.set_password(register_data[PASSWORD_DOCTOR])
+        doctor.gender = register_data[GENDER_DOCTOR]
+        self.db.add_entity(doctor)
+
+    def register_patient(self, register_data):
+        patient = Patient()
+        if (register_data[USERNAME_PATIENT] == "" or register_data[FIRST_NAME_PATIENT] == "" or register_data[LAST_NAME_PATIENT] == "" or
+                register_data[EMAIL_PATIENT] == ""
+                or register_data[PHONE_NUMBER_PATIENT] == "" or register_data[ADDRESS_PATIENT] == "" or register_data[
+                    ID_SERIES_PATIENT] == "" or register_data[ID_NUMBER_PATIENT] == ""
+                or register_data[CNP_PATIENT] == "" or register_data[MARITAL_STATUS_PATIENT] == "" or register_data[PASSWORD_PATIENT] == ""
+                or register_data[GENDER_PATIENT] == ""):
+            raise ValueError
+        patient.username = register_data[USERNAME_PATIENT]
+        patient.first_name = register_data[FIRST_NAME_PATIENT]
+        patient.last_name = register_data[LAST_NAME_PATIENT]
+        patient.email = register_data[EMAIL_PATIENT]
+        patient.phone_number = register_data[PHONE_NUMBER_PATIENT]
+        patient.address = register_data[ADDRESS_PATIENT]
+        patient.id_series = register_data[ID_SERIES_PATIENT]
+        patient.id_number = register_data[ID_NUMBER_PATIENT]
+        patient.cnp = register_data[CNP_PATIENT]
+        patient.martial_status = register_data[MARITAL_STATUS_PATIENT]
+        patient.medical_record_id = register_data[MEDICAL_RECORD_ID_PATIENT]
+        patient.set_password(register_data[PASSWORD_PATIENT])
+        patient.gender = register_data[GENDER_PATIENT]
+        self.db.add_entity(patient)
 
     def get_all_doctors(self):
         return self.db.find_all_doctors()
@@ -142,7 +222,7 @@ class Service:
         self.db.save_to_database()
 
     @staticmethod
-    def update_doctor_profile(doctor,update_data):
+    def update_doctor_profile(doctor, update_data):
         if update_data[USERNAME] != "":
             doctor.username = update_data[USERNAME]
         if update_data[FIRST_NAME] != "":
@@ -161,62 +241,32 @@ class Service:
             doctor.consultation_schedule_office = update_data[CONSULTATION_SCHEDULE_OFFICE]
         if update_data[CONSULTATION_SCHEDULE_AWAY] != "":
             doctor.consultation_schedule_away = update_data[CONSULTATION_SCHEDULE_AWAY]
+        if update_data[ASSISTANTS_SCHEDULE] != "":
+            doctor.assistants_schedule = update_data[ASSISTANTS_SCHEDULE]
         if update_data[PASSWORD] != "":
             doctor.set_password(update_data[PASSWORD])
 
     @staticmethod
     def update_patient_profile(patient, update_data):
-        if update_data[USERNAME] != "":
-            patient.username = update_data[USERNAME]
-        if update_data[FIRST_NAME] != "":
-            patient.first_name = update_data[FIRST_NAME]
-        if update_data[LAST_NAME] != "":
-            patient.last_name = update_data[LAST_NAME]
-        if update_data[EMAIL] != "":
-            patient.email = update_data[EMAIL]
-        if update_data[PHONE_NUMBER] != "":
-            patient.phone_number = update_data[PHONE_NUMBER]
-        if update_data[ADDRESS] != "":
-            patient.address = update_data[ADDRESS]
-        if update_data[ID_SERIES] != "":
-            patient.id_series = update_data[ID_SERIES]
-        if update_data[ID_NUMBER] != "":
-            patient.id_number = update_data[ID_NUMBER]
-        if update_data[CNP] != "":
-            patient.cnp = update_data[CNP]
-        if update_data[MARITAL_STATUS] != "":
-            patient.martial_status = update_data[MARITAL_STATUS]
-        if update_data[PASSWORD] != "":
-            patient.set_password(update_data[PASSWORD])
-
-
-
-    def generate_random_code(self):
-        n = 0
-        for _ in range(7):
-            k = random.randint(0, 9)
-            n = n * 10 + k
-        return n
-
-    def send_welcome_email(self, email_patient, email_companie):
-        sender_account = email_companie
-        reciever_account = email_patient
-        cod = self.generate_random_code()
-        message = f"Subject: BUN VENIT IN CLINICA NOASTRA!!\n Ne bucuram ca ati ales servicile noastre.\nCodul dumneavoastra de autentificare este:{cod}"
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
-            server.starttls()
-            server.login(sender_account, "your_password")
-            server.sendmail(sender_account, reciever_account, message)
-
-    def send_welcome_sms(self, sender_number, destination_number):
-        account_sid = "account_sid"  # gasim pe twilio
-        auth_token = "auth_token"
-        client = Client(account_sid, auth_token)
-        cod = self.generate_random_code()
-        message_body = f"Subject: BUN VENIT IN CLINICA NOASTRA!!\n Ne bucuram ca ati ales servicile noastre.\nCodul dumneavoastra de autentificare este:{cod}"
-        destination_number = "+04" + destination_number
-        client.messages.create(
-            to=destination_number,
-            from_=sender_number,
-            body=message_body)
-
+        if update_data[USERNAME_PATIENT] != "":
+            patient.username = update_data[USERNAME_PATIENT]
+        if update_data[FIRST_NAME_PATIENT] != "":
+            patient.first_name = update_data[FIRST_NAME_PATIENT]
+        if update_data[LAST_NAME_PATIENT] != "":
+            patient.last_name = update_data[LAST_NAME_PATIENT]
+        if update_data[EMAIL_PATIENT] != "":
+            patient.email = update_data[EMAIL_PATIENT]
+        if update_data[PHONE_NUMBER_PATIENT] != "":
+            patient.phone_number = update_data[PHONE_NUMBER_PATIENT]
+        if update_data[ADDRESS_PATIENT] != "":
+            patient.address = update_data[ADDRESS_PATIENT]
+        if update_data[ID_SERIES_PATIENT] != "":
+            patient.id_series = update_data[ID_SERIES_PATIENT]
+        if update_data[ID_NUMBER_PATIENT] != "":
+            patient.id_number = update_data[ID_NUMBER_PATIENT]
+        if update_data[CNP_PATIENT] != "":
+            patient.cnp = update_data[CNP_PATIENT]
+        if update_data[MARITAL_STATUS_PATIENT] != "":
+            patient.martial_status = update_data[MARITAL_STATUS_PATIENT]
+        if update_data[PASSWORD_PATIENT] != "":
+            patient.set_password(update_data[PASSWORD_PATIENT])

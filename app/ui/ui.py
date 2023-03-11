@@ -7,9 +7,9 @@ from werkzeug.security import check_password_hash
 
 with app.app_context():
     db_1 = Database(db)
-    # db_1.clear_patients_table()
-    # db_1.clear_consultation_table()
-    # db_1.clear_doctors_table()
+    """db_1.clear_patients_table()
+    db_1.clear_consultation_table()
+    db_1.clear_doctors_table()"""
     service = Service(db_1, session, choice=False)
 
 class Routes:
@@ -109,11 +109,18 @@ class Routes:
     def register_medic():
         error = None
         if request.method == 'POST':
-            if request.form['username'] != 'admin' and request.form['password'] != 'admin' \
-                    and request.form['email'] != 'admin@admin.com':
-                error = 'Date gresite. Incearca din nou.'
+            form_data = [request.form['username'], request.form['first_name'], request.form['last_name'],
+                         request.form['email'], request.form['phone_number'], request.form['address'],
+                         request.form['birth_date'], request.form['consultation_schedule_office'],
+                         request.form['consultation_schedule_away'],
+                         request.form['assistants_schedule'], request.form['password'], request.form['gender']]
+            try:
+                service.register_medic(form_data)
+            except ValueError:
+                error = "Invalid data. Try again"
             else:
-                return redirect(url_for('medic_home'))
+                service.update_database()
+                return redirect(url_for('home'))
         return render_template('register_medic.html', error=error)
 
     @staticmethod
@@ -121,10 +128,18 @@ class Routes:
     def register_pacient():
         error = None
         if request.method == 'POST':
-            if request.form['username'] != 'admin' and request.form['password'] != 'admin' \
-                    and request.form['email'] != 'admin@admin.com':
-                error = 'Date gresite. Incearca din nou.'
+            form_data = [request.form['username'], request.form['first_name'], request.form['last_name'],
+                         request.form['email'], request.form['phone_number'], request.form['address'],
+                         request.form['birth_date'], request.form['serie_buletin'],
+                         request.form['number_buletin'],
+                         request.form['cnp'], request.form['marital_status'], request.form['medical_record_id'],
+                         request.form['gender'], request.form['password'], request.form['invite_code']]
+            try:
+                service.register_patient(form_data)
+            except ValueError:
+                error = "Invalid data. Try again"
             else:
+                service.update_database()
                 return redirect(url_for('home'))
         return render_template('register_pacient.html', error=error)
 
@@ -137,21 +152,21 @@ class Routes:
     @app.route('/medic-home')
     def medic_home():
         if "doctor" not in service.session:
-            return redirect(url_for('login'))
+            return redirect(url_for('home'))
         return render_template('principal-medic.html')
 
     @staticmethod
     @app.route('/pacient-home')
     def pacient_home():
         if "pacient" not in service.session:
-            return redirect(url_for('login'))
+            return redirect(url_for('home'))
         return render_template('principal-pacient.html')
 
     @staticmethod
     @app.route('/lista-pacienti')
     def lista_pacienti():
         if "doctor" not in service.session:
-            return redirect(url_for('login'))
+            return redirect(url_for('home'))
         patients = service.get_doctor_patients()
         # patients = db.find_all_doctors_ids()
         return render_template('lista-pacienti.html', patients=patients)
@@ -160,14 +175,14 @@ class Routes:
     @app.route('/transfer-pacienti')
     def transfer_pacienti():
         if "doctor" not in service.session:
-            return redirect(url_for('login'))
+            return redirect(url_for('home'))
         return render_template('transfer-pacienti.html')
 
     @staticmethod
     @app.route('/invita-pacienti')
     def invita_pacienti():
         if "doctor" not in service.session:
-            return redirect(url_for('login'))
+            return redirect(url_for('home'))
         return render_template('invita-pacienti.html')
 
     @staticmethod
@@ -175,16 +190,16 @@ class Routes:
     def medic_profil():
         doctor = service.get_doctor_by_id(service.session['doctor'])
         if "doctor" not in service.session:
-            return redirect(url_for('login'))
+            return redirect(url_for('home'))
         return render_template('medic-profil.html', doctor=doctor)
 
     @staticmethod
     @app.route('/invita-pacienti', methods=['GET', 'POST'])
     def invitatie():
-
+        if "doctor" not in service.session:
+            return redirect(url_for('home'))
         if request.method == 'POST':
-            if email_patient == 'admin@admin.com' :
-                service.send_welcome_email(email_companie, email_patient)
+            if request.form['email'] == 'admin@admin.com' and request.form['phone_number'] == '0722123123':
                 message = 'Invitatia a fost trimisa!'
                 return render_template('invita-pacienti.html', message=message)
             else:
@@ -194,12 +209,14 @@ class Routes:
     @staticmethod
     @app.route('/edit-medic', methods=['GET', 'POST'])
     def edit_medic():
+        if "doctor" not in service.session:
+            return redirect(url_for('home'))
         if request.method == "POST":
             doctor = service.get_doctor_by_id(service.session['doctor'])
             form_data = [request.form['username'], request.form['first_name'], request.form['last_name'],
                          request.form['email'], request.form['phone_number'], request.form['address'],
                          request.form['birth_date'], request.form['consultation_schedule_office'], request.form['consultation_schedule_away'],
-                         request.form['assistants_schedule'], request.form['password']]
+                         request.form['assistants_schedule'], request.form['password'], request.form['gender']]
             service.update_doctor_profile(doctor, form_data)
             service.update_database()
         return render_template('edit-medic.html')
@@ -207,5 +224,7 @@ class Routes:
     @staticmethod
     @app.route('/profil-lista-pacient')
     def profil_lista_pacient():
+        if "doctor" not in service.session:
+            return redirect(url_for('home'))
         doctor = service.get_doctor_by_id(service.session['doctor'])
         return render_template('profil-pacient-lista.html', doctor=doctor)

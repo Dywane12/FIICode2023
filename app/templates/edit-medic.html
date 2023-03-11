@@ -45,6 +45,7 @@
                     <input type="text" class="patient-field" placeholder="Program asistenti" name="assistants_schedule" value="{{request.form.assistants_schedule}}">
                     <input type="password" class="patient-field" placeholder="Parola" name="password" value="{{request.form.password}}"> <br><br>
                     <input type="submit" class="register-btn" value="Salveaza schimbarile">
+
                 </form>
                     {% if error %}
                     <p class="error"><strong>Error:</strong> {{ error }}
