@@ -14,15 +14,15 @@
             <!-- The navigation menu -->
             <div class="navbar">
                 <a href="/medic-home">Calendar</a>
-                <a href="/medic-profil">Profil</a>
+                <a href="/medic-profil">Profile</a>
                 <div class="dropdown">
-                    <button class="dropbtn">Pacienti
+                    <button class="dropbtn">Patients
                         <i class="fa fa-caret-down"></i>
                     </button>
                     <div class="dropdown-content">
-                        <a href="/lista-pacienti">Lista pacienti</a>
-                        <a href="/invita-pacienti">Invita pacienti</a>
-                        <a href="/transfer-pacienti">Transfer pacienti</a>
+                        <a href="/lista-pacienti">Patient list</a>
+                        <a href="/invita-pacienti">Invite a patient</a>
+                        <a href="/transfer-pacienti">Transfer patients</a>
                     </div>
                 </div>
                 <a href="{{ url_for('logout') }}">Logout</a>
@@ -30,11 +30,11 @@
         <div class="hero">
             <div class="form-box">
                <div class="login-text">
-                    <h2>Invita Pacient</h2>
+                    <h2>Invite a Patient</h2>
                     <form id="login" class="input-group" action="" method="post">
-                        <input type="text" class="input-field" placeholder="Email pacient" name="email" value="{{request.form.email }}">
-                        <input type="text" class="input-field" placeholder="Numar de telefon pacient" name="phone_number" value="{{request.form.phone_number}}">
-                        <input type="submit" class="login-btn" value="Trimite invitatie"><br><br>
+                        <input type="text" class="input-field" placeholder="Patient email" name="email" value="{{request.form.email }}">
+                        <input type="text" class="input-field" placeholder="Patient phone number" name="phone_number" value="{{request.form.phone_number}}">
+                        <input type="submit" class="login-btn" value="Send invite"><br><br>
                     </form>
                    {% if message %}
                     <p class="message">{{ message }}

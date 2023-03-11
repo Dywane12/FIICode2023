@@ -14,38 +14,38 @@
             <!-- The navigation menu -->
             <div class="navbar">
                 <a href="/medic-home">Calendar</a>
-                <a href="/medic-profil">Profil</a>
+                <a href="/medic-profil">Profile</a>
                 <div class="dropdown">
-                    <button class="dropbtn">Pacienti
+                    <button class="dropbtn">Patients
                         <i class="fa fa-caret-down"></i>
                     </button>
                     <div class="dropdown-content">
-                        <a href="/lista-pacienti">Lista pacienti</a>
-                        <a href="/invita-pacienti">Invita pacienti</a>
-                        <a href="/transfer-pacienti">Transfer pacienti</a>
+                        <a href="/lista-pacienti">Patient list</a>
+                        <a href="/invita-pacienti">Invite a patient</a>
+                        <a href="/transfer-pacienti">Transfer patients</a>
                     </div>
                 </div>
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>
             <div class="main-box">
-                  <img src="{{ doctor.avatar(128) }}" class="profile-img" alt={{ doctor.username }}>
+                  <img src="{{ doctor.avatar(128) }}" class="profile-img" alt="{{ doctor.username }}">
                   <h1 class="name">{{doctor.first_name}} {{doctor.last_name}}</h1>
                   <div class="profile-box">
                     <table class="medic-table">
                         <tr>
-                            <th>Nume de utilizator:</th>
+                            <th>Username:</th>
                             <td>{{doctor.username}}</td>
                         </tr>
                         <tr>
-                            <th>Nume:</th>
+                            <th>Last name:</th>
                             <td>{{doctor.last_name}}</td>
                         </tr>
                         <tr>
-                            <th>Prenume:</th>
+                            <th>First name:</th>
                             <td>{{doctor.first_name}}</td>
                         </tr>
                         <tr>
-                            <th>Telefon:</th>
+                            <th>Phone number:</th>
                             <td>{{doctor.phone_number}}</td>
                         </tr>
                         <tr>
@@ -53,36 +53,36 @@
                             <td>{{doctor.email}}</td>
                         </tr>
                         <tr>
-                            <th>Adresa:</th>
+                            <th>Address:</th>
                             <td>{{doctor.address}}</td>
                         </tr>
                         <tr>
-                            <th>Data nasterii:</th>
+                            <th>Date of birth:</th>
                             <td>{{doctor.birth_date}}</td>
                         </tr>
                         <tr>
-                            <th>Sex:</th>
+                            <th>Gender:</th>
                             <td>{{doctor.gender}}</td>
                         </tr>
                         <tr>
-                            <th>Birou de consultatii:</th>
+                            <th>Consultation schedule office:</th>
                             <td>{{doctor.consultation_schedule_office}}</td>
                         </tr>
                         <tr>
-                            <th>Orar consultatii acasa:</th>
+                            <th>Consultation schedule away:</th>
                             <td>{{doctor.consultation_schedule_away}}</td>
                         </tr>
                         <tr>
-                            <th>Program asistenti:</th>
+                            <th>Assistants schedule:</th>
                             <td>{{doctor.assistants_schedule}}</td>
                         </tr>
                         <tr>
-                            <th>Parola:</th>
+                            <th>Password:</th>
                             <td>********</td>
                         </tr>
                     </table>
                   </div>
-                  <p><a href="/edit-medic" class="contact-btn">Editeaza profil</a></p>
+                  <p><a href="/edit-medic" class="contact-btn">Edit profile</a></p>
             </div>
 
     </section>

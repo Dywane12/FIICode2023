@@ -15,22 +15,22 @@
             <!-- The navigation menu -->
             <div class="navbar">
                 <a href="/medic-home">Calendar</a>
-                <a href="/medic-profil">Profil</a>
+                <a href="/medic-profil">Profile</a>
                 <div class="dropdown">
-                    <button class="dropbtn">Pacienti
+                    <button class="dropbtn">Patients
                         <i class="fa fa-caret-down"></i>
                     </button>
                     <div class="dropdown-content">
-                        <a href="/lista-pacienti">Lista pacienti</a>
-                        <a href="/invita-pacienti">Invita pacienti</a>
-                        <a href="/transfer-pacienti">Transfer pacienti</a>
+                        <a href="/lista-pacienti">Patient list</a>
+                        <a href="/invita-pacienti">Invite a patient</a>
+                        <a href="/transfer-pacienti">Transfer patients</a>
                     </div>
                 </div>
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>
             <div class="main-box">
                 <div>
-                    <h1 class="name">Lista Pacienti</h1>
+                    <h1 class="name">Patient list</h1>
                     <hr>
                     <div id="table"></div>
                 </div>
@@ -41,11 +41,11 @@
     <script>
                       new gridjs.Grid({
                         columns: [
-                          { id: 'fname', name: 'Prenume' },
-                          { id: 'lname', name: 'Nume' },
-                          { id: 'fisa_medicala', name: 'Fisa Medicala', sort: false },
-                          { id: 'detalii', name: 'Detalii', sort: false,
-                                formatter: (_, row) => gridjs.html(`<a href='{{url_for('profil_lista_pacient', doctor=pacient)}}'>Detalii</a>`)
+                          { id: 'fname', name: 'First name' },
+                          { id: 'lname', name: 'Last name' },
+                          { id: 'fisa_medicala', name: 'Medical record', sort: false },
+                          { id: 'detalii', name: 'Details', sort: false,
+                                formatter: (_, row) => gridjs.html(`<a href='{{url_for('profil_lista_pacient', doctor=pacient)}}'>Details</a>`)
                           }
                         ],
                         data: [

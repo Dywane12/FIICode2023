@@ -82,16 +82,16 @@ class Routes:
                     login_user(doctor)
                     return redirect(url_for('medic_home'))
                 else:
-                    error = 'Parola gresita. Incearca din nou.'
+                    error = 'Wrong password. Try again.'
             elif patient is not None:
                 if not check_password_hash(patient.password_hash, password):
                     service.session['pacient'] = patient.id
                     login_user(patient)
                     return redirect(url_for('pacient_home'))
                 else:
-                    error = 'Parola gresita. Incearca din nou.'
+                    error = 'Wrong password. Try again.'
             else:
-                error = 'Username nu exista. Incearca din nou.'
+                error = 'The username does not exist. Try again.'
         return render_template('login.html', error=error)
 
     @staticmethod
@@ -205,10 +205,10 @@ class Routes:
         if request.method == 'POST':
             if email_patient == 'admin@admin.com' :
                 service.send_welcome_email(email_companie, email_patient)
-                message = 'Invitatia a fost trimisa!'
+                message = 'Invite sent!'
                 return render_template('invita-pacienti.html', message=message)
             else:
-                error = 'Date gresite. Incearca din nou.'
+                error = 'Wrong credentials. Try again.'
                 return render_template('invita-pacienti.html', error=error)
 
     @staticmethod
