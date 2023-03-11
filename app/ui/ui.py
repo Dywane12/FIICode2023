@@ -181,7 +181,11 @@ class Routes:
     @staticmethod
     @app.route('/invita-pacienti', methods=['GET', 'POST'])
     def invitatie():
-
+        if "doctor" not in service.session:
+            return redirect(url_for('login'))
+        error = None
+        email_companie = 'clinica_audi@gmail.com'
+        email_patient = request.form['email']
         if request.method == 'POST':
             if email_patient == 'admin@admin.com' :
                 service.send_welcome_email(email_companie, email_patient)

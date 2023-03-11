@@ -1,11 +1,28 @@
 import random
+import smtplib
 from datetime import date, timedelta, datetime
 import names
 from faker import Faker
 from random import randint
 from cnpgen import Cnp, Gender, Region
 from app.domain.entities import Patient, Doctor, Consultation
+from twilio.rest import Client
 
+USERNAME = 0
+FIRST_NAME = 1
+LAST_NAME = 2
+EMAIL = 3
+PHONE_NUMBER = 4
+ADDRESS = 5
+BIRTH_DATE = 6
+ID_SERIES = 6
+ID_NUMBER = 7
+CNP = 8
+MARITAL_STATUS = 9
+CONSULTATION_SCHEDULE_OFFICE = 7
+CONSULTATION_SCHEDULE_AWAY = 8
+ASSISTANTS_SCHEDULE = 9
+PASSWORD = 10
 
 class Service:
     def __init__(self, db, session, choice=False):
