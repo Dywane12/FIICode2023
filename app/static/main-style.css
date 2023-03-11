@@ -142,7 +142,7 @@ button:hover, a:hover {
 }
 
 .medic-table, th, td{
-    margin: 20px auto;
+    margin: 15px auto;
     padding: 5px;
 }
 
@@ -232,4 +232,74 @@ button:hover, a:hover {
 
 #login{
     left: 50px;
+}
+
+#table{
+    margin: 15px;
+    border-radius: 10px;
+}
+
+.form-patient{
+    width: 850px;
+    height: 480px;
+    position: relative;
+    margin: 6% auto;
+    background: #fff;
+    padding: 5px;
+    overflow: hidden;
+}
+
+.patient-field{
+    width: 30%;
+    padding: 15px 0;
+    margin: 5px 0;
+    border-left: 0;
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 1px solid #999;
+    outline: none;
+    background: transparent;
+    display: inline-block;
+    text-align: center;
+}
+
+.patient-group{
+    top: 100px;
+    position: absolute;
+    width: 800px;
+    transition: .5s;
+}
+
+.register-btn{
+    width: 40%;
+    padding: 20px 30px;
+    cursor: pointer;
+    display: block;
+    margin: 10px 220px auto;
+    background: linear-gradient(to right, #5B8FB9, #B6EADA);
+    border: 0;
+    outline: none;
+    border-radius: 30px;
+    font-size: 18px;
+}
+
+.back-btn{
+    color: #777;
+    font-size: 14px;
+    padding: 10px 0;
+    margin: 10px 0;
+    cursor: pointer;
+    position: absolute;
+    bottom: 80px;
+    left: 80px;
+}
+
+.form-patient{
+    width: 850px;
+    height: 550px;
+    position: relative;
+    margin: 6% auto;
+    background: #fff;
+    padding: 5px;
+    overflow: hidden;
 }

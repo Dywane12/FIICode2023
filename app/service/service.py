@@ -1,18 +1,15 @@
 import random
 from datetime import date, timedelta, datetime
-from app import login_manager
 import names
 from faker import Faker
 from random import randint
 from cnpgen import Cnp, Gender, Region
 from app.domain.entities import Patient, Doctor, Consultation
-import smtplib
-from twilio.rest import Client
+
 
 class Service:
-    def __init__(self, db, choice=False):
-        self.doctor = None
-        self.patient = None
+    def __init__(self, db, session, choice=False):
+        self.session = session
         self.db = db
         if choice:
             self.__add_fake_doctors(50)
@@ -117,14 +114,9 @@ class Service:
         return self.db.find_all_patients()
 
     def get_doctor_patients(self):
-        patients = self.get_all_patients()
-        doctor_patients = []
-        for patient in patients:
-            if patient.doctor_id == self.doctor.id:
-                doctor_patients.append(patient)
-        return doctor_patients
+        return self.get_doctor_by_id(self.session['doctor']).patients
 
-    def check_existence_doctor_username(self, username):
+    def get_doctor_by_username(self, username):
         """
         Calls the find_doctor_username function from the repository
         :param username: str
@@ -132,7 +124,7 @@ class Service:
         """
         return self.db.find_doctor_username(username)
 
-    def check_existence_patient_username(self, username):
+    def get_patient_by_username(self, username):
         """
         Calls the find_patient_username function from the repository
         :param username: str
@@ -140,15 +132,64 @@ class Service:
         """
         return self.db.find_patient_username(username)
 
-    @staticmethod
-    @login_manager.user_loader
-    def load_doctor(id):
-        return Doctor.query.get(int(id))
+    def get_doctor_by_id(self, doctor_id):
+        return self.db.find_doctor_by_id(doctor_id)
+
+    def get_patient_by_id(self, patient_id):
+        return self.db.find_patient_by_id(patient_id)
+
+    def update_database(self):
+        self.db.save_to_database()
 
     @staticmethod
-    @login_manager.user_loader
-    def load_patient(id):
-        return Patient.query.get(int(id))
+    def update_doctor_profile(doctor,update_data):
+        if update_data[USERNAME] != "":
+            doctor.username = update_data[USERNAME]
+        if update_data[FIRST_NAME] != "":
+            doctor.first_name = update_data[FIRST_NAME]
+        if update_data[LAST_NAME] != "":
+            doctor.last_name = update_data[LAST_NAME]
+        if update_data[EMAIL] != "":
+            doctor.email = update_data[EMAIL]
+        if update_data[PHONE_NUMBER] != "":
+            doctor.phone_number = update_data[PHONE_NUMBER]
+        if update_data[ADDRESS] != "":
+            doctor.address = update_data[ADDRESS]
+        if update_data[BIRTH_DATE] != "":
+            doctor.birth_date = update_data[BIRTH_DATE]
+        if update_data[CONSULTATION_SCHEDULE_OFFICE] != "":
+            doctor.consultation_schedule_office = update_data[CONSULTATION_SCHEDULE_OFFICE]
+        if update_data[CONSULTATION_SCHEDULE_AWAY] != "":
+            doctor.consultation_schedule_away = update_data[CONSULTATION_SCHEDULE_AWAY]
+        if update_data[PASSWORD] != "":
+            doctor.set_password(update_data[PASSWORD])
+
+    @staticmethod
+    def update_patient_profile(patient, update_data):
+        if update_data[USERNAME] != "":
+            patient.username = update_data[USERNAME]
+        if update_data[FIRST_NAME] != "":
+            patient.first_name = update_data[FIRST_NAME]
+        if update_data[LAST_NAME] != "":
+            patient.last_name = update_data[LAST_NAME]
+        if update_data[EMAIL] != "":
+            patient.email = update_data[EMAIL]
+        if update_data[PHONE_NUMBER] != "":
+            patient.phone_number = update_data[PHONE_NUMBER]
+        if update_data[ADDRESS] != "":
+            patient.address = update_data[ADDRESS]
+        if update_data[ID_SERIES] != "":
+            patient.id_series = update_data[ID_SERIES]
+        if update_data[ID_NUMBER] != "":
+            patient.id_number = update_data[ID_NUMBER]
+        if update_data[CNP] != "":
+            patient.cnp = update_data[CNP]
+        if update_data[MARITAL_STATUS] != "":
+            patient.martial_status = update_data[MARITAL_STATUS]
+        if update_data[PASSWORD] != "":
+            patient.set_password(update_data[PASSWORD])
+
+
 
     def generate_random_code(self):
         n = 0

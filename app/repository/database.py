@@ -73,11 +73,8 @@ class Database:
                 :param username: str
                 :return: True/False
                 """
-        doctor = Doctor.query.filter_by(username=username).first()
-        if doctor is not None and username == doctor.username:
-            return True
-        else:
-            return False
+        return Doctor.query.filter_by(username=username).first()
+
 
     def find_patient_username(self, username):
         """
@@ -85,8 +82,8 @@ class Database:
         :param username: str
         :return: True/False
         """
-        patient = Patient.query.filter_by(username=username).first()
-        if patient is not None and username == patient.username:
-            return True
-        else:
-            return False
+        return Patient.query.filter_by(username=username).first()
+
+    def update_doctor(self, doctor_id, updated):
+        pass
+
