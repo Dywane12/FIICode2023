@@ -6,6 +6,7 @@ from hashlib import md5
 
 
 class Patient(UserMixin, db.Model):
+    __tablename__ = "patient"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True, nullable=False)
     first_name = db.Column(db.String(64), index=True, nullable=False)
@@ -16,8 +17,7 @@ class Patient(UserMixin, db.Model):
     postalcode = db.Column(db.String(256), index=True, nullable=False)
     city = db.Column(db.String(256), index=True, nullable=False)
     county = db.Column(db.String(256), index=True, nullable=False)
-    id_series = db.Column(db.String(8), index=True, nullable=False)
-    id_number = db.Column(db.String(16), index=True, unique=True, nullable=False)
+    passport_id = db.Column(db.String(16), index=True, unique=True, nullable=False)
     cnp = db.Column(db.Integer, index=True, nullable=False)
     birth_date = db.Column(db.String(128), index=True, nullable=False)
     marital_status = db.Column(db.String(16), index=True, nullable=False)
@@ -25,10 +25,8 @@ class Patient(UserMixin, db.Model):
     occupation = db.Column(db.String(256), nullable=True)
     password_hash = db.Column(db.String(256), index=True, unique=False, nullable=False)
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'), nullable=False)
-    consultations = db.relationship('Consultation', backref='patient', lazy='dynamic')
-    medical_record = db.relationship('MedicalRecord', backref='patient', lazy='dynamic')
-
-    # profile = db.image_attachment("PatientPicture")
+    consultations = db.relationship('Consultation', backref='patient')
+    information_sheet = db.relationship('InformationSheet', backref='patient')
 
     def __init__(self, username=None, first_name=None, last_name=None, phone_number=None, email=None, address=None,
                  id_series=None, id_number=None, cnp=None,
@@ -70,6 +68,7 @@ class Patient(UserMixin, db.Model):
 
 
 class Doctor(UserMixin, db.Model):
+    __tablename__ = "doctor"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True, nullable=False)
     first_name = db.Column(db.String(64), index=True, nullable=False)
@@ -83,8 +82,8 @@ class Doctor(UserMixin, db.Model):
     consultation_schedule_away = db.Column(db.String(128), index=True, nullable=False)
     assistants_schedule = db.Column(db.String(128), index=True)
     password_hash = db.Column(db.String(256), index=True, unique=False)
-    patients = db.relationship('Patient', backref='doctor', lazy='dynamic')
-    consultations = db.relationship('Consultation', backref='doctor', lazy='dynamic')
+    patients = db.relationship('Patient', backref='doctor')
+    consultations = db.relationship('Consultation', backref='doctor')
 
     def __init__(self, username=None, first_name=None, last_name=None, phone_number=None, email=None, address=None,
                  birth_date=None,
@@ -127,7 +126,8 @@ def load_user(id):
 
 
 class Consultation(db.Model):
-    id = db.Column(db.Integer, index=True, primary_key=True)
+    __tablename__ = "consultation"
+    id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=True)
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'), nullable=False)
     time = db.Column(db.DateTime, index=True, nullable=False)
@@ -142,24 +142,133 @@ class Consultation(db.Model):
         self.urgency_grade = urgency_grade
 
 
-class MedicalRecord(db.Model):
-    id = db.Column(db.Integer, index=True, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+information_sheet_chronic_disease = db.Table('information_sheet_chronic_disease',
+                                             db.Column('patient_id', db.Integer,
+                                                       db.ForeignKey('information_sheet.patient_id')),
+                                             db.Column('chronic_disease_id', db.Integer,
+                                                       db.ForeignKey('chronic_disease.id'))
+                                             )
+
+information_sheet_allergy = db.Table('information_sheet_allergy',
+                                     db.Column('patient_id', db.Integer, db.ForeignKey('information_sheet.patient_id')),
+                                     db.Column('allergy_id', db.Integer, db.ForeignKey('allergy.id'))
+                                     )
+
+
+class InformationSheet(db.Model):
+    __tablename__ = "information_sheet"
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), primary_key=True)
     weight = db.Column(db.Integer, index=True, nullable=False)
     height = db.Column(db.Integer, index=True, nullable=False)
-    blood_type = db.Column(db.String(256), nullable=False)
-    medical_history = db.relationship('MedicalHistory', backref='medical_record', lazy='dynamic')
-    medications = db.relationship('Medication', backref='medical_record', lazy='dynamic')
+    shoe_size = db.Column(db.Integer, index=True, nullable=False)
+    blood_type = db.Column(db.String(256), index=True, nullable=False)
+    medical_history = db.relationship('ChronicDisease', secondary=information_sheet_chronic_disease, backref='patients')
+    medications = db.relationship('Drug', backref='patient')
+    allergies = db.relationship('Allergy', secondary=information_sheet_allergy, backref='patients')
+    hospitalization = db.relationship('Hospitalization', backref='patient')
+    smoking = db.relationship('Smoker', backref='patient')
+    drinking = db.relationship('Drinker', backref='patient')
+    family_history = db.relationship('FamilyHistory', backref='patient')
 
 
-class Medication(db.model):
-    id = db.Column(db.Integer, index=True, primary_key=True)
-    medical_record_id = db.Column(db.Integer, db.ForeignKey('medical_record.id'), nullable=False)
+class Mother(db.Model):
+    __tablename__ = "mother"
+    patient_id = db.Column(db.Integer, db.ForeignKey('family_history.patient_id'), primary_key=True)
+    living = db.Column(db.Integer, nullable=True)
+    living_age = db.Column(db.Integer, nullable=True)
+    death_age = db.Column(db.Integer, nullable=True)
+    cause = db.Column(db.String(256), nullable=False)
 
 
-class MedicalHistory(db.model):
-    id = db.Column(db.Integer, index=True, primary_key=True)
-    medical_record_id = db.Column(db.Integer, db.ForeignKey('medical_record.id'), nullable=False)
+class Father(db.Model):
+    __tablename__ = "father"
+    patient_id = db.Column(db.Integer, db.ForeignKey('family_history.patient_id'), primary_key=True)
+    living = db.Column(db.Integer, nullable=True)
+    living_age = db.Column(db.Integer, nullable=True)
+    death_age = db.Column(db.Integer, nullable=True)
+    cause = db.Column(db.String(256), nullable=False)
+
+
+class Sister(db.Model):
+    __tablename__ = "sister"
+    patient_id = db.Column(db.Integer, db.ForeignKey('family_history.patient_id'), primary_key=True)
+    living = db.Column(db.Integer, nullable=True)
+    living_age = db.Column(db.Integer, nullable=True)
+    death_age = db.Column(db.Integer, nullable=True)
+    cause = db.Column(db.String(256), nullable=False)
+
+
+class Brother(db.Model):
+    __tablename__ = "brother"
+    patient_id = db.Column(db.Integer, db.ForeignKey('family_history.patient_id'), primary_key=True)
+    living = db.Column(db.Integer, nullable=True)
+    living_age = db.Column(db.Integer, nullable=True)
+    death_age = db.Column(db.Integer, nullable=True)
+    cause = db.Column(db.String(256), nullable=False)
+
+
+class FamilyHistory(db.Model):
+    __tablename__ = "family_history"
+    patient_id = db.Column(db.Integer, db.ForeignKey('information_sheet.patient_id'), primary_key=True)
+    heart_disease = db.Column(db.String(256), nullable=False)
+    diabetes = db.Column(db.String(256), nullable=False)
+    high_blood_pressure = db.Column(db.String(256), nullable=False)
+    stroke = db.Column(db.String(256), nullable=False)
+    varicose_veins = db.Column(db.String(256), nullable=False)
+    gout = db.Column(db.String(256), nullable=False)
+    arthritis = db.Column(db.String(256), nullable=False)
+    neuropathy = db.Column(db.String(256), nullable=False)
+    bleeding_disorder = db.Column(db.String(256), nullable=False)
+    foot_problems = db.Column(db.String(256), nullable=False)
+    brothers = db.relationship('Brother', backref='patient')
+    sisters = db.relationship('Sister', backref='patient')
+    mother = db.relationship('Mother', backref='patient')
+    father = db.relationship('Father', backref='patient')
+
+
+class Smoker(db.Model):
+    __tablename__ = "smoker"
+    patient_id = db.Column(db.Integer, db.ForeignKey('information_sheet.patient_id'), primary_key=True)
+    is_smoking = db.Column(db.Integer, nullable=True)
+    was_smoking = db.Column(db.Integer, nullable=True)
+    current_packs_per_day = db.Column(db.Integer, nullable=True)
+    previous_pack_per_day = db.Column(db.Integer, nullable=True)
+    smoking_years = db.Column(db.Integer, nullable=True)
+
+
+class Drinker(db.Model):
+    __tablename__ = "drinker"
+    patient_id = db.Column(db.Integer, db.ForeignKey('information_sheet.patient_id'), primary_key=True)
+    is_drinking = db.Column(db.Integer, nullable=True)
+    quantity = db.Column(db.Integer, nullable=True)
+    frequency = db.Column(db.Integer, nullable=True)
+
+
+class Hospitalization(db.Model):
+    __tablename__ = "hospitalization"
+    patient_id = db.Column(db.Integer, db.ForeignKey('information_sheet.patient_id'), primary_key=True)
+
+
+class ChronicDisease(db.Model):
+    __tablename__ = "chronic_disease"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(256), index=True, nullable=False)
+
+
+class Drug(db.Model):
+    __tablename__ = "drug"
+    patient_id = db.Column(db.Integer, db.ForeignKey('information_sheet.patient_id'), primary_key=True)
+    name = db.Column(db.String(256), index=True, nullable=False)
+    dosage = db.Column(db.String(256), nullable=False)
+    frequency = db.Column(db.String(256), nullable=False)
+
+
+class Allergy(db.Model):
+    __tablename__ = "allergy"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(256), index=True, nullable=False)
+
 
 class InviteCode(db.Model):
+    __tablename__ = "invite_code"
     invite_code = db.Column(db.Integer, index=True, primary_key=True)
