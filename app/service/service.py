@@ -21,7 +21,6 @@ ASSISTANTS_SCHEDULE_DOCTOR = 9
 PASSWORD_DOCTOR = 10
 GENDER_DOCTOR = 11
 
-
 USERNAME_PATIENT = 0
 FIRST_NAME_PATIENT = 1
 LAST_NAME_PATIENT = 2
@@ -30,10 +29,10 @@ PHONE_NUMBER_PATIENT = 4
 ADDRESS_PATIENT = 5
 BIRTH_DATE_PATIENT = 6
 ID_SERIES_PATIENT = 6
-ID_NUMBER_PATIENT= 7
+ID_NUMBER_PATIENT = 7
 CNP_PATIENT = 8
 MARITAL_STATUS_PATIENT = 9
-GENDER_PATIENT  = 10
+GENDER_PATIENT = 10
 MEDICAL_RECORD_ID_PATIENT = 11
 PASSWORD_PATIENT = 12
 INVITE_CODE_PATIENT = 13
@@ -144,11 +143,14 @@ class Service:
 
     def register_medic(self, register_data):
         doctor = Doctor()
-        if (register_data[USERNAME_DOCTOR] == "" or register_data[PASSWORD_DOCTOR] == "" or register_data[FIRST_NAME_DOCTOR] == "" or
+        if (register_data[USERNAME_DOCTOR] == "" or register_data[PASSWORD_DOCTOR] == "" or register_data[
+            FIRST_NAME_DOCTOR] == "" or
                 register_data[LAST_NAME_DOCTOR] == "" or
-                register_data[EMAIL_DOCTOR] == "" or register_data[PHONE_NUMBER_DOCTOR] == "" or register_data[ADDRESS_DOCTOR] == "" or
+                register_data[EMAIL_DOCTOR] == "" or register_data[PHONE_NUMBER_DOCTOR] == "" or register_data[
+                    ADDRESS_DOCTOR] == "" or
                 register_data[BIRTH_DATE_DOCTOR] == "" or
-                register_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR] == "" or register_data[CONSULTATION_SCHEDULE_AWAY_DOCTOR] == "" or
+                register_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR] == "" or register_data[
+                    CONSULTATION_SCHEDULE_AWAY_DOCTOR] == "" or
                 register_data[ASSISTANTS_SCHEDULE_DOCTOR] == "" or register_data[GENDER_DOCTOR] == ""):
             raise ValueError
         doctor.username = register_data[USERNAME_DOCTOR]
@@ -167,11 +169,13 @@ class Service:
 
     def register_patient(self, register_data):
         patient = Patient()
-        if (register_data[USERNAME_PATIENT] == "" or register_data[FIRST_NAME_PATIENT] == "" or register_data[LAST_NAME_PATIENT] == "" or
+        if (register_data[USERNAME_PATIENT] == "" or register_data[FIRST_NAME_PATIENT] == "" or register_data[
+            LAST_NAME_PATIENT] == "" or
                 register_data[EMAIL_PATIENT] == ""
                 or register_data[PHONE_NUMBER_PATIENT] == "" or register_data[ADDRESS_PATIENT] == "" or register_data[
                     ID_SERIES_PATIENT] == "" or register_data[ID_NUMBER_PATIENT] == ""
-                or register_data[CNP_PATIENT] == "" or register_data[MARITAL_STATUS_PATIENT] == "" or register_data[PASSWORD_PATIENT] == ""
+                or register_data[CNP_PATIENT] == "" or register_data[MARITAL_STATUS_PATIENT] == "" or register_data[
+                    PASSWORD_PATIENT] == ""
                 or register_data[GENDER_PATIENT] == ""):
             raise ValueError
         patient.username = register_data[USERNAME_PATIENT]
@@ -302,9 +306,23 @@ class Service:
             from_=sender_number,
             body=message_body)
 
-    def get_medical_history(self, patient_id):
+    @staticmethod
+    def get_consultation_history(patient_id):
         patient = Patient.query.filter_by(id=patient_id).first()
         if patient:
             return patient.consultations.all()
         else:
             return None
+
+    def create_appointment_ad_hoc(self, time, urgency_grade):
+        doctor_id = self.session['doctor']
+        consultation = Consultation(doctor_id=doctor_id, time=time, urgency_grade=urgency_grade)
+        self.db.add_entity(consultation)
+        self.db.save_to_database()
+
+    def create_appointment_registered_patient(self, time, urgency_grade):
+        patient = self.get_patient_by_id(self.session['patient'])
+        consultation = Consultation(doctor_id=patient.doctor_id, patient_id=patient.id, time=time,
+                                    urgency_grade=urgency_grade)
+        self.db.add_entity(consultation)
+        self.db.save_to_database()

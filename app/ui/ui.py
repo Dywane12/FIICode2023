@@ -7,9 +7,9 @@ from werkzeug.security import check_password_hash
 
 with app.app_context():
     db_1 = Database(db)
-    """db_1.clear_patients_table()
+    db_1.clear_patients_table()
     db_1.clear_consultation_table()
-    db_1.clear_doctors_table()"""
+    db_1.clear_doctors_table()
     service = Service(db_1, session, choice=False)
 
 class Routes:
@@ -238,5 +238,5 @@ class Routes:
     @app.route('/medical-history')
     def patient_medical_history():
         patient_id = current_user.id
-        medical_history = service.get_medical_history(patient_id)
+        medical_history = service.get_consultation_history(patient_id)
         return render_template('medical_history.html', medical_history=medical_history)
