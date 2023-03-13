@@ -13,6 +13,9 @@ class Patient(UserMixin, db.Model):
     phone_number = db.Column(db.Integer, index=True, unique=True, nullable=False)
     email = db.Column(db.String(128), index=True, unique=True, nullable=False)
     address = db.Column(db.String(256), index=True, nullable=False)
+    postalcode = db.Column(db.String(256), index=True, nullable=False)
+    city = db.Column(db.String(256), index=True, nullable=False)
+    county = db.Column(db.String(256), index=True, nullable=False)
     id_series = db.Column(db.String(8), index=True, nullable=False)
     id_number = db.Column(db.String(16), index=True, unique=True, nullable=False)
     cnp = db.Column(db.Integer, index=True, nullable=False)
@@ -20,15 +23,17 @@ class Patient(UserMixin, db.Model):
     marital_status = db.Column(db.String(16), index=True, nullable=False)
     gender = db.Column(db.String(8), index=True, nullable=False)
     occupation = db.Column(db.String(256), nullable=True)
-    medical_record_id = db.Column(db.Integer, index=True, unique=True, nullable=False)
     password_hash = db.Column(db.String(256), index=True, unique=False, nullable=False)
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'), nullable=False)
     consultations = db.relationship('Consultation', backref='patient', lazy='dynamic')
+    medical_record = db.relationship('MedicalRecord', backref='patient', lazy='dynamic')
 
     # profile = db.image_attachment("PatientPicture")
 
-    def __init__(self, username=None, first_name=None, last_name=None, phone_number=None, email=None, address=None, id_series=None, id_number=None, cnp=None,
-                 birth_date=None, marital_status=None, gender=None, occupation=None, medical_record_id=None, doctor_id=None, password_hash=None):
+    def __init__(self, username=None, first_name=None, last_name=None, phone_number=None, email=None, address=None,
+                 id_series=None, id_number=None, cnp=None,
+                 birth_date=None, marital_status=None, gender=None, occupation=None, medical_record_id=None,
+                 doctor_id=None, password_hash=None):
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
@@ -81,8 +86,10 @@ class Doctor(UserMixin, db.Model):
     patients = db.relationship('Patient', backref='doctor', lazy='dynamic')
     consultations = db.relationship('Consultation', backref='doctor', lazy='dynamic')
 
-    def __init__(self, username=None, first_name=None, last_name=None, phone_number=None, email=None, address=None, birth_date=None,
-                 gender=None, consultation_schedule_office=None, consultation_schedule_away=None, assistants_schedule=None, password_hash=None):
+    def __init__(self, username=None, first_name=None, last_name=None, phone_number=None, email=None, address=None,
+                 birth_date=None,
+                 gender=None, consultation_schedule_office=None, consultation_schedule_away=None,
+                 assistants_schedule=None, password_hash=None):
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
@@ -121,20 +128,38 @@ def load_user(id):
 
 class Consultation(db.Model):
     id = db.Column(db.Integer, index=True, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=True)
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'), nullable=False)
-    time = db.Column(db.String(128), index=True, nullable=False)
+    time = db.Column(db.DateTime, index=True, nullable=False)
     pdf = db.Column(db.String(128), nullable=True)
+    urgency_grade = db.Column(db.String(128), nullable=True)
 
-    def __init__(self, patient_id, doctor_id, time, pdf, ):
+    def __init__(self, patient_id=None, doctor_id=None, time=None, pdf=None, urgency_grade=None):
         self.patient_id = patient_id
         self.doctor_id = doctor_id
         self.time = time
         self.pdf = pdf
+        self.urgency_grade = urgency_grade
 
 
+class MedicalRecord(db.Model):
+    id = db.Column(db.Integer, index=True, primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+    weight = db.Column(db.Integer, index=True, nullable=False)
+    height = db.Column(db.Integer, index=True, nullable=False)
+    blood_type = db.Column(db.String(256), nullable=False)
+    medical_history = db.relationship('MedicalHistory', backref='medical_record', lazy='dynamic')
+    medications = db.relationship('Medication', backref='medical_record', lazy='dynamic')
+
+
+class Medication(db.model):
+    id = db.Column(db.Integer, index=True, primary_key=True)
+    medical_record_id = db.Column(db.Integer, db.ForeignKey('medical_record.id'), nullable=False)
+
+
+class MedicalHistory(db.model):
+    id = db.Column(db.Integer, index=True, primary_key=True)
+    medical_record_id = db.Column(db.Integer, db.ForeignKey('medical_record.id'), nullable=False)
 
 class InviteCode(db.Model):
     invite_code = db.Column(db.Integer, index=True, primary_key=True)
-
-
