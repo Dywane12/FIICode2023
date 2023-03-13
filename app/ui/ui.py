@@ -64,6 +64,28 @@ class Routes:
         return render_template('register_pacient.html')
 
     @staticmethod
+    @app.route('/register-patient-2')
+    def register_patient_2():
+        diseases = [{'name': 'AIDS/HIV', 'type': ''}, {'name': 'Anemia', 'type': ''}, {'name': 'Anxiety', 'type': ''}, {'name': 'Arthritis', 'type': 'Type'},
+                    {'name': 'Artificial Heart Valve', 'type': ''}, {'name': 'Artificial Joint', 'type': ''},
+                    {'name': 'Asthma', 'type': ''}, {'name': 'Back Problems', 'type': ''}, {'name': 'Bleeding Disorder', 'type': ''}, {'name': 'Bipolar Disorder', 'type': ''}, {'name': 'Bloot Clot/DVT', 'type': ''},
+                    {'name': 'Bypass Surgery', 'type': ''},
+                    {'name': 'Cancer', 'type': 'Type'}, {'name': 'Chemical Dependency', 'type': ''}, {'name': 'Chest Pain', 'type':''}, {'name': 'Circulatory Problems', 'type': ''}, {'name': 'Depression', 'type': ''},
+                    {'name': 'Diabetes', 'type': 'Type' 'How long'}, {'name': 'Emphysema', 'type': ''},
+                    {'name': 'Eye Problems', 'type': ''}, {'name': 'Fibromyalgia', 'type': ''}, {'name': 'Fott Cramps', 'type':''}, {'name': 'Gastric Reflux', 'type': ''}, {'name': 'Gout', 'type': ''}, {'name': 'Headaches', 'type': ''},
+                    {'name': 'Heart Attack', 'type': ''}, {'name': 'Heart Murmur', 'type': ''},
+                    {'name': 'Heart Failure', 'type': ''}, {'name': 'Hemophilia', 'type': ''}, {'name': 'Hepatitis', 'type':''}, {'name': 'High Blood Pressure', 'type': ''}, {'name': 'Kidney Problems', 'type': ''},
+                    {'name': 'Leg Cramps', 'type': ''},
+                    {'name': 'Liver Disease', 'type': ''}, {'name': 'Low Blood Pressure', 'type': ''}, {'name': 'Mental Illness', 'type': ''}, {'name':'Neuropathy', 'type': ''}, {'name': 'Pacemaker', 'type': ''},
+                    {'name': 'Paralysis', 'type': ''}, {'name': 'Phlebitis', 'type' :''},
+                    {'name': 'Psoriasis', 'type': ''}, {'name': 'Rheumatic Fever', 'type': ''}, {'name': 'Schizophrenia', 'type': ''}, {'name': 'Shortness of Breath', 'type': ''}, {'name': 'Stroke', 'type': ''},
+                    {'name': 'Thyroid Problems', 'type': 'Type'},
+                    {'name': 'Tuberculosis', 'type': ''}, {'name': 'Ulcers (Stomach)', 'type': ''}, {'name': 'Varicose Veins', 'type': ''}, {'name':'Wight loss, unexplained', 'type': ''},
+                    {'name': 'Pregnant?', 'type': ''}, {'name': 'Breastfeeding?', 'type': ''}
+                    ]
+        return render_template('register_pacient_2.html', diseases=diseases)
+
+    @staticmethod
     @app.route('/login', methods=['GET', 'POST'])
     def login():
         error = None
@@ -140,7 +162,7 @@ class Routes:
                 error = "Invalid data. Try again"
             else:
                 service.update_database()
-                return redirect(url_for('home'))
+                return redirect(url_for('regiser_patient_2'))
         return render_template('register_pacient.html', error=error)
 
     @staticmethod

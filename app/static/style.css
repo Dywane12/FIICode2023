@@ -206,7 +206,7 @@ nav img{
     text-align: center;
 }
 
-span{
+.save{
     color: #777;
     font-size: 12px;
     bottom: 129px;
@@ -309,4 +309,31 @@ nav p{
     background: #fff;
     padding: 5px;
     overflow: hidden;
+}
+
+.diseases{
+    float: left;
+    min-width: 200px;
+    white-space: nowrap;
+    max-inline-size: 5em;
+
+}
+
+.checkbox-patient{
+    margin: 5px;
+    padding: 5px;
+    max-inline-size: 5em;
+}
+
+.checkbox-text{
+    display: inline;
+
+    padding 5px;
+    max-inline-size: 2rem;
+    width: 5em;
+}
+
+.check-text{
+    position: absolute;
+    margin: 70px auto auto 50px;
 }
