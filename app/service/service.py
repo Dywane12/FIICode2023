@@ -2,11 +2,14 @@ import random
 import smtplib
 from datetime import date, timedelta, datetime
 import names
+import random_address
+from RandomDataGenerators import *
 from faker import Faker
 from random import randint
-from cnpgen import Cnp, Gender, Region
+from geopy import Nominatim
 from app.domain.entities import Patient, Doctor, Consultation
 from twilio.rest import Client
+from random_address import real_random_address
 
 USERNAME_DOCTOR = 0
 FIRST_NAME_DOCTOR = 1
@@ -57,25 +60,30 @@ class Service:
             username = first_name + '_' + last_name + f'{randint(1, 420)}'
             phone_number = fake.phone_number()
             email = first_name + '_' + last_name + f'{randint(1, 420)}' + '@gmail.com'
-            address = fake.address()
-            id_series = 'MM'
-            id_number = randint(100000, 1000000 - 1)
+            address_data = random_address.real_random_address_by_state('CA')
+            address = address_data['address1']
+            city = address_data['city']
+            state = 'CA'
+            postal_code = address_data['postalCode']
+            passport_id = randint(1000000,9999999)
+            occupation = random_pretentious_job_title(1,number_of_words=15)
             birth_date = self.__random_date(date(1940, 1, 1), date(2008, 12, 30))
-            if gender == "Male":
-                cnp = Cnp(Gender.M, birth_date, Region.Maramures)
-            else:
-                cnp = Cnp(Gender.F, birth_date, Region.Maramures)
-            marital_status = random.choice(['Casatorit', 'Divortat', 'Vaduv', 'Necasatorit'])
+            marital_status = random.choice(['Married', 'Divorced', 'Widow', 'Single'])
             if gender == 'Female':
-                marital_status += 'ă'
-            medical_record_id = randint(100000, 1000000 - 1)
+                height = randint(140,185)
+            else:
+                height = randint(160,210)
+            weight = height // 2.8
+            shoe_size = height // 4.05
+            blood_type = random.choice(['0','A','AB',"B"])
+
+
             doctor_id = random.choice(doctor_ids)
             password = 'nacho'
-
             patient = Patient(username=username, first_name=first_name, last_name=last_name, phone_number=phone_number,
-                              email=email, address=address, id_series=id_series, id_number=id_number, cnp=str(cnp),
+                              email=email, address=address, id_series=id_series, id_number=id_number,
                               birth_date=birth_date, marital_status=marital_status, gender=gender,
-                              medical_record_id=medical_record_id, doctor_id=doctor_id, occupation='Glovo delivery'
+                              doctor_id=doctor_id, occupation='Glovo delivery'
                               )
             patient.set_password(password)
             self.db.add_entity(patient)
