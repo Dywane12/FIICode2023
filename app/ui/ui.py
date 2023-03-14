@@ -74,7 +74,13 @@ class Routes:
                     {'name': 'Diabetes', 'type': 'Type' 'How long'}, {'name': 'Emphysema', 'type': ''},
                     {'name': 'Eye Problems', 'type': ''}, {'name': 'Fibromyalgia', 'type': ''}, {'name': 'Fott Cramps', 'type':''}, {'name': 'Gastric Reflux', 'type': ''}, {'name': 'Gout', 'type': ''}, {'name': 'Headaches', 'type': ''},
                     {'name': 'Heart Attack', 'type': ''}, {'name': 'Heart Murmur', 'type': ''},
-                    {'name': 'Heart Failure', 'type': ''}, {'name': 'Hemophilia', 'type': ''}, {'name': 'Hepatitis', 'type':''}, {'name': 'High Blood Pressure', 'type': ''}, {'name': 'Kidney Problems', 'type': ''},
+                    ]
+        return render_template('register_pacient_2.html', diseases=diseases)
+
+    @staticmethod
+    @app.route('/register-patient-3')
+    def register_patient_3():
+        diseases = [{'name': 'Heart Failure', 'type': ''}, {'name': 'Hemophilia', 'type': ''}, {'name': 'Hepatitis', 'type':''}, {'name': 'High Blood Pressure', 'type': ''}, {'name': 'Kidney Problems', 'type': ''},
                     {'name': 'Leg Cramps', 'type': ''},
                     {'name': 'Liver Disease', 'type': ''}, {'name': 'Low Blood Pressure', 'type': ''}, {'name': 'Mental Illness', 'type': ''}, {'name':'Neuropathy', 'type': ''}, {'name': 'Pacemaker', 'type': ''},
                     {'name': 'Paralysis', 'type': ''}, {'name': 'Phlebitis', 'type' :''},
@@ -83,7 +89,7 @@ class Routes:
                     {'name': 'Tuberculosis', 'type': ''}, {'name': 'Ulcers (Stomach)', 'type': ''}, {'name': 'Varicose Veins', 'type': ''}, {'name':'Wight loss, unexplained', 'type': ''},
                     {'name': 'Pregnant?', 'type': ''}, {'name': 'Breastfeeding?', 'type': ''}
                     ]
-        return render_template('register_pacient_2.html', diseases=diseases)
+        return render_template('register_pacient_3.html', diseases=diseases)
 
     @staticmethod
     @app.route('/login', methods=['GET', 'POST'])
@@ -151,11 +157,11 @@ class Routes:
         error = None
         if request.method == 'POST':
             form_data = [request.form['username'], request.form['first_name'], request.form['last_name'],
-                         request.form['email'], request.form['phone_number'], request.form['address'],
-                         request.form['birth_date'], request.form['serie_buletin'],
-                         request.form['number_buletin'],
-                         request.form['cnp'], request.form['marital_status'], request.form['medical_record_id'],
-                         request.form['gender'], request.form['password'], request.form['invite_code']]
+                         request.form['phone_number'], request.form['email'], request.form['address'],
+                         request.form['zipcode'], request.form['city'],
+                         request.form['county'], request.form['passport_id'],
+                         request.form['cnp'], request.form['birth_date'], request.form['marital_status'],
+                         request.form['gender'], request.form['occupation'], request.form['password'], request.form['invite_code']]
             try:
                 service.register_patient(form_data)
             except ValueError:
@@ -178,8 +184,8 @@ class Routes:
         return render_template('principal-medic.html')
 
     @staticmethod
-    @app.route('/pacient-home')
-    def pacient_home():
+    @app.route('/patient-home')
+    def patient_home():
         if "pacient" not in service.session:
             return redirect(url_for('home'))
         return render_template('principal-pacient.html')
@@ -215,6 +221,14 @@ class Routes:
         if "doctor" not in service.session:
             return redirect(url_for('home'))
         return render_template('medic-profil.html', doctor=doctor)
+
+    @staticmethod
+    @app.route('/patient-profile')
+    def patient_profile():
+        patient = service.get_patient_by_id(service.session['patient'])
+        if "patient" not in service.session:
+            return redirect(url_for('home'))
+        return render_template('patient-profile.html')
 
     @staticmethod
     @app.route('/invita-pacienti', methods=['GET', 'POST'])
@@ -262,3 +276,8 @@ class Routes:
         patient_id = current_user.id
         medical_history = service.get_consultation_history(patient_id)
         return render_template('medical_history.html', medical_history=medical_history)
+
+    @staticmethod
+    @app.route('/change-medic')
+    def change_medic():
+        return render_template('change-medic.html')

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta name="viewport" content="with=device-width, initial-scale=1.0">
     <title>FIICode2023 Challenge</title>
@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
     <section class="header">
@@ -18,7 +17,21 @@
                 <a href="/change-medic">Change doctor</a>
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>
+        <div class="form-patient">
+            <div class="form-patient">
+                <div class="login-text">
+                    <h2>Edit profile</h2>
+                </div>
+                <form id="login" class="patient-group" action="" method="post">
+
+                    <input type="submit" class="register-btn" value="Save changes">
+                </form>
+                    {% if error %}
+                    <p class="error"><strong>Error:</strong> {{ error }}
+                      {% endif %}</p>
+                <a href="/patient-profile" class="back-btn">Back</a>
+            </div>
+        </div>
     </section>
 </body>
-
 </html>

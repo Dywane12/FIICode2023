@@ -320,17 +320,20 @@ nav p{
 }
 
 .checkbox-patient{
-    margin: 5px;
+    margin: 10px;
     padding: 5px;
     max-inline-size: 5em;
 }
 
 .checkbox-text{
     display: inline;
-
-    padding 5px;
+    padding 10px;
     max-inline-size: 2rem;
     width: 5em;
+}
+
+.type-text{
+    padding: 10px;
 }
 
 .check-text{
