@@ -7,10 +7,11 @@ from werkzeug.security import check_password_hash
 
 with app.app_context():
     db_1 = Database(db)
-    db_1.clear_patients_table()
+    """db_1.clear_patients_table()
     db_1.clear_consultation_table()
-    db_1.clear_doctors_table()
+    db_1.clear_doctors_table()"""
     service = Service(db_1, session, choice=False)
+
 
 class Routes:
 
