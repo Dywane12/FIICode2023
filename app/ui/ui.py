@@ -7,9 +7,13 @@ from werkzeug.security import check_password_hash
 
 with app.app_context():
     db_1 = Database(db)
-    """db_1.clear_patients_table()
+    """ db_1.clear_patients_table()
     db_1.clear_consultation_table()
-    db_1.clear_doctors_table()"""
+    db_1.clear_doctors_table()
+    db_1.clear_hospitalization_table()
+    db_1.clear_drinker_table()
+    db_1.clear_smoker_table()
+    db_1.clear_information_sheet_table()"""
     service = Service(db_1, session, choice=False)
 
 
@@ -20,7 +24,6 @@ class Routes:
 
     def __run_all_routes(self):
         self.home()
-        #self.login_page()
         self.choice()
         self.medic_profil()
         self.transfer_pacienti()
@@ -43,16 +46,6 @@ class Routes:
             return redirect(url_for('pacient_home'))
         return render_template('index.html')
 
-    """@staticmethod
-    @app.route('/login')
-    def login_page():
-        if "doctor" in service.session:
-            flash("Deja logat")
-            return redirect(url_for('medic_home'))
-        elif "pacient" in service.session:
-            flash("Deja logat")
-            return redirect(url_for('pacient_home'))
-        return render_template('login.html')"""
 
     @staticmethod
     @app.route('/register-medic')

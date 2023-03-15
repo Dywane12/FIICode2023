@@ -4,12 +4,12 @@ from datetime import date, timedelta, datetime
 import names
 import random_address
 from RandomDataGenerators import *
-from faker import Faker
 from random import randint
 from geopy import Nominatim
-from app.domain.entities import Patient, Doctor, Consultation
+from app.domain.entities import Patient, Doctor, Consultation, Drinker, Smoker, InformationSheet, Father, FamilyHistory, Mother, Brother, Sister, Hospitalization
 from twilio.rest import Client
 from random_address import real_random_address
+import phone_gen
 
 USERNAME_DOCTOR = 0
 FIRST_NAME_DOCTOR = 1
@@ -46,58 +46,127 @@ class Service:
         self.session = session
         self.db = db
         if choice:
-            self.__add_fake_doctors(25)
-            doctors_ids = self.db.find_all_doctors_ids()
-            self.__add_fake_patients(200, doctors_ids)
-            patients_ids = self.db.find_all_patients_ids()
-            self.__add_fake_consultations(300, patients_ids, doctors_ids)
+            self.__add_chronic_diseases()
+            self.__add_alergies()
+            self.__add_fake_doctors(5)
+            self.__add_fake_patients(10)
+            self.__add_fake_consultations(10)
 
-    def __add_fake_patients(self, n, doctor_ids):
-        fake = Faker()
+    def __add_chronic_diseases(self):
+        pass
+
+
+    def __add_alergies(self):
+        pass
+
+    def __add_fake_patients(self, n):
         for i in range(n):
+            doctor = random.choice(self.get_all_doctors())
+            patient = Patient(doctor_id=doctor.id)
+            information_sheet = InformationSheet(patient_id=patient.id)
             gender = random.choice(['Male', 'Female'])
             first_name, last_name = names.get_full_name(gender=gender.lower()).split()
             username = first_name + '_' + last_name + f'{randint(1, 420)}'
-            phone_number = fake.phone_number()
+            phone_number = phone_gen.PhoneNumber("US").get_number()
             email = first_name + '_' + last_name + f'{randint(1, 420)}' + '@gmail.com'
             address_data = random_address.real_random_address_by_state('CA')
             address = address_data['address1']
             city = address_data['city']
             state = 'CA'
             postal_code = address_data['postalCode']
-            passport_id = randint(1000000,9999999)
-            occupation = random_pretentious_job_title(1,number_of_words=15)
+            passport_id = randint(1000000, 9999999)
+            occupation = random_pretentious_job_title(1, number_of_words=2)
             birth_date = self.__random_date(date(1940, 1, 1), date(2008, 12, 30))
             marital_status = random.choice(['Married', 'Divorced', 'Widow', 'Single'])
+            patient.gender = gender
+            patient.email = email
+            patient.address = address
+            patient.birth_date = birth_date
+            patient.last_name = last_name
+            patient.first_name = first_name
+            patient.username = username
+            patient.state = state
+            patient.city = city
+            patient.postalcode = postal_code
+            patient.passport_id = passport_id
+            patient.occupation = occupation
+            patient.marital_status = marital_status
+            patient.phone_number = phone_number
+            self.db.add_entity(patient)
             if gender == 'Female':
-                height = randint(140,185)
+                height = randint(140, 185)
             else:
-                height = randint(160,210)
+                height = randint(160, 210)
             weight = height // 2.8
             shoe_size = height // 4.05
-            blood_type = random.choice(['0','A','AB',"B"])
-
-
-            doctor_id = random.choice(doctor_ids)
+            blood_type = random.choice(['0', 'A', 'AB', "B"])
+            information_sheet.height = height
+            information_sheet.weight = weight
+            information_sheet.shoe_size = shoe_size
+            information_sheet.blood_type = blood_type
+            choice = random.choice([True, False])
+            if choice:
+                for chronic_disease in self.db.get_all_chronic_diseases():
+                    if len(information_sheet.medical_history) > 3:
+                        break
+                    choice = random.choice([True, False])
+                    if choice:
+                        information_sheet.medical_history.append(chronic_disease)
+            choice = random.choice([True, False])
+            if choice:
+                for allergy in self.db.get_all_allergies():
+                    if len(information_sheet.allergies) > 3:
+                        break
+                    choice = random.choice([True, False])
+                    if choice:
+                        information_sheet.allergies.append(allergy)
+            number_of_hospitalizations = randint(0, 5)
+            for _ in range(number_of_hospitalizations):
+                hospitalization = Hospitalization()
+                hospitalization.patient_id = patient.id
+                hospitalization_date = self.__random_date(date(2010, 1, 1), datetime.now().date())
+                hospitalization.date = hospitalization_date
+                self.db.add_entity(hospitalization)
+            is_smoking = randint(0, 1)
+            if is_smoking:
+                current_packs_per_day = randint(1, 5)
+                smoking_years = randint(0, 10)
+                smoker = Smoker(current_packs_per_day=current_packs_per_day, smoking_years=smoking_years)
+                smoker.patient_id = patient.id
+                self.db.add_entity(smoker)
+            else:
+                was_smoking = randint(0, 1)
+                if was_smoking:
+                    previous_pack_per_day = randint(1, 5)
+                    smoking_years = randint(0, 10)
+                    smoker = Smoker(previous_pack_per_day=previous_pack_per_day, smoking_years=smoking_years)
+                    smoker.patient_id = patient.id
+                    self.db.add_entity(smoker)
+            is_drinking = randint(0, 1)
+            if is_drinking:
+                quantity = randint(1, 5)
+                frequency = randint(1, 7)
+                drinker = Drinker(quantity, frequency)
+                drinker.patient_id = patient.id
+                self.db.add_entity(drinker)
             password = 'nacho'
-            patient = Patient(username=username, first_name=first_name, last_name=last_name, phone_number=phone_number,
-                              email=email, address=address, id_series=id_series, id_number=id_number,
-                              birth_date=birth_date, marital_status=marital_status, gender=gender,
-                              doctor_id=doctor_id, occupation='Glovo delivery'
-                              )
             patient.set_password(password)
             self.db.add_entity(patient)
+            self.db.add_entity(information_sheet)
         self.db.save_to_database()
 
     def __add_fake_doctors(self, n):
-        fake = Faker()
         for i in range(n):
             gender = random.choice(['Male', 'Female'])
             first_name, last_name = names.get_full_name(gender=gender.lower()).split()
             username = first_name + '_' + last_name + f'{randint(1, 420)}'
-            phone_number = fake.phone_number()
+            phone_number = phone_gen.PhoneNumber("US").get_number()
             email = first_name + '_' + last_name + f'{randint(1, 420)}' + '@gmail.com'
-            address = fake.address()
+            address_data = random_address.real_random_address_by_state('CA')
+            address = address_data['address1']
+            city = address_data['city']
+            state = 'CA'
+            postal_code = address_data['postalCode']
             birth_date = self.__random_date(date(1960, 1, 1), date(1995, 12, 30))
             consultation_schedule_office = self.__random_schedule()
             consultation_schedule_away = consultation_schedule_office
@@ -106,21 +175,23 @@ class Service:
             password = 'nacho'
             assistants_schedule = self.__random_schedule()
             doctor = Doctor(username=username, first_name=first_name, last_name=last_name, phone_number=phone_number,
-                            email=email, address=address, birth_date=birth_date, gender=gender,
-                            consultation_schedule_office=', '.join(day for day in consultation_schedule_office),
+                            email=email, address=address, city=city, state=state, postalcode=postal_code,
+                            birth_date=birth_date, gender=gender, consultation_schedule_office
+                            =''.join(day for day in consultation_schedule_office),
                             consultation_schedule_away=', '.join(day for day in consultation_schedule_away),
                             assistants_schedule=' , '.join(day for day in assistants_schedule))
             doctor.set_password(password)
             self.db.add_entity(doctor)
         self.db.save_to_database()
 
-    def __add_fake_consultations(self, n, patients_ids, doctors_ids):
+    def __add_fake_consultations(self, n):
         for i in range(n):
-            patient_id = random.choice(patients_ids)
-            doctor_id = random.choice(doctors_ids)
-            time = f'{self.__random_date(date(2015, 1, 1), datetime.now().date())}'
+            patient_id = random.choice(self.get_all_patients()).id
+            doctor_id = random.choice(self.get_all_doctors()).id
+            time = self.__random_date(date(2015, 1, 1), datetime.now().date())
             pdf = randint(100, 1000 - 1)
-            consultation = Consultation(patient_id, doctor_id, time, pdf)
+            urgency_grade = randint(1, 5)
+            consultation = Consultation(patient_id=patient_id, doctor_id=doctor_id, time=time, pdf=pdf,urgency_grade=urgency_grade)
             self.db.add_entity(consultation)
         self.db.save_to_database()
 
