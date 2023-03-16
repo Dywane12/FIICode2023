@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="with=device-width, initial-scale=1.0">
+    <title>FIICode2023 Challenge</title>
+    <link rel="stylesheet" href="../static/main-style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <section class="header">
+            <!-- The navigation menu -->
+            <div class="navbar">
+                <a href="/patient-home">Calendar</a>
+                <a href="/patient-profile">Profile</a>
+                <a href="/change-medic">Change doctor</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+            <div class="main-box">
+                  <img src="{{ patient.avatar(128) }}" class="profile-img" alt="{{ patient.username }}">
+                  <h1 class="name">{{patient.first_name}} {{patient.last_name}}</h1>
+                  <div class="profile-box">
+                    <table class="medic-table">
+                        <tr>
+                            <th>Username:</th>
+                            <td>{{patient.username}}</td>
+                        </tr>
+                        <tr>
+                            <th>Last name:</th>
+                            <td>{{patient.last_name}}</td>
+                        </tr>
+                        <tr>
+                            <th>First name:</th>
+                            <td>{{patient.first_name}}</td>
+                        </tr>
+                        <tr>
+                            <th>Phone number:</th>
+                            <td>{{patient.phone_number}}</td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>{{patient.email}}</td>
+                        </tr>
+                        <tr>
+                            <th>Address:</th>
+                            <td>{{patient.address}}</td>
+                        </tr>
+                        <tr>
+                            <th>Date of birth:</th>
+                            <td>{{patient.birth_date}}</td>
+                        </tr>
+                        <tr>
+                            <th>Gender:</th>
+                            <td>{{patient.gender}}</td>
+                        </tr>
+                        <tr>
+                            <th>more data:</th>
+                            <td>123123</td>
+                        </tr>
+                        <tr>
+                            <th>more data:</th>
+                            <td>123123</td>
+                        </tr>
+                        <tr>
+                            <th>more data</th>
+                            <td>123123</td>
+                        </tr>
+                        <tr>
+                            <th>Password:</th>
+                            <td>********</td>
+                        </tr>
+                    </table>
+                  </div>
+                  <p><a href="/edit-patient" class="contact-btn">Edit profile</a></p>
+            </div>
+
+    </section>
+</body>
+
+</html>
