@@ -66,7 +66,7 @@ class Routes:
                     {'name': 'Bypass Surgery', 'type': ''},
                     {'name': 'Cancer', 'type': 'Type'}, {'name': 'Chemical Dependency', 'type': ''}, {'name': 'Chest Pain', 'type':''}, {'name': 'Circulatory Problems', 'type': ''}, {'name': 'Depression', 'type': ''},
                     {'name': 'Diabetes', 'type': 'Type' 'How long'}, {'name': 'Emphysema', 'type': ''},
-                    {'name': 'Eye Problems', 'type': ''}, {'name': 'Fibromyalgia', 'type': ''}, {'name': 'Fott Cramps', 'type':''}, {'name': 'Gastric Reflux', 'type': ''}, {'name': 'Gout', 'type': ''}, {'name': 'Headaches', 'type': ''},
+                    {'name': 'Eye Problems', 'type': ''}, {'name': 'Fibromyalgia', 'type': ''}, {'name': 'Foot Cramps', 'type':''}, {'name': 'Gastric Reflux', 'type': ''}, {'name': 'Gout', 'type': ''}, {'name': 'Headaches', 'type': ''},
                     {'name': 'Heart Attack', 'type': ''}, {'name': 'Heart Murmur', 'type': ''},
                     ]
         return render_template('register_pacient_2.html', diseases=diseases)
@@ -154,7 +154,7 @@ class Routes:
                          request.form['phone_number'], request.form['email'], request.form['address'],
                          request.form['zipcode'], request.form['city'],
                          request.form['county'], request.form['passport_id'],
-                         request.form['cnp'], request.form['birth_date'], request.form['marital_status'],
+                         request.form['birth_date'], request.form['marital_status'],
                          request.form['gender'], request.form['occupation'], request.form['password'], request.form['invite_code']]
             try:
                 service.register_patient(form_data)

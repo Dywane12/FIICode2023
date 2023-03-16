@@ -62,7 +62,7 @@ class Service:
              {'name': 'Cancer'}, {'name': 'Chemical Dependency'}, {'name': 'Chest Pain'},
              {'name': 'Circulatory Problems'}, {'name': 'Depression'},
              {'name': 'Diabetes' 'How long'}, {'name': 'Emphysema'},
-             {'name': 'Eye Problems'}, {'name': 'Fibromyalgia'}, {'name': 'Fott Cramps'}, {'name': 'Gastric Reflux'},
+             {'name': 'Eye Problems'}, {'name': 'Fibromyalgia'}, {'name': 'Foot Cramps'}, {'name': 'Gastric Reflux'},
              {'name': 'Gout'}, {'name': 'Headaches'},
              {'name': 'Heart Attack'}, {'name': 'Heart Murmur'},
              {'name': 'Heart Failure'}, {'name': 'Hemophilia'}, {'name': 'Hepatitis'}, {'name': 'High Blood Pressure'},
