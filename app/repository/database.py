@@ -111,12 +111,5 @@ class Database:
         self.db.session.query(InformationSheet).delete()
         self.db.session.commit()
 
-    def find_disease(self):
-        chronic_diseases = [
-            ]
-        for disease in chronic_diseases:
-            chronic_disease = ChronicDisease(name=disease['name'], type=disease['type'])
-            self.session.add(chronic_disease)
 
-        self.session.commit()
 
