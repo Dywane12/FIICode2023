@@ -162,7 +162,7 @@ class Routes:
                 error = "Invalid data. Try again"
             else:
                 service.update_database()
-                return redirect(url_for('regiser_patient_2'))
+                return redirect(url_for('register_patient_2'))
         return render_template('register_pacient.html', error=error)
 
     @staticmethod
