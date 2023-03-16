@@ -43,7 +43,7 @@
                         columns: [
                           { id: 'fname', name: 'First name' },
                           { id: 'lname', name: 'Last name' },
-                          { id: 'fisa_medicala', name: 'Medical record', sort: false },
+                          { id: 'fisa_medicala', name: 'Passport ID', sort: false },
                           { id: 'detalii', name: 'Details', sort: false,
                                 formatter: (_, row) => gridjs.html(`<a href='{{url_for('profil_lista_pacient', doctor=pacient)}}'>Details</a>`)
                           }
@@ -53,7 +53,7 @@
                             {
                               fname: '{{ patient.first_name }}',
                               lname: '{{ patient.last_name }}',
-                              fisa_medicala: '{{ patient.cnp }}',
+                              passport_id: '{{ patient.passport_id }}',
                               detalii: 'Detalii'
                             },
                           {% endfor %}

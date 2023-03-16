@@ -1,4 +1,4 @@
-from app.domain.entities import Doctor, Patient, Consultation
+from app.domain.entities import Doctor, Patient, Consultation, ChronicDisease, Allergy, Drinker, Smoker, Hospitalization, InformationSheet
 
 
 class Database:
@@ -86,4 +86,37 @@ class Database:
 
     def update_doctor(self, doctor_id, updated):
         pass
+
+    @staticmethod
+    def get_all_chronic_diseases():
+        return ChronicDisease.query.all()
+
+    @staticmethod
+    def get_all_allergies():
+        return Allergy.query.all()
+
+    def clear_smoker_table(self):
+        self.db.session.query(Smoker).delete()
+        self.db.session.commit()
+
+    def clear_drinker_table(self):
+        self.db.session.query(Drinker).delete()
+        self.db.session.commit()
+
+    def clear_hospitalization_table(self):
+        self.db.session.query(Hospitalization).delete()
+        self.db.session.commit()
+
+    def clear_information_sheet_table(self):
+        self.db.session.query(InformationSheet).delete()
+        self.db.session.commit()
+
+    def find_disease(self):
+        chronic_diseases = [
+            ]
+        for disease in chronic_diseases:
+            chronic_disease = ChronicDisease(name=disease['name'], type=disease['type'])
+            self.session.add(chronic_disease)
+
+        self.session.commit()
 
