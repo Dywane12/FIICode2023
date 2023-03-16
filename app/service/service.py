@@ -6,7 +6,7 @@ import random_address
 from RandomDataGenerators import *
 from random import randint
 from geopy import Nominatim
-from app.domain.entities import Patient, Doctor, Consultation, Drinker, Smoker, InformationSheet, Father, FamilyHistory, Mother, Brother, Sister, Hospitalization
+from app.domain.entities import Patient, Doctor, Consultation, Drinker, Smoker, InformationSheet, Father, FamilyHistory, Mother, Brother, Sister, Hospitalization, ChronicDisease, Allergy
 from twilio.rest import Client
 from random_address import real_random_address
 import phone_gen
@@ -47,17 +47,53 @@ class Service:
         self.db = db
         if choice:
             self.__add_chronic_diseases()
-            self.__add_alergies()
+            self.__add_allergies()
             self.__add_fake_doctors(5)
             self.__add_fake_patients(10)
             self.__add_fake_consultations(10)
 
     def __add_chronic_diseases(self):
-        pass
+        chronic_diseases = [
+             {'name': 'AIDS/HIV'}, {'name': 'Anemia'}, {'name': 'Anxiety'}, {'name': 'Arthritis'},
+             {'name': 'Artificial Heart Valve'}, {'name': 'Artificial Joint'},
+             {'name': 'Asthma'}, {'name': 'Back Problems'}, {'name': 'Bleeding Disorder'}, {'name': 'Bipolar Disorder'},
+             {'name': 'Bloot Clot/DVT'},
+             {'name': 'Bypass Surgery'},
+             {'name': 'Cancer'}, {'name': 'Chemical Dependency'}, {'name': 'Chest Pain'},
+             {'name': 'Circulatory Problems'}, {'name': 'Depression'},
+             {'name': 'Diabetes' 'How long'}, {'name': 'Emphysema'},
+             {'name': 'Eye Problems'}, {'name': 'Fibromyalgia'}, {'name': 'Fott Cramps'}, {'name': 'Gastric Reflux'},
+             {'name': 'Gout'}, {'name': 'Headaches'},
+             {'name': 'Heart Attack'}, {'name': 'Heart Murmur'},
+             {'name': 'Heart Failure'}, {'name': 'Hemophilia'}, {'name': 'Hepatitis'}, {'name': 'High Blood Pressure'},
+             {'name': 'Kidney Problems'},
+             {'name': 'Leg Cramps'},
+             {'name': 'Liver Disease'}, {'name': 'Low Blood Pressure'}, {'name': 'Mental Illness'},
+             {'name': 'Neuropathy'}, {'name': 'Pacemaker'},
+             {'name': 'Paralysis'}, {'name': 'Phlebitis'},
+             {'name': 'Psoriasis'}, {'name': 'Rheumatic Fever'}, {'name': 'Schizophrenia'},
+             {'name': 'Shortness of Breath'}, {'name': 'Stroke'},
+             {'name': 'Thyroid Problems'},
+             {'name': 'Tuberculosis'}, {'name': 'Ulcers (Stomach)'}, {'name': 'Varicose Veins'},
+             {'name': 'Wight loss, unexplained'},
+             {'name': 'Pregnant?'}, {'name': 'Breastfeeding?'}
+             ]
+        for disease in chronic_diseases:
+            given_chronic_disease = ChronicDisease(name=disease['name'])
+            self.session.add(given_chronic_disease)
+        self.session.commit()
 
-
-    def __add_alergies(self):
-        pass
+    def __add_allergies(self):
+        allergies =[
+            {'name': 'Local anesthesia'}, {'name': 'Aspirin'}, {'name': 'Anti-Inflammatory'}, {'name': 'Penicillin'},
+            {'name': 'Sulfa'}, {'name': 'IVP dye'}, {'name': 'Tetanus'}, {'name': 'General anesthesia'},
+            {'name': 'Latex'}, {'name': 'Tape/Adhesives'}, {'name': 'Iodine'}, {'name': 'Betadine'},
+            {'name': 'Codeine'}, {'name': 'Steroids'}
+            ]
+        for allergy in allergies:
+            given_allergy = Allergy(name=allergy['name'])
+            self.session.add(given_allergy)
+        self.session.commit()
 
     def __add_fake_patients(self, n):
         for i in range(n):
