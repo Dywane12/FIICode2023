@@ -22,6 +22,7 @@ class Patient(UserMixin, db.Model):
     marital_status = db.Column(db.String(16), index=True)
     gender = db.Column(db.String(8), index=True)
     occupation = db.Column(db.String(256), index=True)
+    invite_code = db.Column(db.String(64), index=True, unique=True)
     password_hash = db.Column(db.String(256), index=True, unique=False)
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
     consultations = db.relationship('Consultation', backref='patient')
@@ -29,7 +30,7 @@ class Patient(UserMixin, db.Model):
 
     def __init__(self, username=None, first_name=None, last_name=None, phone_number=None, email=None, address=None,
                  city=None, state=None, postalcode=None, passport_id=None,
-                 birth_date=None, marital_status=None, gender=None, occupation=None, medical_record_id=None,
+                 birth_date=None, marital_status=None, gender=None, occupation=None, invite_code=None,
                  doctor_id=None, password_hash=None):
         self.username = username
         self.first_name = first_name
@@ -45,7 +46,7 @@ class Patient(UserMixin, db.Model):
         self.marital_status = marital_status
         self.gender = gender
         self.occupation = occupation
-        self.medical_record_id = medical_record_id
+        self.invite_code = invite_code
         self.password_hash = password_hash
         self.doctor_id = doctor_id
 

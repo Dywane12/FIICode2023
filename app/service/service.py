@@ -31,14 +31,18 @@ EMAIL_PATIENT = 3
 PHONE_NUMBER_PATIENT = 4
 ADDRESS_PATIENT = 5
 BIRTH_DATE_PATIENT = 6
-ID_SERIES_PATIENT = 6
-ID_NUMBER_PATIENT = 7
-CNP_PATIENT = 8
-MARITAL_STATUS_PATIENT = 9
-GENDER_PATIENT = 10
-MEDICAL_RECORD_ID_PATIENT = 11
-PASSWORD_PATIENT = 12
-INVITE_CODE_PATIENT = 13
+MARITAL_STATUS_PATIENT = 7
+GENDER_PATIENT = 8
+PASSWORD_PATIENT = 10
+INVITE_CODE_PATIENT = 11
+
+ZIP_CODE = 12
+CITY_PATIENT = 13
+COUNTY_PATIENT =14
+PASSPORT_ID_PATIENT = 15
+OCCUPATION_PATIENT = 16
+
+
 
 
 class Service:
@@ -287,25 +291,30 @@ class Service:
         if (register_data[USERNAME_PATIENT] == "" or register_data[FIRST_NAME_PATIENT] == "" or register_data[
             LAST_NAME_PATIENT] == "" or
                 register_data[EMAIL_PATIENT] == ""
-                or register_data[PHONE_NUMBER_PATIENT] == "" or register_data[ADDRESS_PATIENT] == "" or register_data[
-                    ID_SERIES_PATIENT] == "" or register_data[ID_NUMBER_PATIENT] == ""
-                or register_data[CNP_PATIENT] == "" or register_data[MARITAL_STATUS_PATIENT] == "" or register_data[
+                or register_data[PHONE_NUMBER_PATIENT] == "" or register_data[ADDRESS_PATIENT] == ""
+                 or register_data[MARITAL_STATUS_PATIENT] == "" or register_data[
                     PASSWORD_PATIENT] == ""
-                or register_data[GENDER_PATIENT] == ""):
+                or register_data[GENDER_PATIENT] == "" or register_data[ZIP_CODE] == "" or register_data[CITY_PATIENT] == ""
+                or register_data[COUNTY_PATIENT] == "" or register_data[PASSPORT_ID_PATIENT] == ""
+                or register_data[OCCUPATION_PATIENT] == ""
+                    or register_data[BIRTH_DATE_PATIENT] == "" or register_data[INVITE_CODE_PATIENT] == ""):
             raise ValueError
         patient.username = register_data[USERNAME_PATIENT]
         patient.first_name = register_data[FIRST_NAME_PATIENT]
         patient.last_name = register_data[LAST_NAME_PATIENT]
         patient.email = register_data[EMAIL_PATIENT]
+        patient.postalcode = register_data[ZIP_CODE]
+        patient.city = register_data[CITY_PATIENT]
+        patient.state = register_data[COUNTY_PATIENT]
+        patient.passport_id = register_data[PASSPORT_ID_PATIENT]
         patient.phone_number = register_data[PHONE_NUMBER_PATIENT]
         patient.address = register_data[ADDRESS_PATIENT]
-        patient.id_series = register_data[ID_SERIES_PATIENT]
-        patient.id_number = register_data[ID_NUMBER_PATIENT]
-        patient.cnp = register_data[CNP_PATIENT]
         patient.martial_status = register_data[MARITAL_STATUS_PATIENT]
-        patient.medical_record_id = register_data[MEDICAL_RECORD_ID_PATIENT]
+        patient.occupation = register_data[OCCUPATION_PATIENT]
+        patient.birth_date = register_data[BIRTH_DATE_PATIENT]
         patient.set_password(register_data[PASSWORD_PATIENT])
         patient.gender = register_data[GENDER_PATIENT]
+        patient.invite_code = register_data[INVITE_CODE_PATIENT]
         self.db.add_entity(patient)
 
     def get_all_doctors(self):
@@ -381,16 +390,25 @@ class Service:
             patient.phone_number = update_data[PHONE_NUMBER_PATIENT]
         if update_data[ADDRESS_PATIENT] != "":
             patient.address = update_data[ADDRESS_PATIENT]
-        if update_data[ID_SERIES_PATIENT] != "":
-            patient.id_series = update_data[ID_SERIES_PATIENT]
-        if update_data[ID_NUMBER_PATIENT] != "":
-            patient.id_number = update_data[ID_NUMBER_PATIENT]
-        if update_data[CNP_PATIENT] != "":
-            patient.cnp = update_data[CNP_PATIENT]
         if update_data[MARITAL_STATUS_PATIENT] != "":
             patient.martial_status = update_data[MARITAL_STATUS_PATIENT]
         if update_data[PASSWORD_PATIENT] != "":
             patient.set_password(update_data[PASSWORD_PATIENT])
+        if update_data[ZIP_CODE] != "":
+            patient.email = update_data[ZIP_CODE]
+        if update_data[CITY_PATIENT] != "":
+            patient.email = update_data[CITY_PATIENT]
+        if update_data[COUNTY_PATIENT] != "":
+            patient.email = update_data[COUNTY_PATIENT]
+        if update_data[PASSPORT_ID_PATIENT] != "":
+            patient.email = update_data[PASSPORT_ID_PATIENT]
+        if update_data[OCCUPATION_PATIENT] != "":
+            patient.email = update_data[OCCUPATION_PATIENT]
+        if update_data[BIRTH_DATE_PATIENT] != "":
+            patient.email = update_data[BIRTH_DATE_PATIENT]
+        if update_data[INVITE_CODE_PATIENT] != "":
+            patient.email = update_data[INVITE_CODE_PATIENT]
+
 
     def generate_random_code(self):
         n = 0
