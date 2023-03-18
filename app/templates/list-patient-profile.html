@@ -20,7 +20,7 @@
                         <i class="fa fa-caret-down"></i>
                     </button>
                     <div class="dropdown-content">
-                        <a href="/lista-pacienti">Patient list</a>
+                        <a href="/patient-list">Patient list</a>
                         <a href="/invita-pacienti">Invite a patient</a>
                         <a href="/transfer-pacienti">Transfer patients</a>
                     </div>
@@ -73,6 +73,19 @@
             </div>
 
     </section>
+     <script>
+      window.onunload = function() {
+        window.location.reload(true);
+      };
+    </script>
+    <script>
+      window.addEventListener('beforeunload', function (event) {
+        // Send an AJAX request to the server to clear the session
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/clear-session', false);
+        xhr.send(null);
+      });
+    </script>
 </body>
 
 </html>

@@ -1,11 +1,9 @@
 from app import db
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import UserMixin
-from app import login_manager
 from hashlib import md5
 
 
-class Patient(UserMixin, db.Model):
+class Patient(db.Model):
     __tablename__ = "patient"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -67,7 +65,7 @@ class Patient(UserMixin, db.Model):
         return f'Patient: {self.username}'
 
 
-class Doctor(UserMixin, db.Model):
+class Doctor(db.Model):
     __tablename__ = "doctor"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -125,11 +123,6 @@ class Doctor(UserMixin, db.Model):
 
     def __str__(self):
         return f'doctor: {self.username}'
-
-
-@login_manager.user_loader
-def load_user(id):
-    return Doctor.query.get(int(id))
 
 
 class Consultation(db.Model):

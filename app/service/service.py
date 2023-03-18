@@ -5,11 +5,13 @@ import names
 import random_address
 from RandomDataGenerators import *
 from random import randint
-from geopy import Nominatim
+from geopy.geocoders import Nominatim
+from geopy import distance
 from app.domain.entities import Patient, Doctor, Consultation, Drinker, Smoker, InformationSheet, Father, FamilyHistory, Mother, Brother, Sister, Hospitalization, ChronicDisease, Allergy
 from twilio.rest import Client
-from random_address import real_random_address
+import math
 import phone_gen
+
 
 USERNAME_DOCTOR = 0
 FIRST_NAME_DOCTOR = 1
@@ -46,8 +48,8 @@ class Service:
         self.session = session
         self.db = db
         if choice:
-            self.__add_chronic_diseases()
-            self.__add_allergies()
+            #self.__add_chronic_diseases()
+            #self.__add_allergies()
             self.__add_fake_doctors(5)
             self.__add_fake_patients(10)
             self.__add_fake_consultations(10)
@@ -80,8 +82,8 @@ class Service:
              ]
         for disease in chronic_diseases:
             given_chronic_disease = ChronicDisease(name=disease['name'])
-            self.session.add(given_chronic_disease)
-        self.session.commit()
+            self.db.add_entity(given_chronic_disease)
+        self.db.save_to_database()
 
     def __add_allergies(self):
         allergies =[
@@ -92,10 +94,20 @@ class Service:
             ]
         for allergy in allergies:
             given_allergy = Allergy(name=allergy['name'])
-            self.session.add(given_allergy)
-        self.session.commit()
+            self.db.add_entity(given_allergy)
+        self.db.save_to_database()
 
     def __add_fake_patients(self, n):
+        zip_codes = [90011, 91331, 90650, 90201, 90250, 90044, 90805, 90280, 91342, 91744,
+                     91335, 91706, 90706, 90003, 93550, 90255, 93535, 91766, 90262, 91402,
+                     93536, 90631, 90026, 90022, 91343, 90037, 90660, 90019, 91770, 90640,
+                     90042, 90001, 90066, 91732, 90004, 90006, 90731, 91702, 90813, 91406,
+                     90744, 91605, 91405, 91304, 91801, 91745, 90723, 93551, 90018, 90063,
+                     90745, 90221, 90002, 90034, 91344, 90047, 90220, 90046, 91767, 90703,
+                     90023, 90065, 90638, 90057, 90032, 91306, 90033, 91789, 90025, 91352,
+                     91790, 90027, 91733, 90247, 90016, 90007, 90059, 90043, 90024, 91765,
+                     91367, 90503, 90241, 91748, 90242, 92821, 90604, 90806, 91311, 91355,
+                     91606, 91016, 90045]
         for i in range(n):
             doctor = random.choice(self.get_all_doctors())
             patient = Patient(doctor_id=doctor.id)
@@ -192,6 +204,16 @@ class Service:
         self.db.save_to_database()
 
     def __add_fake_doctors(self, n):
+        zip_codes = [90011, 91331, 90650, 90201, 90250, 90044, 90805, 90280, 91342, 91744,
+                     91335, 91706, 90706, 90003, 93550, 90255, 93535, 91766, 90262, 91402,
+                     93536, 90631, 90026, 90022, 91343, 90037, 90660, 90019, 91770, 90640,
+                     90042, 90001, 90066, 91732, 90004, 90006, 90731, 91702, 90813, 91406,
+                     90744, 91605, 91405, 91304, 91801, 91745, 90723, 93551, 90018, 90063,
+                     90745, 90221, 90002, 90034, 91344, 90047, 90220, 90046, 91767, 90703,
+                     90023, 90065, 90638, 90057, 90032, 91306, 90033, 91789, 90025, 91352,
+                     91790, 90027, 91733, 90247, 90016, 90007, 90059, 90043, 90024, 91765,
+                     91367, 90503, 90241, 91748, 90242, 92821, 90604, 90806, 91311, 91355,
+                     91606, 91016, 90045]
         for i in range(n):
             gender = random.choice(['Male', 'Female'])
             first_name, last_name = names.get_full_name(gender=gender.lower()).split()
@@ -441,3 +463,20 @@ class Service:
                                     urgency_grade=urgency_grade)
         self.db.add_entity(consultation)
         self.db.save_to_database()
+
+    def get_doctors_nearby_patient(self, patient_id):
+        geolocator = Nominatim(user_agent="medical_app")
+        patient = self.get_patient_by_id(patient_id)
+        patient_location = geolocator.geocode(patient.address + ' ' + patient.state)
+        doctors_nearby = []
+        for doctor in self.get_all_doctors():
+            doctor_location = geolocator.geocode(doctor.address + ' ' + doctor.state)
+            distance_doctor_to_patient = distance.distance((patient_location.latitude, patient_location.longitude),
+                                                           (doctor_location.latitude, doctor_location.longitude)).km
+            if distance_doctor_to_patient <30:
+                doctors_nearby.append(doctor)
+        return doctors_nearby
+
+
+
+
