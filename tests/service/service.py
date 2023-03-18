@@ -9,6 +9,5 @@ from flask import session
 with app.app_context():
     db_1 = Database(db)
     service = Service(db_1, session)
-    patient = db.session.get(Patient, 7)
-    doctors_nearby = service.get_doctors_nearby_patient(patient.id)
-    print(doctors_nearby)
+    OK = service.validate_medical_proof('Medical+degree.pdf','CALIN ANDREI')
+    print(OK)

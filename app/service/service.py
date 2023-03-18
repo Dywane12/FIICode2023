@@ -7,12 +7,17 @@ from RandomDataGenerators import *
 from random import randint
 from geopy.geocoders import Nominatim
 from geopy import distance
-from app.domain.entities import Patient, Doctor, Consultation, Drinker, Smoker, InformationSheet, Father, FamilyHistory, Mother, Brother, Sister, Hospitalization, ChronicDisease, Allergy
+import re
+from pdfminer.high_level import extract_text
+import app
+from app.domain.entities import Patient, Doctor, Consultation, Drinker, Smoker, InformationSheet, Father, FamilyHistory, \
+    Mother, Brother, Sister, Hospitalization, ChronicDisease, Allergy
 from twilio.rest import Client
-import math
+import os
+from werkzeug.utils import secure_filename
 import phone_gen
 
-
+ALLOWED_EXTENSIONS = {'jpg', 'pdf'}
 USERNAME_DOCTOR = 0
 FIRST_NAME_DOCTOR = 1
 LAST_NAME_DOCTOR = 2
@@ -48,50 +53,50 @@ class Service:
         self.session = session
         self.db = db
         if choice:
-            #self.__add_chronic_diseases()
-            #self.__add_allergies()
+            # self.__add_chronic_diseases()
+            # self.__add_allergies()
             self.__add_fake_doctors(5)
             self.__add_fake_patients(10)
             self.__add_fake_consultations(10)
 
     def __add_chronic_diseases(self):
         chronic_diseases = [
-             {'name': 'AIDS/HIV'}, {'name': 'Anemia'}, {'name': 'Anxiety'}, {'name': 'Arthritis'},
-             {'name': 'Artificial Heart Valve'}, {'name': 'Artificial Joint'},
-             {'name': 'Asthma'}, {'name': 'Back Problems'}, {'name': 'Bleeding Disorder'}, {'name': 'Bipolar Disorder'},
-             {'name': 'Bloot Clot/DVT'},
-             {'name': 'Bypass Surgery'},
-             {'name': 'Cancer'}, {'name': 'Chemical Dependency'}, {'name': 'Chest Pain'},
-             {'name': 'Circulatory Problems'}, {'name': 'Depression'},
-             {'name': 'Diabetes' 'How long'}, {'name': 'Emphysema'},
-             {'name': 'Eye Problems'}, {'name': 'Fibromyalgia'}, {'name': 'Fott Cramps'}, {'name': 'Gastric Reflux'},
-             {'name': 'Gout'}, {'name': 'Headaches'},
-             {'name': 'Heart Attack'}, {'name': 'Heart Murmur'},
-             {'name': 'Heart Failure'}, {'name': 'Hemophilia'}, {'name': 'Hepatitis'}, {'name': 'High Blood Pressure'},
-             {'name': 'Kidney Problems'},
-             {'name': 'Leg Cramps'},
-             {'name': 'Liver Disease'}, {'name': 'Low Blood Pressure'}, {'name': 'Mental Illness'},
-             {'name': 'Neuropathy'}, {'name': 'Pacemaker'},
-             {'name': 'Paralysis'}, {'name': 'Phlebitis'},
-             {'name': 'Psoriasis'}, {'name': 'Rheumatic Fever'}, {'name': 'Schizophrenia'},
-             {'name': 'Shortness of Breath'}, {'name': 'Stroke'},
-             {'name': 'Thyroid Problems'},
-             {'name': 'Tuberculosis'}, {'name': 'Ulcers (Stomach)'}, {'name': 'Varicose Veins'},
-             {'name': 'Wight loss, unexplained'},
-             {'name': 'Pregnant?'}, {'name': 'Breastfeeding?'}
-             ]
+            {'name': 'AIDS/HIV'}, {'name': 'Anemia'}, {'name': 'Anxiety'}, {'name': 'Arthritis'},
+            {'name': 'Artificial Heart Valve'}, {'name': 'Artificial Joint'},
+            {'name': 'Asthma'}, {'name': 'Back Problems'}, {'name': 'Bleeding Disorder'}, {'name': 'Bipolar Disorder'},
+            {'name': 'Bloot Clot/DVT'},
+            {'name': 'Bypass Surgery'},
+            {'name': 'Cancer'}, {'name': 'Chemical Dependency'}, {'name': 'Chest Pain'},
+            {'name': 'Circulatory Problems'}, {'name': 'Depression'},
+            {'name': 'Diabetes' 'How long'}, {'name': 'Emphysema'},
+            {'name': 'Eye Problems'}, {'name': 'Fibromyalgia'}, {'name': 'Fott Cramps'}, {'name': 'Gastric Reflux'},
+            {'name': 'Gout'}, {'name': 'Headaches'},
+            {'name': 'Heart Attack'}, {'name': 'Heart Murmur'},
+            {'name': 'Heart Failure'}, {'name': 'Hemophilia'}, {'name': 'Hepatitis'}, {'name': 'High Blood Pressure'},
+            {'name': 'Kidney Problems'},
+            {'name': 'Leg Cramps'},
+            {'name': 'Liver Disease'}, {'name': 'Low Blood Pressure'}, {'name': 'Mental Illness'},
+            {'name': 'Neuropathy'}, {'name': 'Pacemaker'},
+            {'name': 'Paralysis'}, {'name': 'Phlebitis'},
+            {'name': 'Psoriasis'}, {'name': 'Rheumatic Fever'}, {'name': 'Schizophrenia'},
+            {'name': 'Shortness of Breath'}, {'name': 'Stroke'},
+            {'name': 'Thyroid Problems'},
+            {'name': 'Tuberculosis'}, {'name': 'Ulcers (Stomach)'}, {'name': 'Varicose Veins'},
+            {'name': 'Wight loss, unexplained'},
+            {'name': 'Pregnant?'}, {'name': 'Breastfeeding?'}
+        ]
         for disease in chronic_diseases:
             given_chronic_disease = ChronicDisease(name=disease['name'])
             self.db.add_entity(given_chronic_disease)
         self.db.save_to_database()
 
     def __add_allergies(self):
-        allergies =[
+        allergies = [
             {'name': 'Local anesthesia'}, {'name': 'Aspirin'}, {'name': 'Anti-Inflammatory'}, {'name': 'Penicillin'},
             {'name': 'Sulfa'}, {'name': 'IVP dye'}, {'name': 'Tetanus'}, {'name': 'General anesthesia'},
             {'name': 'Latex'}, {'name': 'Tape/Adhesives'}, {'name': 'Iodine'}, {'name': 'Betadine'},
             {'name': 'Codeine'}, {'name': 'Steroids'}
-            ]
+        ]
         for allergy in allergies:
             given_allergy = Allergy(name=allergy['name'])
             self.db.add_entity(given_allergy)
@@ -249,7 +254,8 @@ class Service:
             time = self.__random_date(date(2015, 1, 1), datetime.now().date())
             pdf = randint(100, 1000 - 1)
             urgency_grade = randint(1, 5)
-            consultation = Consultation(patient_id=patient_id, doctor_id=doctor_id, time=time, pdf=pdf,urgency_grade=urgency_grade)
+            consultation = Consultation(patient_id=patient_id, doctor_id=doctor_id, time=time, pdf=pdf,
+                                        urgency_grade=urgency_grade)
             self.db.add_entity(consultation)
         self.db.save_to_database()
 
@@ -414,7 +420,8 @@ class Service:
         if update_data[PASSWORD_PATIENT] != "":
             patient.set_password(update_data[PASSWORD_PATIENT])
 
-    def generate_random_code(self):
+    @staticmethod
+    def generate_random_code():
         n = 0
         for _ in range(7):
             k = random.randint(0, 9)
@@ -473,10 +480,34 @@ class Service:
             doctor_location = geolocator.geocode(doctor.address + ' ' + doctor.state)
             distance_doctor_to_patient = distance.distance((patient_location.latitude, patient_location.longitude),
                                                            (doctor_location.latitude, doctor_location.longitude)).km
-            if distance_doctor_to_patient <30:
+            if distance_doctor_to_patient < 30:
                 doctors_nearby.append(doctor)
         return doctors_nearby
 
+    @staticmethod
+    def allowed_file(filename):
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+    @staticmethod
+    def save_file(file):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                               app.config['UPLOAD_FOLDER'], filename))
 
+    @staticmethod
+    def validate_medical_proof(filename, medic_name):
+        text = extract_text(filename)
+        is_medic = re.compile('{}'.format(medic_name),  re.IGNORECASE)
+        medic_name_matches = is_medic.findall(text)
+        if len(medic_name_matches) == 0:
+            return False
+        is_medical_degree = re.compile("Medical Degree",  re.IGNORECASE)
+        medical_degree_matches = is_medical_degree.findall(text)
+        if len(medical_degree_matches) == 0:
+            return False
+        is_university = re.compile("University",  re.IGNORECASE)
+        university_matches = is_university.findall(text)
+        if len(university_matches) == 0:
+            return False
+        return True
 
