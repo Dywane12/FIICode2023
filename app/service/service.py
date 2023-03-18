@@ -7,17 +7,12 @@ from RandomDataGenerators import *
 from random import randint
 from geopy.geocoders import Nominatim
 from geopy import distance
-import re
-from pdfminer.high_level import extract_text
-import app
-from app.domain.entities import Patient, Doctor, Consultation, Drinker, Smoker, InformationSheet, Father, FamilyHistory, \
-    Mother, Brother, Sister, Hospitalization, ChronicDisease, Allergy
+from app.domain.entities import Patient, Doctor, Consultation, Drinker, Smoker, InformationSheet, Father, FamilyHistory, Mother, Brother, Sister, Hospitalization, ChronicDisease, Allergy
 from twilio.rest import Client
-import os
-from werkzeug.utils import secure_filename
+import math
 import phone_gen
 
-ALLOWED_EXTENSIONS = {'jpg', 'pdf'}
+
 USERNAME_DOCTOR = 0
 FIRST_NAME_DOCTOR = 1
 LAST_NAME_DOCTOR = 2
@@ -38,18 +33,14 @@ EMAIL_PATIENT = 3
 PHONE_NUMBER_PATIENT = 4
 ADDRESS_PATIENT = 5
 BIRTH_DATE_PATIENT = 6
-MARITAL_STATUS_PATIENT = 7
-GENDER_PATIENT = 8
-PASSWORD_PATIENT = 10
-INVITE_CODE_PATIENT = 11
-
-ZIP_CODE = 12
-CITY_PATIENT = 13
-COUNTY_PATIENT =14
-PASSPORT_ID_PATIENT = 15
-OCCUPATION_PATIENT = 16
-
-
+ID_SERIES_PATIENT = 6
+ID_NUMBER_PATIENT = 7
+CNP_PATIENT = 8
+MARITAL_STATUS_PATIENT = 9
+GENDER_PATIENT = 10
+MEDICAL_RECORD_ID_PATIENT = 11
+PASSWORD_PATIENT = 12
+INVITE_CODE_PATIENT = 13
 
 
 class Service:
@@ -57,50 +48,50 @@ class Service:
         self.session = session
         self.db = db
         if choice:
-            # self.__add_chronic_diseases()
-            # self.__add_allergies()
+            #self.__add_chronic_diseases()
+            #self.__add_allergies()
             self.__add_fake_doctors(5)
             self.__add_fake_patients(10)
             self.__add_fake_consultations(10)
 
     def __add_chronic_diseases(self):
         chronic_diseases = [
-            {'name': 'AIDS/HIV'}, {'name': 'Anemia'}, {'name': 'Anxiety'}, {'name': 'Arthritis'},
-            {'name': 'Artificial Heart Valve'}, {'name': 'Artificial Joint'},
-            {'name': 'Asthma'}, {'name': 'Back Problems'}, {'name': 'Bleeding Disorder'}, {'name': 'Bipolar Disorder'},
-            {'name': 'Bloot Clot/DVT'},
-            {'name': 'Bypass Surgery'},
-            {'name': 'Cancer'}, {'name': 'Chemical Dependency'}, {'name': 'Chest Pain'},
-            {'name': 'Circulatory Problems'}, {'name': 'Depression'},
-            {'name': 'Diabetes' 'How long'}, {'name': 'Emphysema'},
-            {'name': 'Eye Problems'}, {'name': 'Fibromyalgia'}, {'name': 'Fott Cramps'}, {'name': 'Gastric Reflux'},
-            {'name': 'Gout'}, {'name': 'Headaches'},
-            {'name': 'Heart Attack'}, {'name': 'Heart Murmur'},
-            {'name': 'Heart Failure'}, {'name': 'Hemophilia'}, {'name': 'Hepatitis'}, {'name': 'High Blood Pressure'},
-            {'name': 'Kidney Problems'},
-            {'name': 'Leg Cramps'},
-            {'name': 'Liver Disease'}, {'name': 'Low Blood Pressure'}, {'name': 'Mental Illness'},
-            {'name': 'Neuropathy'}, {'name': 'Pacemaker'},
-            {'name': 'Paralysis'}, {'name': 'Phlebitis'},
-            {'name': 'Psoriasis'}, {'name': 'Rheumatic Fever'}, {'name': 'Schizophrenia'},
-            {'name': 'Shortness of Breath'}, {'name': 'Stroke'},
-            {'name': 'Thyroid Problems'},
-            {'name': 'Tuberculosis'}, {'name': 'Ulcers (Stomach)'}, {'name': 'Varicose Veins'},
-            {'name': 'Wight loss, unexplained'},
-            {'name': 'Pregnant?'}, {'name': 'Breastfeeding?'}
-        ]
+             {'name': 'AIDS/HIV'}, {'name': 'Anemia'}, {'name': 'Anxiety'}, {'name': 'Arthritis'},
+             {'name': 'Artificial Heart Valve'}, {'name': 'Artificial Joint'},
+             {'name': 'Asthma'}, {'name': 'Back Problems'}, {'name': 'Bleeding Disorder'}, {'name': 'Bipolar Disorder'},
+             {'name': 'Bloot Clot/DVT'},
+             {'name': 'Bypass Surgery'},
+             {'name': 'Cancer'}, {'name': 'Chemical Dependency'}, {'name': 'Chest Pain'},
+             {'name': 'Circulatory Problems'}, {'name': 'Depression'},
+             {'name': 'Diabetes' 'How long'}, {'name': 'Emphysema'},
+             {'name': 'Eye Problems'}, {'name': 'Fibromyalgia'}, {'name': 'Fott Cramps'}, {'name': 'Gastric Reflux'},
+             {'name': 'Gout'}, {'name': 'Headaches'},
+             {'name': 'Heart Attack'}, {'name': 'Heart Murmur'},
+             {'name': 'Heart Failure'}, {'name': 'Hemophilia'}, {'name': 'Hepatitis'}, {'name': 'High Blood Pressure'},
+             {'name': 'Kidney Problems'},
+             {'name': 'Leg Cramps'},
+             {'name': 'Liver Disease'}, {'name': 'Low Blood Pressure'}, {'name': 'Mental Illness'},
+             {'name': 'Neuropathy'}, {'name': 'Pacemaker'},
+             {'name': 'Paralysis'}, {'name': 'Phlebitis'},
+             {'name': 'Psoriasis'}, {'name': 'Rheumatic Fever'}, {'name': 'Schizophrenia'},
+             {'name': 'Shortness of Breath'}, {'name': 'Stroke'},
+             {'name': 'Thyroid Problems'},
+             {'name': 'Tuberculosis'}, {'name': 'Ulcers (Stomach)'}, {'name': 'Varicose Veins'},
+             {'name': 'Wight loss, unexplained'},
+             {'name': 'Pregnant?'}, {'name': 'Breastfeeding?'}
+             ]
         for disease in chronic_diseases:
             given_chronic_disease = ChronicDisease(name=disease['name'])
             self.db.add_entity(given_chronic_disease)
         self.db.save_to_database()
 
     def __add_allergies(self):
-        allergies = [
+        allergies =[
             {'name': 'Local anesthesia'}, {'name': 'Aspirin'}, {'name': 'Anti-Inflammatory'}, {'name': 'Penicillin'},
             {'name': 'Sulfa'}, {'name': 'IVP dye'}, {'name': 'Tetanus'}, {'name': 'General anesthesia'},
             {'name': 'Latex'}, {'name': 'Tape/Adhesives'}, {'name': 'Iodine'}, {'name': 'Betadine'},
             {'name': 'Codeine'}, {'name': 'Steroids'}
-        ]
+            ]
         for allergy in allergies:
             given_allergy = Allergy(name=allergy['name'])
             self.db.add_entity(given_allergy)
@@ -258,8 +249,7 @@ class Service:
             time = self.__random_date(date(2015, 1, 1), datetime.now().date())
             pdf = randint(100, 1000 - 1)
             urgency_grade = randint(1, 5)
-            consultation = Consultation(patient_id=patient_id, doctor_id=doctor_id, time=time, pdf=pdf,
-                                        urgency_grade=urgency_grade)
+            consultation = Consultation(patient_id=patient_id, doctor_id=doctor_id, time=time, pdf=pdf,urgency_grade=urgency_grade)
             self.db.add_entity(consultation)
         self.db.save_to_database()
 
@@ -319,30 +309,25 @@ class Service:
         if (register_data[USERNAME_PATIENT] == "" or register_data[FIRST_NAME_PATIENT] == "" or register_data[
             LAST_NAME_PATIENT] == "" or
                 register_data[EMAIL_PATIENT] == ""
-                or register_data[PHONE_NUMBER_PATIENT] == "" or register_data[ADDRESS_PATIENT] == ""
-                 or register_data[MARITAL_STATUS_PATIENT] == "" or register_data[
+                or register_data[PHONE_NUMBER_PATIENT] == "" or register_data[ADDRESS_PATIENT] == "" or register_data[
+                    ID_SERIES_PATIENT] == "" or register_data[ID_NUMBER_PATIENT] == ""
+                or register_data[CNP_PATIENT] == "" or register_data[MARITAL_STATUS_PATIENT] == "" or register_data[
                     PASSWORD_PATIENT] == ""
-                or register_data[GENDER_PATIENT] == "" or register_data[ZIP_CODE] == "" or register_data[CITY_PATIENT] == ""
-                or register_data[COUNTY_PATIENT] == "" or register_data[PASSPORT_ID_PATIENT] == ""
-                or register_data[OCCUPATION_PATIENT] == ""
-                    or register_data[BIRTH_DATE_PATIENT] == "" or register_data[INVITE_CODE_PATIENT] == ""):
+                or register_data[GENDER_PATIENT] == ""):
             raise ValueError
         patient.username = register_data[USERNAME_PATIENT]
         patient.first_name = register_data[FIRST_NAME_PATIENT]
         patient.last_name = register_data[LAST_NAME_PATIENT]
         patient.email = register_data[EMAIL_PATIENT]
-        patient.postalcode = register_data[ZIP_CODE]
-        patient.city = register_data[CITY_PATIENT]
-        patient.state = register_data[COUNTY_PATIENT]
-        patient.passport_id = register_data[PASSPORT_ID_PATIENT]
         patient.phone_number = register_data[PHONE_NUMBER_PATIENT]
         patient.address = register_data[ADDRESS_PATIENT]
+        patient.id_series = register_data[ID_SERIES_PATIENT]
+        patient.id_number = register_data[ID_NUMBER_PATIENT]
+        patient.cnp = register_data[CNP_PATIENT]
         patient.martial_status = register_data[MARITAL_STATUS_PATIENT]
-        patient.occupation = register_data[OCCUPATION_PATIENT]
-        patient.birth_date = register_data[BIRTH_DATE_PATIENT]
+        patient.medical_record_id = register_data[MEDICAL_RECORD_ID_PATIENT]
         patient.set_password(register_data[PASSWORD_PATIENT])
         patient.gender = register_data[GENDER_PATIENT]
-        patient.invite_code = register_data[INVITE_CODE_PATIENT]
         self.db.add_entity(patient)
 
     def get_all_doctors(self):
@@ -418,28 +403,18 @@ class Service:
             patient.phone_number = update_data[PHONE_NUMBER_PATIENT]
         if update_data[ADDRESS_PATIENT] != "":
             patient.address = update_data[ADDRESS_PATIENT]
+        if update_data[ID_SERIES_PATIENT] != "":
+            patient.id_series = update_data[ID_SERIES_PATIENT]
+        if update_data[ID_NUMBER_PATIENT] != "":
+            patient.id_number = update_data[ID_NUMBER_PATIENT]
+        if update_data[CNP_PATIENT] != "":
+            patient.cnp = update_data[CNP_PATIENT]
         if update_data[MARITAL_STATUS_PATIENT] != "":
             patient.martial_status = update_data[MARITAL_STATUS_PATIENT]
         if update_data[PASSWORD_PATIENT] != "":
             patient.set_password(update_data[PASSWORD_PATIENT])
-        if update_data[ZIP_CODE] != "":
-            patient.email = update_data[ZIP_CODE]
-        if update_data[CITY_PATIENT] != "":
-            patient.email = update_data[CITY_PATIENT]
-        if update_data[COUNTY_PATIENT] != "":
-            patient.email = update_data[COUNTY_PATIENT]
-        if update_data[PASSPORT_ID_PATIENT] != "":
-            patient.email = update_data[PASSPORT_ID_PATIENT]
-        if update_data[OCCUPATION_PATIENT] != "":
-            patient.email = update_data[OCCUPATION_PATIENT]
-        if update_data[BIRTH_DATE_PATIENT] != "":
-            patient.email = update_data[BIRTH_DATE_PATIENT]
-        if update_data[INVITE_CODE_PATIENT] != "":
-            patient.email = update_data[INVITE_CODE_PATIENT]
 
-
-    @staticmethod
-    def generate_random_code():
+    def generate_random_code(self):
         n = 0
         for _ in range(7):
             k = random.randint(0, 9)
@@ -498,34 +473,10 @@ class Service:
             doctor_location = geolocator.geocode(doctor.address + ' ' + doctor.state)
             distance_doctor_to_patient = distance.distance((patient_location.latitude, patient_location.longitude),
                                                            (doctor_location.latitude, doctor_location.longitude)).km
-            if distance_doctor_to_patient < 30:
+            if distance_doctor_to_patient <30:
                 doctors_nearby.append(doctor)
         return doctors_nearby
 
-    @staticmethod
-    def allowed_file(filename):
-        return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-    @staticmethod
-    def save_file(file):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                               app.config['UPLOAD_FOLDER'], filename))
 
-    @staticmethod
-    def validate_medical_proof(filename, medic_name):
-        text = extract_text(filename)
-        is_medic = re.compile('{}'.format(medic_name),  re.IGNORECASE)
-        medic_name_matches = is_medic.findall(text)
-        if len(medic_name_matches) == 0:
-            return False
-        is_medical_degree = re.compile("Medical Degree",  re.IGNORECASE)
-        medical_degree_matches = is_medical_degree.findall(text)
-        if len(medical_degree_matches) == 0:
-            return False
-        is_university = re.compile("University",  re.IGNORECASE)
-        university_matches = is_university.findall(text)
-        if len(university_matches) == 0:
-            return False
-        return True
 
