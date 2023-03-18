@@ -37,15 +37,16 @@ LAST_NAME_PATIENT = 2
 EMAIL_PATIENT = 3
 PHONE_NUMBER_PATIENT = 4
 ADDRESS_PATIENT = 5
-BIRTH_DATE_PATIENT = 6
-ID_SERIES_PATIENT = 6
-ID_NUMBER_PATIENT = 7
-CNP_PATIENT = 8
-MARITAL_STATUS_PATIENT = 9
-GENDER_PATIENT = 10
-MEDICAL_RECORD_ID_PATIENT = 11
-PASSWORD_PATIENT = 12
-INVITE_CODE_PATIENT = 13
+ZIP_CODE_PATIENT = 6#
+CITY_PATIENT = 7#
+COUNTY_PATIENT = 8#
+PASSPORT_ID_PATIENT = 9#
+BIRTH_DATE_PATIENT = 10#
+MARITAL_STATUS_PATIENT = 11
+GENDER_PATIENT = 12
+OCCUPATION_PATIENT = 13#
+PASSWORD_PATIENT = 14
+INVITE_CODE_PATIENT = 15#
 
 
 class Service:
@@ -315,11 +316,11 @@ class Service:
         if (register_data[USERNAME_PATIENT] == "" or register_data[FIRST_NAME_PATIENT] == "" or register_data[
             LAST_NAME_PATIENT] == "" or
                 register_data[EMAIL_PATIENT] == ""
-                or register_data[PHONE_NUMBER_PATIENT] == "" or register_data[ADDRESS_PATIENT] == "" or register_data[
-                    ID_SERIES_PATIENT] == "" or register_data[ID_NUMBER_PATIENT] == ""
-                or register_data[CNP_PATIENT] == "" or register_data[MARITAL_STATUS_PATIENT] == "" or register_data[
-                    PASSWORD_PATIENT] == ""
-                or register_data[GENDER_PATIENT] == ""):
+                or register_data[PHONE_NUMBER_PATIENT] == "" or register_data[ADDRESS_PATIENT] == ""
+                or register_data[MARITAL_STATUS_PATIENT] == "" or register_data[
+                    PASSWORD_PATIENT] == "" or register_data[GENDER_PATIENT] == "" or register_data[ZIP_CODE_PATIENT] == ""
+                or register_data[CITY_PATIENT] == "" or register_data[COUNTY_PATIENT] == "" or register_data[PASSPORT_ID_PATIENT] == ""
+                 or register_data[BIRTH_DATE_PATIENT] == "" or register_data[OCCUPATION_PATIENT] == "" or register_data[INVITE_CODE_PATIENT] == ""):
             raise ValueError
         patient.username = register_data[USERNAME_PATIENT]
         patient.first_name = register_data[FIRST_NAME_PATIENT]
@@ -327,11 +328,14 @@ class Service:
         patient.email = register_data[EMAIL_PATIENT]
         patient.phone_number = register_data[PHONE_NUMBER_PATIENT]
         patient.address = register_data[ADDRESS_PATIENT]
-        patient.id_series = register_data[ID_SERIES_PATIENT]
-        patient.id_number = register_data[ID_NUMBER_PATIENT]
-        patient.cnp = register_data[CNP_PATIENT]
+        patient.postalcode = register_data[ZIP_CODE_PATIENT]
+        patient.city = register_data[CITY_PATIENT]
+        patient.state = register_data[COUNTY_PATIENT]
+        patient.passport_id = register_data[PASSPORT_ID_PATIENT]
+        patient.birth_date = register_data[BIRTH_DATE_PATIENT]
+        patient.occupation = register_data[OCCUPATION_PATIENT]
+        patient.invite_code = register_data[INVITE_CODE_PATIENT]
         patient.martial_status = register_data[MARITAL_STATUS_PATIENT]
-        patient.medical_record_id = register_data[MEDICAL_RECORD_ID_PATIENT]
         patient.set_password(register_data[PASSWORD_PATIENT])
         patient.gender = register_data[GENDER_PATIENT]
         self.db.add_entity(patient)
@@ -409,12 +413,20 @@ class Service:
             patient.phone_number = update_data[PHONE_NUMBER_PATIENT]
         if update_data[ADDRESS_PATIENT] != "":
             patient.address = update_data[ADDRESS_PATIENT]
-        if update_data[ID_SERIES_PATIENT] != "":
-            patient.id_series = update_data[ID_SERIES_PATIENT]
-        if update_data[ID_NUMBER_PATIENT] != "":
-            patient.id_number = update_data[ID_NUMBER_PATIENT]
-        if update_data[CNP_PATIENT] != "":
-            patient.cnp = update_data[CNP_PATIENT]
+        if update_data[ZIP_CODE_PATIENT] != "":
+            patient.postalcode = update_data[ZIP_CODE_PATIENT]
+        if update_data[PASSPORT_ID_PATIENT] != "":
+            patient.passport_id = update_data[PASSPORT_ID_PATIENT]
+        if update_data[BIRTH_DATE_PATIENT] != "":
+            patient.birth_date = update_data[BIRTH_DATE_PATIENT]
+        if update_data[OCCUPATION_PATIENT] != "":
+            patient.occupation = update_data[OCCUPATION_PATIENT]
+        if update_data[CITY_PATIENT] != "":
+            patient.city = update_data[CITY_PATIENT]
+        if update_data[COUNTY_PATIENT] != "":
+            patient.state = update_data[COUNTY_PATIENT]
+        if update_data[INVITE_CODE_PATIENT] != "":
+            patient.invite_code = update_data[INVITE_CODE_PATIENT]
         if update_data[MARITAL_STATUS_PATIENT] != "":
             patient.martial_status = update_data[MARITAL_STATUS_PATIENT]
         if update_data[PASSWORD_PATIENT] != "":
