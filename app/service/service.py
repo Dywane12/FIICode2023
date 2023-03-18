@@ -8,7 +8,7 @@ from random import randint
 from geopy.geocoders import Nominatim
 from geopy import distance
 import re
-from pdfminer.high_level import extract_text
+#from pdfminer.high_level import extract_text
 import app
 from app.domain.entities import Patient, Doctor, Consultation, Drinker, Smoker, InformationSheet, Father, FamilyHistory, \
     Mother, Brother, Sister, Hospitalization, ChronicDisease, Allergy
@@ -37,17 +37,18 @@ LAST_NAME_PATIENT = 2
 EMAIL_PATIENT = 3
 PHONE_NUMBER_PATIENT = 4
 ADDRESS_PATIENT = 5
-ZIP_CODE_PATIENT = 6#
-CITY_PATIENT = 7#
-COUNTY_PATIENT = 8#
-PASSPORT_ID_PATIENT = 9#
-BIRTH_DATE_PATIENT = 10#
+ZIP_CODE_PATIENT = 6
+CITY_PATIENT = 7
+COUNTY_PATIENT = 8
+PASSPORT_ID_PATIENT = 9
+BIRTH_DATE_PATIENT = 10
 MARITAL_STATUS_PATIENT = 11
 GENDER_PATIENT = 12
-OCCUPATION_PATIENT = 13#
+OCCUPATION_PATIENT = 13
 PASSWORD_PATIENT = 14
-INVITE_CODE_PATIENT = 15#
+INVITE_CODE_PATIENT = 15
 
+DOCTOR_ID = 16
 
 class Service:
     def __init__(self, db, session, choice=False):
@@ -338,6 +339,7 @@ class Service:
         patient.martial_status = register_data[MARITAL_STATUS_PATIENT]
         patient.set_password(register_data[PASSWORD_PATIENT])
         patient.gender = register_data[GENDER_PATIENT]
+        #patient.doctor_id = register_data[DOCTOR_ID]
         self.db.add_entity(patient)
 
     def get_all_doctors(self):
@@ -431,7 +433,10 @@ class Service:
             patient.martial_status = update_data[MARITAL_STATUS_PATIENT]
         if update_data[PASSWORD_PATIENT] != "":
             patient.set_password(update_data[PASSWORD_PATIENT])
-
+        if update_data[GENDER_PATIENT] != "":
+            patient.gender = update_data[GENDER_PATIENT]
+        #if update_data[DOCTOR_ID] != "":
+            #patient.doctor_id = update_data[DOCTOR_ID]
     @staticmethod
     def generate_random_code():
         n = 0

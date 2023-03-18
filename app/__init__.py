@@ -16,4 +16,3 @@ app.config['UPLOAD_FOLDER'] = 'static/files'
 metadata = MetaData(naming_convention=convention)
 db = SQLAlchemy(app, metadata=metadata)
 migrate = Migrate(app, db, render_as_batch=True)
-
