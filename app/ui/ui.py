@@ -2,11 +2,11 @@ import flask
 
 from app import app, db
 from flask import render_template, redirect, url_for, request, session
-from flask_login import login_user, logout_user, current_user
 from app.repository.database import Database
 from app.service.service import Service
 from werkzeug.security import check_password_hash
 import datetime
+
 with app.app_context():
     db_1 = Database(db)
     """db_1.clear_patients_table()
@@ -61,7 +61,6 @@ class Routes:
             return redirect(url_for('patient_home'))
         return render_template('index.html')
 
-
     @staticmethod
     @app.route('/register-medic')
     def register_page_medic():
@@ -75,13 +74,20 @@ class Routes:
     @staticmethod
     @app.route('/register-patient-2')
     def register_patient_2():
-        diseases = [{'name': 'AIDS/HIV', 'type': ''}, {'name': 'Anemia', 'type': ''}, {'name': 'Anxiety', 'type': ''}, {'name': 'Arthritis', 'type': 'Type'},
+        diseases = [{'name': 'AIDS/HIV', 'type': ''}, {'name': 'Anemia', 'type': ''}, {'name': 'Anxiety', 'type': ''},
+                    {'name': 'Arthritis', 'type': 'Type'},
                     {'name': 'Artificial Heart Valve', 'type': ''}, {'name': 'Artificial Joint', 'type': ''},
-                    {'name': 'Asthma', 'type': ''}, {'name': 'Back Problems', 'type': ''}, {'name': 'Bleeding Disorder', 'type': ''}, {'name': 'Bipolar Disorder', 'type': ''}, {'name': 'Bloot Clot/DVT', 'type': ''},
+                    {'name': 'Asthma', 'type': ''}, {'name': 'Back Problems', 'type': ''},
+                    {'name': 'Bleeding Disorder', 'type': ''}, {'name': 'Bipolar Disorder', 'type': ''},
+                    {'name': 'Bloot Clot/DVT', 'type': ''},
                     {'name': 'Bypass Surgery', 'type': ''},
-                    {'name': 'Cancer', 'type': 'Type'}, {'name': 'Chemical Dependency', 'type': ''}, {'name': 'Chest Pain', 'type':''}, {'name': 'Circulatory Problems', 'type': ''}, {'name': 'Depression', 'type': ''},
+                    {'name': 'Cancer', 'type': 'Type'}, {'name': 'Chemical Dependency', 'type': ''},
+                    {'name': 'Chest Pain', 'type': ''}, {'name': 'Circulatory Problems', 'type': ''},
+                    {'name': 'Depression', 'type': ''},
                     {'name': 'Diabetes', 'type': 'Type' 'How long'}, {'name': 'Emphysema', 'type': ''},
-                    {'name': 'Eye Problems', 'type': ''}, {'name': 'Fibromyalgia', 'type': ''}, {'name': 'Fott Cramps', 'type':''}, {'name': 'Gastric Reflux', 'type': ''}, {'name': 'Gout', 'type': ''}, {'name': 'Headaches', 'type': ''},
+                    {'name': 'Eye Problems', 'type': ''}, {'name': 'Fibromyalgia', 'type': ''},
+                    {'name': 'Fott Cramps', 'type': ''}, {'name': 'Gastric Reflux', 'type': ''},
+                    {'name': 'Gout', 'type': ''}, {'name': 'Headaches', 'type': ''},
                     {'name': 'Heart Attack', 'type': ''}, {'name': 'Heart Murmur', 'type': ''},
                     ]
         return render_template('register_patient_2.html', diseases=diseases)
@@ -89,13 +95,20 @@ class Routes:
     @staticmethod
     @app.route('/register-patient-3')
     def register_patient_3():
-        diseases = [{'name': 'Heart Failure', 'type': ''}, {'name': 'Hemophilia', 'type': ''}, {'name': 'Hepatitis', 'type':''}, {'name': 'High Blood Pressure', 'type': ''}, {'name': 'Kidney Problems', 'type': ''},
+        diseases = [{'name': 'Heart Failure', 'type': ''}, {'name': 'Hemophilia', 'type': ''},
+                    {'name': 'Hepatitis', 'type': ''}, {'name': 'High Blood Pressure', 'type': ''},
+                    {'name': 'Kidney Problems', 'type': ''},
                     {'name': 'Leg Cramps', 'type': ''},
-                    {'name': 'Liver Disease', 'type': ''}, {'name': 'Low Blood Pressure', 'type': ''}, {'name': 'Mental Illness', 'type': ''}, {'name':'Neuropathy', 'type': ''}, {'name': 'Pacemaker', 'type': ''},
-                    {'name': 'Paralysis', 'type': ''}, {'name': 'Phlebitis', 'type' :''},
-                    {'name': 'Psoriasis', 'type': ''}, {'name': 'Rheumatic Fever', 'type': ''}, {'name': 'Schizophrenia', 'type': ''}, {'name': 'Shortness of Breath', 'type': ''}, {'name': 'Stroke', 'type': ''},
+                    {'name': 'Liver Disease', 'type': ''}, {'name': 'Low Blood Pressure', 'type': ''},
+                    {'name': 'Mental Illness', 'type': ''}, {'name': 'Neuropathy', 'type': ''},
+                    {'name': 'Pacemaker', 'type': ''},
+                    {'name': 'Paralysis', 'type': ''}, {'name': 'Phlebitis', 'type': ''},
+                    {'name': 'Psoriasis', 'type': ''}, {'name': 'Rheumatic Fever', 'type': ''},
+                    {'name': 'Schizophrenia', 'type': ''}, {'name': 'Shortness of Breath', 'type': ''},
+                    {'name': 'Stroke', 'type': ''},
                     {'name': 'Thyroid Problems', 'type': 'Type'},
-                    {'name': 'Tuberculosis', 'type': ''}, {'name': 'Ulcers (Stomach)', 'type': ''}, {'name': 'Varicose Veins', 'type': ''}, {'name':'Wight loss, unexplained', 'type': ''},
+                    {'name': 'Tuberculosis', 'type': ''}, {'name': 'Ulcers (Stomach)', 'type': ''},
+                    {'name': 'Varicose Veins', 'type': ''}, {'name': 'Wight loss, unexplained', 'type': ''},
                     {'name': 'Pregnant?', 'type': ''}, {'name': 'Breastfeeding?', 'type': ''}
                     ]
         return render_template('register_patient_3.html', diseases=diseases)
@@ -167,7 +180,8 @@ class Routes:
                          request.form['zipcode'], request.form['city'],
                          request.form['county'], request.form['passport_id'],
                          request.form['cnp'], request.form['birth_date'], request.form['marital_status'],
-                         request.form['gender'], request.form['occupation'], request.form['password'], request.form['invite_code']]
+                         request.form['gender'], request.form['occupation'], request.form['password'],
+                         request.form['invite_code']]
             try:
                 service.register_patient(form_data)
             except ValueError:
@@ -234,18 +248,17 @@ class Routes:
         patient = service.get_patient_by_id(service.session['patient'])
         if "patient" not in service.session:
             return redirect(url_for('home'))
-        return render_template('patient-profile.html',patient=patient)
+        return render_template('patient-profile.html', patient=patient)
 
     @staticmethod
     @app.route('/invite-patient', methods=['GET', 'POST'])
     def invitation():
         if "doctor" not in service.session:
             return redirect(url_for('home'))
-        error = None
         email_companie = 'clinica_audi@gmail.com'
         email_patient = request.form['email']
         if request.method == 'POST':
-            if email_patient == 'admin@admin.com' :
+            if email_patient == 'admin@admin.com':
                 service.send_welcome_email(email_companie, email_patient)
                 message = 'Invite sent!'
                 return render_template('invite-patient.html', message=message)
@@ -262,7 +275,8 @@ class Routes:
             doctor = service.get_doctor_by_id(service.session['doctor'])
             form_data = [request.form['username'], request.form['first_name'], request.form['last_name'],
                          request.form['email'], request.form['phone_number'], request.form['address'],
-                         request.form['birth_date'], request.form['consultation_schedule_office'], request.form['consultation_schedule_away'],
+                         request.form['birth_date'], request.form['consultation_schedule_office'],
+                         request.form['consultation_schedule_away'],
                          request.form['assistants_schedule'], request.form['password'], request.form['gender']]
             service.update_doctor_profile(doctor, form_data)
             service.update_database()
@@ -279,7 +293,7 @@ class Routes:
     @staticmethod
     @app.route('/medical-history')
     def patient_medical_history():
-        patient_id = current_user.id
+        patient_id = service.session['patient']
         medical_history = service.get_consultation_history(patient_id)
         return render_template('medical_history.html', medical_history=medical_history)
 
