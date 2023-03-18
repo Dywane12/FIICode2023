@@ -1,13 +1,15 @@
+import flask
+
 from app import app, db
 from flask import render_template, redirect, url_for, request, session
 from flask_login import login_user, logout_user, current_user
 from app.repository.database import Database
 from app.service.service import Service
 from werkzeug.security import check_password_hash
-
+import datetime
 with app.app_context():
     db_1 = Database(db)
-    """ db_1.clear_patients_table()
+    """db_1.clear_patients_table()
     db_1.clear_consultation_table()
     db_1.clear_doctors_table()
     db_1.clear_hospitalization_table()
@@ -25,16 +27,29 @@ class Routes:
     def __run_all_routes(self):
         self.home()
         self.choice()
-        self.medic_profil()
-        self.transfer_pacienti()
-        self.lista_pacienti()
-        self.invita_pacienti()
+        self.medic_profile()
+        self.transfer_patients()
+        self.patient_list()
+        self.invite_patient()
         self.medic_home()
-        self.register_pacient()
+        self.register_patient()
         self.register_medic()
-        self.register_page_pacient()
+        self.register_page_patient()
         self.register_page_medic()
         self.login()
+
+    @staticmethod
+    @app.before_request
+    def before_request():
+        flask.session.permanent = True
+        app.permanent_session_lifetime = datetime.timedelta(minutes=5)
+        flask.session.modified = True
+
+    @staticmethod
+    @app.route('/clear-session', methods=['GET'])
+    def clear_session():
+        session.clear()
+        return 'Session Cleared'
 
     @staticmethod
     @app.route('/')
@@ -42,8 +57,8 @@ class Routes:
     def home():
         if "doctor" in service.session:
             return redirect(url_for('medic_home'))
-        elif "pacient" in service.session:
-            return redirect(url_for('pacient_home'))
+        elif "patient" in service.session:
+            return redirect(url_for('patient_home'))
         return render_template('index.html')
 
 
@@ -53,9 +68,9 @@ class Routes:
         return render_template('register_medic.html')
 
     @staticmethod
-    @app.route('/register-pacient')
-    def register_page_pacient():
-        return render_template('register_pacient.html')
+    @app.route('/register-patient')
+    def register_page_patient():
+        return render_template('register_patient.html')
 
     @staticmethod
     @app.route('/register-patient-2')
@@ -69,7 +84,7 @@ class Routes:
                     {'name': 'Eye Problems', 'type': ''}, {'name': 'Fibromyalgia', 'type': ''}, {'name': 'Fott Cramps', 'type':''}, {'name': 'Gastric Reflux', 'type': ''}, {'name': 'Gout', 'type': ''}, {'name': 'Headaches', 'type': ''},
                     {'name': 'Heart Attack', 'type': ''}, {'name': 'Heart Murmur', 'type': ''},
                     ]
-        return render_template('register_pacient_2.html', diseases=diseases)
+        return render_template('register_patient_2.html', diseases=diseases)
 
     @staticmethod
     @app.route('/register-patient-3')
@@ -83,7 +98,7 @@ class Routes:
                     {'name': 'Tuberculosis', 'type': ''}, {'name': 'Ulcers (Stomach)', 'type': ''}, {'name': 'Varicose Veins', 'type': ''}, {'name':'Wight loss, unexplained', 'type': ''},
                     {'name': 'Pregnant?', 'type': ''}, {'name': 'Breastfeeding?', 'type': ''}
                     ]
-        return render_template('register_pacient_3.html', diseases=diseases)
+        return render_template('register_patient_3.html', diseases=diseases)
 
     @staticmethod
     @app.route('/login', methods=['GET', 'POST'])
@@ -91,8 +106,8 @@ class Routes:
         error = None
         if "doctor" in service.session:
             return redirect(url_for('medic_home'))
-        elif "pacient" in service.session:
-            return redirect(url_for('pacient_home'))
+        elif "patient" in service.session:
+            return redirect(url_for('patient_home'))
         if request.method == 'POST':
             username = request.form['username']
             password = request.form['password']
@@ -101,15 +116,13 @@ class Routes:
             if doctor is not None:
                 if check_password_hash(doctor.password_hash, password):
                     service.session['doctor'] = doctor.id
-                    login_user(doctor)
                     return redirect(url_for('medic_home'))
                 else:
                     error = 'Wrong password. Try again.'
             elif patient is not None:
                 if not check_password_hash(patient.password_hash, password):
-                    service.session['pacient'] = patient.id
-                    login_user(patient)
-                    return redirect(url_for('pacient_home'))
+                    service.session['patient'] = patient.id
+                    return redirect(url_for('patient_home'))
                 else:
                     error = 'Wrong password. Try again.'
             else:
@@ -122,9 +135,8 @@ class Routes:
         if 'doctor' in service.session:
             service.session.pop('doctor', None)
         else:
-            service.session.pop('pacient', None)
-        logout_user()
-        return redirect(url_for('login'))
+            service.session.pop('patient', None)
+        return redirect(url_for('home'))
 
     @staticmethod
     @app.route('/register-medic', methods=['GET', 'POST'])
@@ -146,8 +158,8 @@ class Routes:
         return render_template('register_medic.html', error=error)
 
     @staticmethod
-    @app.route('/register-pacient', methods=['GET', 'POST'])
-    def register_pacient():
+    @app.route('/register-patient', methods=['GET', 'POST'])
+    def register_patient():
         error = None
         if request.method == 'POST':
             form_data = [request.form['username'], request.form['first_name'], request.form['last_name'],
@@ -162,7 +174,7 @@ class Routes:
             else:
                 service.update_database()
                 return redirect(url_for('register_patient_2'))
-        return render_template('register_pacient.html', error=error)
+        return render_template('register_patient.html', error=error)
 
     @staticmethod
     @app.route('/choice')
@@ -174,46 +186,46 @@ class Routes:
     def medic_home():
         if "doctor" not in service.session:
             return redirect(url_for('home'))
-        return render_template('principal-medic.html')
+        return render_template('medic-home.html')
 
     @staticmethod
     @app.route('/patient-home')
     def patient_home():
-        if "pacient" not in service.session:
+        if "patient" not in service.session:
             return redirect(url_for('home'))
-        return render_template('principal-pacient.html')
+        return render_template('patient-home.html')
 
     @staticmethod
-    @app.route('/lista-pacienti')
-    def lista_pacienti():
+    @app.route('/patient-list')
+    def patient_list():
         if "doctor" not in service.session:
             return redirect(url_for('home'))
         patients = service.get_doctor_patients()
         # patients = db.find_all_doctors_ids()
-        return render_template('lista-pacienti.html', patients=patients)
+        return render_template('patient-list.html', patients=patients)
 
     @staticmethod
-    @app.route('/transfer-pacienti')
-    def transfer_pacienti():
+    @app.route('/transfer-patients')
+    def transfer_patients():
         if "doctor" not in service.session:
             return redirect(url_for('home'))
-        return render_template('transfer-pacienti.html')
+        return render_template('transfer-patients.html')
 
     @staticmethod
-    @app.route('/invita-pacienti')
-    def invita_pacienti():
+    @app.route('/invite-patient')
+    def invite_patient():
         if "doctor" not in service.session:
             return redirect(url_for('home'))
 
-        return render_template('invita-pacienti.html')
+        return render_template('invite-patient.html')
 
     @staticmethod
-    @app.route('/medic-profil')
-    def medic_profil():
+    @app.route('/medic-profile')
+    def medic_profile():
         doctor = service.get_doctor_by_id(service.session['doctor'])
         if "doctor" not in service.session:
             return redirect(url_for('home'))
-        return render_template('medic-profil.html', doctor=doctor)
+        return render_template('medic-profile.html', doctor=doctor)
 
     @staticmethod
     @app.route('/patient-profile')
@@ -221,11 +233,11 @@ class Routes:
         patient = service.get_patient_by_id(service.session['patient'])
         if "patient" not in service.session:
             return redirect(url_for('home'))
-        return render_template('patient-profile.html')
+        return render_template('patient-profile.html',patient=patient)
 
     @staticmethod
-    @app.route('/invita-pacienti', methods=['GET', 'POST'])
-    def invitatie():
+    @app.route('/invite-patient', methods=['GET', 'POST'])
+    def invitation():
         if "doctor" not in service.session:
             return redirect(url_for('home'))
         error = None
@@ -235,10 +247,10 @@ class Routes:
             if email_patient == 'admin@admin.com' :
                 service.send_welcome_email(email_companie, email_patient)
                 message = 'Invite sent!'
-                return render_template('invita-pacienti.html', message=message)
+                return render_template('invite-patient.html', message=message)
             else:
                 error = 'Wrong credentials. Try again.'
-                return render_template('invita-pacienti.html', error=error)
+                return render_template('invite-patient.html', error=error)
 
     @staticmethod
     @app.route('/edit-medic', methods=['GET', 'POST'])
@@ -261,7 +273,7 @@ class Routes:
         if "doctor" not in service.session:
             return redirect(url_for('home'))
         doctor = service.get_doctor_by_id(service.session['doctor'])
-        return render_template('profil-pacient-lista.html', doctor=doctor)
+        return render_template('list-patient-profile.html', doctor=doctor)
 
     @staticmethod
     @app.route('/medical-history')
