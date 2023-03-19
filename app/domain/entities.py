@@ -23,6 +23,7 @@ class Patient(db.Model):
     invite_code = db.Column(db.String(64), index=True, unique=True)
     password_hash = db.Column(db.String(256), index=True, unique=False)
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
+    transfer = db.Column(db.Integer, index=True)
     consultations = db.relationship('Consultation', backref='patient')
     information_sheet = db.relationship('InformationSheet', backref='patient')
 
@@ -84,6 +85,7 @@ class Doctor(db.Model):
     consultation_schedule_away = db.Column(db.String(128), index=True)
     assistants_schedule = db.Column(db.String(128), index=True)
     password_hash = db.Column(db.String(256), index=True)
+    medical_proof = db.Column(db.String(256))
     patients = db.relationship('Patient', backref='doctor')
     consultations = db.relationship('Consultation', backref='doctor')
 
@@ -288,3 +290,5 @@ class FamilyHistory(db.Model):
 class InviteCode(db.Model):
     __tablename__ = "invite_code"
     invite_code = db.Column(db.Integer, index=True, primary_key=True)
+
+

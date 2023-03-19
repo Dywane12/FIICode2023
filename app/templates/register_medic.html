@@ -31,7 +31,7 @@
                     <input type="text" class="patient-field" placeholder="Consultation schedule away" name="consultation_schedule_away" value="{{request.form.consultation_schedule_away}}">
                     <input type="text" class="patient-field" placeholder="Assistants schedule" name="assistants_schedule" value="{{request.form.assistants_schedule}}">
                     <input type="password" class="patient-field" placeholder="Password" name="password" value="{{request.form.password}}">
-                    <input type="file" class="patient-field" placeholder="Proof of medic" name="proof_of_medic" value="{{request.form.proof_of_medic}}"><br><br>
+                    <input type="file" class="patient-field" placeholder="Proof of medic" name="proof_of_medic" value="{{request.files.proof_of_medic}}"><br><br>
                     <input type="submit" class="register-btn" value="Register">
                 </form>
                     {% if error %}

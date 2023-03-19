@@ -3,13 +3,15 @@ import smtplib
 from datetime import date, timedelta, datetime
 import names
 import random_address
+from PyPDF2 import PdfFileMerger
 from RandomDataGenerators import *
 from random import randint
 from geopy.geocoders import Nominatim
 from geopy import distance
 import re
-#from pdfminer.high_level import extract_text
-import app
+from pdfminer.high_level import extract_text
+from app import app
+from app import config
 from app.domain.entities import Patient, Doctor, Consultation, Drinker, Smoker, InformationSheet, Father, FamilyHistory, \
     Mother, Brother, Sister, Hospitalization, ChronicDisease, Allergy
 from twilio.rest import Client
@@ -30,6 +32,7 @@ CONSULTATION_SCHEDULE_AWAY_DOCTOR = 8
 ASSISTANTS_SCHEDULE_DOCTOR = 9
 PASSWORD_DOCTOR = 10
 GENDER_DOCTOR = 11
+MEDICAL_PROOF = 12
 
 USERNAME_PATIENT = 0
 FIRST_NAME_PATIENT = 1
@@ -49,6 +52,7 @@ PASSWORD_PATIENT = 14
 INVITE_CODE_PATIENT = 15
 
 DOCTOR_ID = 16
+
 
 class Service:
     def __init__(self, db, session, choice=False):
@@ -246,6 +250,12 @@ class Service:
                             consultation_schedule_away=', '.join(day for day in consultation_schedule_away),
                             assistants_schedule=' , '.join(day for day in assistants_schedule))
             doctor.set_password(password)
+            """medical_degree_date = {'university_name': "University of Nacho's",
+                                   'student_name': f'{doctor.first_name} {doctor.last_name}',
+                                   'date': (birth_date+timedelta(weeks=1565)),
+                                   'graduation_year': (birth_date+timedelta(weeks=1565)).year}
+            template_loader = jinja2.FileSystemLoader(‘./ ’)
+            template_env = jinja2.Environment(loader=template_loader)"""
             self.db.add_entity(doctor)
         self.db.save_to_database()
 
@@ -288,6 +298,18 @@ class Service:
 
     def register_medic(self, register_data):
         doctor = Doctor()
+        medical_proof = register_data[MEDICAL_PROOF]
+        if medical_proof.filename == '':
+            raise ValueError("No file selected")
+        if not self.allowed_file(medical_proof.filename):
+            raise ValueError("Invalid file format")
+        medical_proof.filename = f'{doctor.id}.pdf'
+        medical_proof_path = self.save_file(medical_proof, 'proofs')
+        if not self.validate_medical_proof(os.path.abspath(medical_proof_path),
+                                           register_data[FIRST_NAME_DOCTOR] + ' ' + register_data[LAST_NAME_DOCTOR]):
+            os.remove(os.path.abspath(medical_proof_path))
+            raise AttributeError("Invalid proof")
+        doctor.medical_proof = medical_proof.filename
         if (register_data[USERNAME_DOCTOR] == "" or register_data[PASSWORD_DOCTOR] == "" or register_data[
             FIRST_NAME_DOCTOR] == "" or
                 register_data[LAST_NAME_DOCTOR] == "" or
@@ -297,7 +319,7 @@ class Service:
                 register_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR] == "" or register_data[
                     CONSULTATION_SCHEDULE_AWAY_DOCTOR] == "" or
                 register_data[ASSISTANTS_SCHEDULE_DOCTOR] == "" or register_data[GENDER_DOCTOR] == ""):
-            raise ValueError
+            raise ValueError("Invalid data")
         doctor.username = register_data[USERNAME_DOCTOR]
         doctor.first_name = register_data[FIRST_NAME_DOCTOR]
         doctor.last_name = register_data[LAST_NAME_DOCTOR]
@@ -319,9 +341,12 @@ class Service:
                 register_data[EMAIL_PATIENT] == ""
                 or register_data[PHONE_NUMBER_PATIENT] == "" or register_data[ADDRESS_PATIENT] == ""
                 or register_data[MARITAL_STATUS_PATIENT] == "" or register_data[
-                    PASSWORD_PATIENT] == "" or register_data[GENDER_PATIENT] == "" or register_data[ZIP_CODE_PATIENT] == ""
-                or register_data[CITY_PATIENT] == "" or register_data[COUNTY_PATIENT] == "" or register_data[PASSPORT_ID_PATIENT] == ""
-                 or register_data[BIRTH_DATE_PATIENT] == "" or register_data[OCCUPATION_PATIENT] == "" or register_data[INVITE_CODE_PATIENT] == ""):
+                    PASSWORD_PATIENT] == "" or register_data[GENDER_PATIENT] == "" or register_data[
+                    ZIP_CODE_PATIENT] == ""
+                or register_data[CITY_PATIENT] == "" or register_data[COUNTY_PATIENT] == "" or register_data[
+                    PASSPORT_ID_PATIENT] == ""
+                or register_data[BIRTH_DATE_PATIENT] == "" or register_data[OCCUPATION_PATIENT] == "" or register_data[
+                    INVITE_CODE_PATIENT] == ""):
             raise ValueError
         patient.username = register_data[USERNAME_PATIENT]
         patient.first_name = register_data[FIRST_NAME_PATIENT]
@@ -339,7 +364,7 @@ class Service:
         patient.martial_status = register_data[MARITAL_STATUS_PATIENT]
         patient.set_password(register_data[PASSWORD_PATIENT])
         patient.gender = register_data[GENDER_PATIENT]
-        #patient.doctor_id = register_data[DOCTOR_ID]
+        # patient.doctor_id = register_data[DOCTOR_ID]
         self.db.add_entity(patient)
 
     def get_all_doctors(self):
@@ -435,8 +460,9 @@ class Service:
             patient.set_password(update_data[PASSWORD_PATIENT])
         if update_data[GENDER_PATIENT] != "":
             patient.gender = update_data[GENDER_PATIENT]
-        #if update_data[DOCTOR_ID] != "":
-            #patient.doctor_id = update_data[DOCTOR_ID]
+        # if update_data[DOCTOR_ID] != "":
+        # patient.doctor_id = update_data[DOCTOR_ID]
+
     @staticmethod
     def generate_random_code():
         n = 0
@@ -506,25 +532,68 @@ class Service:
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
     @staticmethod
-    def save_file(file):
+    def save_file(file, folder):
         filename = secure_filename(file.filename)
-        file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                               app.config['UPLOAD_FOLDER'], filename))
+        file_path = os.path.join(os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], folder, filename
+                                                              )))
+        file.save(file_path)
+        return file_path
 
     @staticmethod
-    def validate_medical_proof(filename, medic_name):
-        text = extract_text(filename)
-        is_medic = re.compile('{}'.format(medic_name),  re.IGNORECASE)
+    def validate_medical_proof(file_path, medic_name):
+        text = extract_text(file_path)
+        is_medic = re.compile('{}'.format(medic_name), re.IGNORECASE)
         medic_name_matches = is_medic.findall(text)
         if len(medic_name_matches) == 0:
             return False
-        is_medical_degree = re.compile("Medical Degree",  re.IGNORECASE)
+        is_medical_degree = re.compile("Medical Degree", re.IGNORECASE)
         medical_degree_matches = is_medical_degree.findall(text)
         if len(medical_degree_matches) == 0:
             return False
-        is_university = re.compile("University",  re.IGNORECASE)
+        is_university = re.compile("University", re.IGNORECASE)
         university_matches = is_university.findall(text)
         if len(university_matches) == 0:
             return False
         return True
 
+    def add_consultation(self, patient_id, time, urgency_grade, pdf=None):
+        consultation = Consultation(doctor_id=self.session['doctor'], patient_id=patient_id, time=time,
+                                    urgency_grade=urgency_grade)
+        if pdf is not None:
+            pdf_path = self.save_file(pdf)
+            consultation.pdf = pdf_path
+        self.db.add_entity(consultation)
+        self.db.save_to_database()
+
+    def add_pdf_to_consultation(self, consultation_id, pdf):
+        consultation = self.db.find_consultation_by_id(consultation_id)
+        if consultation is None:
+            raise ValueError("Invalid id")
+        if consultation.pdf is not None:
+            pdf.filename = f'{consultation_id}_extension.pdf'
+            self.save_file(pdf, 'consultation')
+            merger = PdfFileMerger()
+            pdfs_merge = [os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], consultation.pdf)),
+                          os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], pdf.filename))]
+            for pdf_merge in pdfs_merge:
+                merger.append(pdf_merge)
+            merger.write(os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], consultation.pdf)))
+            merger.close()
+            os.remove(os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], pdf.filename)))
+        else:
+            pdf.filename = f'{consultation_id}.pdf'
+            self.save_file(pdf, 'consultation')
+
+    def transfer_patient(self, patient_id, doctor_id):
+        patient = self.get_patient_by_id(patient_id)
+        patient.doctor_id = doctor_id
+
+    def get_patients_that_want_to_transfer(self):
+        patients_that_want_to_transfer = []
+        for patient in self.get_doctor_patients():
+            if patient.transfer == 1:
+                patients_that_want_to_transfer.append(patient)
+        return patients_that_want_to_transfer
+
+    def get_consultation(self, consultation_id):
+        return self.db.find_consultation_by_id(consultation_id)

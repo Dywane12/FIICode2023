@@ -1,7 +1,9 @@
+import os
+
 import flask
 
 from app import app, db
-from flask import render_template, redirect, url_for, request, session
+from flask import render_template, redirect, url_for, request, session, send_from_directory
 from app.repository.database import Database
 from app.service.service import Service
 from werkzeug.security import check_password_hash
@@ -71,47 +73,7 @@ class Routes:
     def register_page_patient():
         return render_template('register_patient.html')
 
-    @staticmethod
-    @app.route('/register-patient-2')
-    def register_patient_2():
-        diseases = [{'name': 'AIDS/HIV', 'type': ''}, {'name': 'Anemia', 'type': ''}, {'name': 'Anxiety', 'type': ''},
-                    {'name': 'Arthritis', 'type': 'Type'},
-                    {'name': 'Artificial Heart Valve', 'type': ''}, {'name': 'Artificial Joint', 'type': ''},
-                    {'name': 'Asthma', 'type': ''}, {'name': 'Back Problems', 'type': ''},
-                    {'name': 'Bleeding Disorder', 'type': ''}, {'name': 'Bipolar Disorder', 'type': ''},
-                    {'name': 'Bloot Clot/DVT', 'type': ''},
-                    {'name': 'Bypass Surgery', 'type': ''},
-                    {'name': 'Cancer', 'type': 'Type'}, {'name': 'Chemical Dependency', 'type': ''},
-                    {'name': 'Chest Pain', 'type': ''}, {'name': 'Circulatory Problems', 'type': ''},
-                    {'name': 'Depression', 'type': ''},
-                    {'name': 'Diabetes', 'type': 'Type' 'How long'}, {'name': 'Emphysema', 'type': ''},
-                    {'name': 'Eye Problems', 'type': ''}, {'name': 'Fibromyalgia', 'type': ''},
-                    {'name': 'Fott Cramps', 'type': ''}, {'name': 'Gastric Reflux', 'type': ''},
-                    {'name': 'Gout', 'type': ''}, {'name': 'Headaches', 'type': ''},
-                    {'name': 'Heart Attack', 'type': ''}, {'name': 'Heart Murmur', 'type': ''},
-                    ]
-        return render_template('register_patient_2.html', diseases=diseases)
 
-    @staticmethod
-    @app.route('/register-patient-3')
-    def register_patient_3():
-        diseases = [{'name': 'Heart Failure', 'type': ''}, {'name': 'Hemophilia', 'type': ''},
-                    {'name': 'Hepatitis', 'type': ''}, {'name': 'High Blood Pressure', 'type': ''},
-                    {'name': 'Kidney Problems', 'type': ''},
-                    {'name': 'Leg Cramps', 'type': ''},
-                    {'name': 'Liver Disease', 'type': ''}, {'name': 'Low Blood Pressure', 'type': ''},
-                    {'name': 'Mental Illness', 'type': ''}, {'name': 'Neuropathy', 'type': ''},
-                    {'name': 'Pacemaker', 'type': ''},
-                    {'name': 'Paralysis', 'type': ''}, {'name': 'Phlebitis', 'type': ''},
-                    {'name': 'Psoriasis', 'type': ''}, {'name': 'Rheumatic Fever', 'type': ''},
-                    {'name': 'Schizophrenia', 'type': ''}, {'name': 'Shortness of Breath', 'type': ''},
-                    {'name': 'Stroke', 'type': ''},
-                    {'name': 'Thyroid Problems', 'type': 'Type'},
-                    {'name': 'Tuberculosis', 'type': ''}, {'name': 'Ulcers (Stomach)', 'type': ''},
-                    {'name': 'Varicose Veins', 'type': ''}, {'name': 'Wight loss, unexplained', 'type': ''},
-                    {'name': 'Pregnant?', 'type': ''}, {'name': 'Breastfeeding?', 'type': ''}
-                    ]
-        return render_template('register_patient_3.html', diseases=diseases)
 
     @staticmethod
     @app.route('/login', methods=['GET', 'POST'])
@@ -160,11 +122,14 @@ class Routes:
                          request.form['email'], request.form['phone_number'], request.form['address'],
                          request.form['birth_date'], request.form['consultation_schedule_office'],
                          request.form['consultation_schedule_away'],
-                         request.form['assistants_schedule'], request.form['password'], request.form['gender']]
+                         request.form['assistants_schedule'], request.form['password'], request.form['gender'],
+                         request.files['proof_of_medic']]
             try:
                 service.register_medic(form_data)
-            except ValueError:
-                error = "Invalid data. Try again"
+            except ValueError as exception:
+                error = exception
+            except AttributeError as exception:
+                error = exception
             else:
                 service.update_database()
                 return redirect(url_for('home'))
@@ -179,7 +144,7 @@ class Routes:
                          request.form['email'], request.form['phone_number'], request.form['address'],
                          request.form['zipcode'], request.form['city'],
                          request.form['county'], request.form['passport_id'],
-                         request.form['cnp'], request.form['birth_date'], request.form['marital_status'],
+                         request.form['birth_date'], request.form['marital_status'],
                          request.form['gender'], request.form['occupation'], request.form['password'],
                          request.form['invite_code']]
             try:
@@ -190,6 +155,48 @@ class Routes:
                 service.update_database()
                 return redirect(url_for('register_patient_2'))
         return render_template('register_patient.html', error=error)
+
+    @staticmethod
+    @app.route('/register-patient-2')
+    def register_patient_2():
+        diseases = [{'name': 'AIDS/HIV', 'type': ''}, {'name': 'Anemia', 'type': ''}, {'name': 'Anxiety', 'type': ''},
+                    {'name': 'Arthritis', 'type': 'Type'},
+                    {'name': 'Artificial Heart Valve', 'type': ''}, {'name': 'Artificial Joint', 'type': ''},
+                    {'name': 'Asthma', 'type': ''}, {'name': 'Back Problems', 'type': ''},
+                    {'name': 'Bleeding Disorder', 'type': ''}, {'name': 'Bipolar Disorder', 'type': ''},
+                    {'name': 'Bloot Clot/DVT', 'type': ''},
+                    {'name': 'Bypass Surgery', 'type': ''},
+                    {'name': 'Cancer', 'type': 'Type'}, {'name': 'Chemical Dependency', 'type': ''},
+                    {'name': 'Chest Pain', 'type': ''}, {'name': 'Circulatory Problems', 'type': ''},
+                    {'name': 'Depression', 'type': ''},
+                    {'name': 'Diabetes', 'type': 'Type' 'How long'}, {'name': 'Emphysema', 'type': ''},
+                    {'name': 'Eye Problems', 'type': ''}, {'name': 'Fibromyalgia', 'type': ''},
+                    {'name': 'Fott Cramps', 'type': ''}, {'name': 'Gastric Reflux', 'type': ''},
+                    {'name': 'Gout', 'type': ''}, {'name': 'Headaches', 'type': ''},
+                    {'name': 'Heart Attack', 'type': ''}, {'name': 'Heart Murmur', 'type': ''},
+                    ]
+        return render_template('register_patient_2.html', diseases=diseases)
+
+    @staticmethod
+    @app.route('/register-patient-3')
+    def register_patient_3():
+        diseases = [{'name': 'Heart Failure', 'type': ''}, {'name': 'Hemophilia', 'type': ''},
+                    {'name': 'Hepatitis', 'type': ''}, {'name': 'High Blood Pressure', 'type': ''},
+                    {'name': 'Kidney Problems', 'type': ''},
+                    {'name': 'Leg Cramps', 'type': ''},
+                    {'name': 'Liver Disease', 'type': ''}, {'name': 'Low Blood Pressure', 'type': ''},
+                    {'name': 'Mental Illness', 'type': ''}, {'name': 'Neuropathy', 'type': ''},
+                    {'name': 'Pacemaker', 'type': ''},
+                    {'name': 'Paralysis', 'type': ''}, {'name': 'Phlebitis', 'type': ''},
+                    {'name': 'Psoriasis', 'type': ''}, {'name': 'Rheumatic Fever', 'type': ''},
+                    {'name': 'Schizophrenia', 'type': ''}, {'name': 'Shortness of Breath', 'type': ''},
+                    {'name': 'Stroke', 'type': ''},
+                    {'name': 'Thyroid Problems', 'type': 'Type'},
+                    {'name': 'Tuberculosis', 'type': ''}, {'name': 'Ulcers (Stomach)', 'type': ''},
+                    {'name': 'Varicose Veins', 'type': ''}, {'name': 'Wight loss, unexplained', 'type': ''},
+                    {'name': 'Pregnant?', 'type': ''}, {'name': 'Breastfeeding?', 'type': ''}
+                    ]
+        return render_template('register_patient_3.html', diseases=diseases)
 
     @staticmethod
     @app.route('/choice')
@@ -301,3 +308,9 @@ class Routes:
     @app.route('/change-medic')
     def change_medic():
         return render_template('change-medic.html')
+
+    @staticmethod
+    @app.route('/consultations/<filename>')
+    def uploaded_consultation(filename):
+        return send_from_directory(os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], 'consultation')),
+                                   filename)
