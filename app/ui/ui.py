@@ -176,7 +176,7 @@ class Routes:
         error = None
         if request.method == 'POST':
             form_data = [request.form['username'], request.form['first_name'], request.form['last_name'],
-                         request.form['phone_number'], request.form['email'], request.form['address'],
+                         request.form['email'], request.form['phone_number'], request.form['address'],
                          request.form['zipcode'], request.form['city'],
                          request.form['county'], request.form['passport_id'],
                          request.form['cnp'], request.form['birth_date'], request.form['marital_status'],
