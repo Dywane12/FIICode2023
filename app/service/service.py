@@ -13,7 +13,7 @@ from pdfminer.high_level import extract_text
 from app import app
 from app import config
 from app.domain.entities import Patient, Doctor, Consultation, Drinker, Smoker, InformationSheet, Father, FamilyHistory, \
-    Mother, Brother, Sister, Hospitalization, ChronicDisease, Allergy
+    Mother, Brother, Sister, Hospitalization, ChronicDisease, Allergy, InviteCode
 from twilio.rest import Client
 import os
 from werkzeug.utils import secure_filename
@@ -63,7 +63,7 @@ class Service:
             # self.__add_allergies()
             self.__add_fake_doctors(5)
             self.__add_fake_patients(10)
-            self.__add_fake_consultations(10)
+            self.__add_fake_consultations(15)
 
     def __add_chronic_diseases(self):
         chronic_diseases = [
@@ -122,7 +122,6 @@ class Service:
         for i in range(n):
             doctor = random.choice(self.get_all_doctors())
             patient = Patient(doctor_id=doctor.id)
-            information_sheet = InformationSheet(patient_id=patient.id)
             gender = random.choice(['Male', 'Female'])
             first_name, last_name = names.get_full_name(gender=gender.lower()).split()
             username = first_name + '_' + last_name + f'{randint(1, 420)}'
@@ -152,6 +151,8 @@ class Service:
             patient.marital_status = marital_status
             patient.phone_number = phone_number
             self.db.add_entity(patient)
+            self.db.save_to_database()
+            information_sheet = InformationSheet(patient_id=patient.id)
             if gender == 'Female':
                 height = randint(140, 185)
             else:
@@ -210,9 +211,11 @@ class Service:
                 self.db.add_entity(drinker)
             password = 'nacho'
             patient.set_password(password)
-            self.db.add_entity(patient)
             self.db.add_entity(information_sheet)
-        self.db.save_to_database()
+            invite_code = InviteCode(invite_code=self.generate_random_code(), patient_id=patient.id,
+                                     doctor_id=patient.doctor_id)
+            self.db.add_entity(invite_code)
+            self.db.save_to_database()
 
     def __add_fake_doctors(self, n):
         zip_codes = [90011, 91331, 90650, 90201, 90250, 90044, 90805, 90280, 91342, 91744,
@@ -261,12 +264,12 @@ class Service:
 
     def __add_fake_consultations(self, n):
         for i in range(n):
-            patient_id = random.choice(self.get_all_patients()).id
-            doctor_id = random.choice(self.get_all_doctors()).id
+            patient = random.choice(self.get_all_patients())
+            doctor_id = patient.doctor_id
             time = self.__random_date(date(2015, 1, 1), datetime.now().date())
             pdf = randint(100, 1000 - 1)
             urgency_grade = randint(1, 5)
-            consultation = Consultation(patient_id=patient_id, doctor_id=doctor_id, time=time, pdf=pdf,
+            consultation = Consultation(patient_id=patient.id, doctor_id=doctor_id, time=time, pdf=pdf,
                                         urgency_grade=urgency_grade)
             self.db.add_entity(consultation)
         self.db.save_to_database()
@@ -333,9 +336,17 @@ class Service:
         doctor.set_password(register_data[PASSWORD_DOCTOR])
         doctor.gender = register_data[GENDER_DOCTOR]
         self.db.add_entity(doctor)
+        self.db.save_to_database()
 
     def register_patient(self, register_data):
         patient = Patient()
+        for invite_code in self.db.find_all_invite_codes():
+            if int(register_data[INVITE_CODE_PATIENT]) == invite_code.invite_code and invite_code.patient_id is not None:
+                raise ValueError("Invalid invite code")
+        invite_code = self.db.find_invite_code(int(register_data[INVITE_CODE_PATIENT]))
+        if invite_code.patient_id is not None:
+            raise ValueError("Invite code already used")
+        information_sheet = InformationSheet(patient_id=patient)
         if (register_data[USERNAME_PATIENT] == "" or register_data[FIRST_NAME_PATIENT] == "" or register_data[
             LAST_NAME_PATIENT] == "" or
                 register_data[EMAIL_PATIENT] == ""
@@ -347,7 +358,7 @@ class Service:
                     PASSPORT_ID_PATIENT] == ""
                 or register_data[BIRTH_DATE_PATIENT] == "" or register_data[OCCUPATION_PATIENT] == "" or register_data[
                     INVITE_CODE_PATIENT] == ""):
-            raise ValueError
+            raise ValueError("Empty fields")
         patient.username = register_data[USERNAME_PATIENT]
         patient.first_name = register_data[FIRST_NAME_PATIENT]
         patient.last_name = register_data[LAST_NAME_PATIENT]
@@ -360,12 +371,14 @@ class Service:
         patient.passport_id = register_data[PASSPORT_ID_PATIENT]
         patient.birth_date = register_data[BIRTH_DATE_PATIENT]
         patient.occupation = register_data[OCCUPATION_PATIENT]
-        patient.invite_code = register_data[INVITE_CODE_PATIENT]
         patient.martial_status = register_data[MARITAL_STATUS_PATIENT]
         patient.set_password(register_data[PASSWORD_PATIENT])
         patient.gender = register_data[GENDER_PATIENT]
-        # patient.doctor_id = register_data[DOCTOR_ID]
+        patient.doctor_id = invite_code.doctor_id
         self.db.add_entity(patient)
+        self.db.save_to_database()
+        invite_code.patient_id = patient.id
+        self.db.save_to_database()
 
     def get_all_doctors(self):
         return self.db.find_all_doctors()
@@ -460,21 +473,18 @@ class Service:
             patient.set_password(update_data[PASSWORD_PATIENT])
         if update_data[GENDER_PATIENT] != "":
             patient.gender = update_data[GENDER_PATIENT]
-        # if update_data[DOCTOR_ID] != "":
-        # patient.doctor_id = update_data[DOCTOR_ID]
 
     @staticmethod
     def generate_random_code():
-        n = 0
-        for _ in range(7):
-            k = random.randint(0, 9)
-            n = n * 10 + k
-        return n
+        return random.randint(1000000, 9999999)
 
     def send_welcome_email(self, email_patient, email_companie):
         sender_account = email_companie
         reciever_account = email_patient
         cod = self.generate_random_code()
+        invite_code = InviteCode(invite_code=cod, doctor_id=self.session['doctor'])
+        self.db.add_entity(invite_code)
+        self.update_database()
         message = f"Subject: BUN VENIT IN CLINICA NOASTRA!!\n Ne bucuram ca ati ales servicile noastre.\nCodul dumneavoastra de autentificare este:{cod}"
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
             server.starttls()
@@ -486,6 +496,9 @@ class Service:
         auth_token = "auth_token"
         client = Client(account_sid, auth_token)
         cod = self.generate_random_code()
+        invite_code = InviteCode(invite_code=cod, doctor_id=self.session['doctor'])
+        self.db.add_entity(invite_code)
+        self.update_database()
         message_body = f"Subject: BUN VENIT IN CLINICA NOASTRA!!\n Ne bucuram ca ati ales servicile noastre.\nCodul dumneavoastra de autentificare este:{cod}"
         destination_number = "+04" + destination_number
         client.messages.create(
@@ -619,4 +632,3 @@ class Service:
             if consultation.date_time > datetime.now():
                 future_consulations.append(consultation)
         return future_consulations
-

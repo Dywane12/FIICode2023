@@ -12,7 +12,7 @@ class Patient(db.Model):
     phone_number = db.Column(db.Integer, index=True, unique=True)
     email = db.Column(db.String(128), index=True, unique=True)
     address = db.Column(db.String(256), index=True)
-    postalcode = db.Column(db.String(256), index=True )
+    postalcode = db.Column(db.String(256), index=True)
     city = db.Column(db.String(256), index=True)
     state = db.Column(db.String(256), index=True)
     passport_id = db.Column(db.String(16), index=True, unique=True)
@@ -20,7 +20,7 @@ class Patient(db.Model):
     marital_status = db.Column(db.String(16), index=True)
     gender = db.Column(db.String(8), index=True)
     occupation = db.Column(db.String(256), index=True)
-    invite_code = db.Column(db.String(64), index=True, unique=True)
+    invite_code = db.relationship('InviteCode', backref='patient')
     password_hash = db.Column(db.String(256), index=True, unique=False)
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
     transfer = db.Column(db.Integer, index=True)
@@ -45,7 +45,6 @@ class Patient(db.Model):
         self.marital_status = marital_status
         self.gender = gender
         self.occupation = occupation
-        self.invite_code = invite_code
         self.password_hash = password_hash
         self.doctor_id = doctor_id
 
@@ -131,8 +130,8 @@ class Doctor(db.Model):
 class Consultation(db.Model):
     __tablename__ = "consultation"
     id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'),)
-    doctor_id = db.Column(db.Integer, db.ForeignKey('patient.doctor_id'))
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), )
+    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
     date_time = db.Column(db.DateTime, index=True)
     pdf = db.Column(db.String(128))
     urgency_grade = db.Column(db.String(128), index=True)
@@ -289,6 +288,12 @@ class FamilyHistory(db.Model):
 
 class InviteCode(db.Model):
     __tablename__ = "invite_code"
-    invite_code = db.Column(db.Integer, index=True, primary_key=True)
+    id = db.Column(db.Integer, index=True, primary_key=True)
+    invite_code = db.Column(db.Integer)
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), index=True)
+    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'), index=True)
 
-
+    def __init__(self, invite_code=None, patient_id=None, doctor_id=None):
+        self.invite_code = invite_code
+        self.patient_id = patient_id
+        self.doctor_id = doctor_id

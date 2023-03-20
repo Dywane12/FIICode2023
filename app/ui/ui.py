@@ -17,7 +17,8 @@ with app.app_context():
     db_1.clear_hospitalization_table()
     db_1.clear_drinker_table()
     db_1.clear_smoker_table()
-    db_1.clear_information_sheet_table()"""
+    db_1.clear_information_sheet_table()
+    db_1.clear_invite_code_table()"""
     service = Service(db_1, session, choice=False)
 
 
@@ -149,8 +150,8 @@ class Routes:
                          request.form['invite_code']]
             try:
                 service.register_patient(form_data)
-            except ValueError:
-                error = "Invalid data. Try again"
+            except ValueError as exception:
+                error = exception
             else:
                 service.update_database()
                 return redirect(url_for('register_patient_2'))
