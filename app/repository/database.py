@@ -1,4 +1,7 @@
-from app.domain.entities import Doctor, Patient, Consultation, ChronicDisease, Allergy, Drinker, Smoker, Hospitalization, InformationSheet
+import datetime
+
+from app.domain.entities import Doctor, Patient, Consultation, ChronicDisease, Allergy, Drinker, Smoker, \
+    Hospitalization, InformationSheet
 
 
 class Database:
@@ -67,7 +70,8 @@ class Database:
         self.db.session.query(Consultation).delete()
         self.db.session.commit()
 
-    def find_doctor_username(self, username):
+    @staticmethod
+    def find_doctor_username(username):
         """
                 The function returns True if there is any existing doctor with the given username and False otherwise
                 :param username: str
@@ -75,8 +79,8 @@ class Database:
                 """
         return Doctor.query.filter_by(username=username).first()
 
-
-    def find_patient_username(self, username):
+    @staticmethod
+    def find_patient_username(username):
         """
         The function returns True if there is any existing patient with the given username and False otherwise
         :param username: str
@@ -88,11 +92,11 @@ class Database:
         pass
 
     @staticmethod
-    def get_all_chronic_diseases():
+    def find_all_chronic_diseases():
         return ChronicDisease.query.all()
 
     @staticmethod
-    def get_all_allergies():
+    def find_all_allergies():
         return Allergy.query.all()
 
     def clear_smoker_table(self):
@@ -111,5 +115,7 @@ class Database:
         self.db.session.query(InformationSheet).delete()
         self.db.session.commit()
 
-
-
+    def remove_consultation(self, consultation_id):
+        consultation = Consultation.query.filter_by(consultation_id)
+        if consultation:
+            self.db.session.commit()

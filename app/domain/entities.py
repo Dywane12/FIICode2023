@@ -132,15 +132,15 @@ class Consultation(db.Model):
     __tablename__ = "consultation"
     id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'),)
-    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
-    time = db.Column(db.Date, index=True)
+    doctor_id = db.Column(db.Integer, db.ForeignKey('patient.doctor_id'))
+    date_time = db.Column(db.DateTime, index=True)
     pdf = db.Column(db.String(128))
-    urgency_grade = db.Column(db.String(128),index=True)
+    urgency_grade = db.Column(db.String(128), index=True)
 
     def __init__(self, patient_id=None, doctor_id=None, time=None, pdf=None, urgency_grade=None):
         self.patient_id = patient_id
         self.doctor_id = doctor_id
-        self.time = time
+        self.date_time = time
         self.pdf = pdf
         self.urgency_grade = urgency_grade
 

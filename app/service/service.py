@@ -165,7 +165,7 @@ class Service:
             information_sheet.blood_type = blood_type
             choice = random.choice([True, False])
             if choice:
-                for chronic_disease in self.db.get_all_chronic_diseases():
+                for chronic_disease in self.db.find_all_chronic_diseases():
                     if len(information_sheet.medical_history) > 3:
                         break
                     choice = random.choice([True, False])
@@ -173,7 +173,7 @@ class Service:
                         information_sheet.medical_history.append(chronic_disease)
             choice = random.choice([True, False])
             if choice:
-                for allergy in self.db.get_all_allergies():
+                for allergy in self.db.find_all_allergies():
                     if len(information_sheet.allergies) > 3:
                         break
                     choice = random.choice([True, False])
@@ -493,14 +493,6 @@ class Service:
             from_=sender_number,
             body=message_body)
 
-    @staticmethod
-    def get_consultation_history(patient_id):
-        patient = Patient.query.filter_by(id=patient_id).first()
-        if patient:
-            return patient.consultations.all()
-        else:
-            return None
-
     def create_appointment_ad_hoc(self, time, urgency_grade):
         doctor_id = self.session['doctor']
         consultation = Consultation(doctor_id=doctor_id, time=time, urgency_grade=urgency_grade)
@@ -512,7 +504,7 @@ class Service:
         consultation = Consultation(doctor_id=patient.doctor_id, patient_id=patient.id, time=time,
                                     urgency_grade=urgency_grade)
         self.db.add_entity(consultation)
-        self.db.save_to_database()
+        self.update_database()
 
     def get_doctors_nearby_patient(self, patient_id):
         geolocator = Nominatim(user_agent="medical_app")
@@ -597,3 +589,34 @@ class Service:
 
     def get_consultation(self, consultation_id):
         return self.db.find_consultation_by_id(consultation_id)
+
+    def update_consultation_time(self, consultation_id, time):
+        consultation = self.db.find_consultation_by_id(consultation_id)
+        consultation.date_time = time
+        self.update_database()
+
+    def update_consultation_urgency_grade(self, consultation_id, urgency_grade):
+        consultation = self.db.find_consultation_by_id(consultation_id)
+        consultation.urgency_grade = urgency_grade
+        self.update_database()
+
+    def get_consultation_history(self, patient_id):
+        patient = self.db.find_patient_by_id(patient_id)
+        if patient is None:
+            raise ValueError("Patient not found")
+        consultation_history = []
+        for consultation in patient.consultations:
+            if consultation.date_time < datetime.now():
+                consultation_history.append(consultation)
+        return consultation_history
+
+    def get_future_consultations(self, patient_id):
+        patient = self.db.find_patient_by_id(patient_id)
+        if patient is None:
+            raise ValueError("Patient not found")
+        future_consulations = []
+        for consultation in patient.consultations:
+            if consultation.date_time > datetime.now():
+                future_consulations.append(consultation)
+        return future_consulations
+
