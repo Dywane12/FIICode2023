@@ -1,4 +1,7 @@
-from app.domain.entities import Doctor, Patient, Consultation, ChronicDisease, Allergy, Drinker, Smoker, Hospitalization, InformationSheet
+import datetime
+
+from app.domain.entities import Doctor, Patient, Consultation, ChronicDisease, Allergy, Drinker, Smoker, \
+    Hospitalization, InformationSheet, InviteCode
 
 
 class Database:
@@ -22,11 +25,26 @@ class Database:
             raise ValueError("Doctor not found")
         return consultation
 
+    def find_information_sheet_by_id(self, information_sheet_id):
+        information_sheet = self.db.session.get(InformationSheet, information_sheet_id)
+        if information_sheet is None:
+            raise ValueError("Consultation not found")
+        return information_sheet
+
     def find_patient_by_id(self, patient_id):
         patient = self.db.session.get(Patient, patient_id)
         if patient is None:
             raise ValueError("Doctor not found")
         return patient
+
+    def find_invite_code(self, code):
+        invite = None
+        for invite_code in self.find_all_invite_codes():
+            if invite_code.invite_code == code:
+                invite = invite_code
+        if invite is None:
+            raise ValueError("Invite code not found")
+        return invite
 
     @staticmethod
     def find_all_doctors():
@@ -39,6 +57,10 @@ class Database:
     @staticmethod
     def find_all_consultations():
         return Consultation.query.all()
+
+    @staticmethod
+    def find_all_invite_codes():
+        return InviteCode.query.all()
 
     def find_all_doctors_ids(self):
         ids = []
@@ -67,32 +89,30 @@ class Database:
         self.db.session.query(Consultation).delete()
         self.db.session.commit()
 
-    def find_doctor_username(self, username):
-        """
-                The function returns True if there is any existing doctor with the given username and False otherwise
-                :param username: str
-                :return: True/False
-                """
-        return Doctor.query.filter_by(username=username).first()
-
-
-    def find_patient_username(self, username):
-        """
-        The function returns True if there is any existing patient with the given username and False otherwise
-        :param username: str
-        :return: True/False
-        """
-        return Patient.query.filter_by(username=username).first()
-
-    def update_doctor(self, doctor_id, updated):
-        pass
+    def clear_invite_code_table(self):
+        self.db.session.query(InviteCode).delete()
+        self.db.session.commit()
 
     @staticmethod
-    def get_all_chronic_diseases():
+    def find_doctor_username(username):
+        doctor = Doctor.query.filter_by(username=username).first()
+        if doctor is None:
+            raise ValueError("Doctor not found")
+        return doctor
+
+    @staticmethod
+    def find_patient_username(username):
+        patient = Patient.query.filter_by(username=username).first()
+        if patient is None:
+            raise ValueError("Patient not found")
+        return patient
+
+    @staticmethod
+    def find_all_chronic_diseases():
         return ChronicDisease.query.all()
 
     @staticmethod
-    def get_all_allergies():
+    def find_all_allergies():
         return Allergy.query.all()
 
     def clear_smoker_table(self):
@@ -111,4 +131,9 @@ class Database:
         self.db.session.query(InformationSheet).delete()
         self.db.session.commit()
 
-
+    def remove_consultation(self, consultation_id):
+        consultation = self.find_consultation_by_id(consultation_id)
+        if consultation is None:
+            raise ValueError("Consultation not found")
+        consultation.remove()
+        self.db.session.commit()

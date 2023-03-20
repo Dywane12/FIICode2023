@@ -1,11 +1,9 @@
 from app import db
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import UserMixin
-from app import login_manager
 from hashlib import md5
 
 
-class Patient(UserMixin, db.Model):
+class Patient(db.Model):
     __tablename__ = "patient"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -14,7 +12,7 @@ class Patient(UserMixin, db.Model):
     phone_number = db.Column(db.Integer, index=True, unique=True)
     email = db.Column(db.String(128), index=True, unique=True)
     address = db.Column(db.String(256), index=True)
-    postalcode = db.Column(db.String(256), index=True )
+    postalcode = db.Column(db.String(256), index=True)
     city = db.Column(db.String(256), index=True)
     state = db.Column(db.String(256), index=True)
     passport_id = db.Column(db.String(16), index=True, unique=True)
@@ -22,14 +20,16 @@ class Patient(UserMixin, db.Model):
     marital_status = db.Column(db.String(16), index=True)
     gender = db.Column(db.String(8), index=True)
     occupation = db.Column(db.String(256), index=True)
+    invite_code = db.relationship('InviteCode', backref='patient')
     password_hash = db.Column(db.String(256), index=True, unique=False)
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
+    transfer = db.Column(db.Integer, index=True)
     consultations = db.relationship('Consultation', backref='patient')
     information_sheet = db.relationship('InformationSheet', backref='patient')
 
     def __init__(self, username=None, first_name=None, last_name=None, phone_number=None, email=None, address=None,
                  city=None, state=None, postalcode=None, passport_id=None,
-                 birth_date=None, marital_status=None, gender=None, occupation=None, medical_record_id=None,
+                 birth_date=None, marital_status=None, gender=None, occupation=None, invite_code=None,
                  doctor_id=None, password_hash=None):
         self.username = username
         self.first_name = first_name
@@ -45,7 +45,6 @@ class Patient(UserMixin, db.Model):
         self.marital_status = marital_status
         self.gender = gender
         self.occupation = occupation
-        self.medical_record_id = medical_record_id
         self.password_hash = password_hash
         self.doctor_id = doctor_id
 
@@ -67,7 +66,7 @@ class Patient(UserMixin, db.Model):
         return f'Patient: {self.username}'
 
 
-class Doctor(UserMixin, db.Model):
+class Doctor(db.Model):
     __tablename__ = "doctor"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -85,6 +84,7 @@ class Doctor(UserMixin, db.Model):
     consultation_schedule_away = db.Column(db.String(128), index=True)
     assistants_schedule = db.Column(db.String(128), index=True)
     password_hash = db.Column(db.String(256), index=True)
+    medical_proof = db.Column(db.String(256))
     patients = db.relationship('Patient', backref='doctor')
     consultations = db.relationship('Consultation', backref='doctor')
 
@@ -127,24 +127,19 @@ class Doctor(UserMixin, db.Model):
         return f'doctor: {self.username}'
 
 
-@login_manager.user_loader
-def load_user(id):
-    return Doctor.query.get(int(id))
-
-
 class Consultation(db.Model):
     __tablename__ = "consultation"
     id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'),)
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), )
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
-    time = db.Column(db.Date, index=True)
+    date_time = db.Column(db.DateTime, index=True)
     pdf = db.Column(db.String(128))
-    urgency_grade = db.Column(db.String(128),index=True)
+    urgency_grade = db.Column(db.String(128), index=True)
 
     def __init__(self, patient_id=None, doctor_id=None, time=None, pdf=None, urgency_grade=None):
         self.patient_id = patient_id
         self.doctor_id = doctor_id
-        self.time = time
+        self.date_time = time
         self.pdf = pdf
         self.urgency_grade = urgency_grade
 
@@ -293,4 +288,12 @@ class FamilyHistory(db.Model):
 
 class InviteCode(db.Model):
     __tablename__ = "invite_code"
-    invite_code = db.Column(db.Integer, index=True, primary_key=True)
+    id = db.Column(db.Integer, index=True, primary_key=True)
+    invite_code = db.Column(db.Integer)
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), index=True)
+    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'), index=True)
+
+    def __init__(self, invite_code=None, patient_id=None, doctor_id=None):
+        self.invite_code = invite_code
+        self.patient_id = patient_id
+        self.doctor_id = doctor_id

@@ -18,7 +18,7 @@
                 <div class="login-text">
                     <h2>Sign up Step 2</h2>
                 </div>
-                <form id="login" class="patient-group" action="" method="post">
+                <form id="login" class="patient-group" action="" method="post" enctype="multipart/form-data">
                     <input type="text" class="patient-field" placeholder="Username" name="username" value="{{request.form.username }}">
                     <input type="text" class="patient-field" placeholder="First name" name="first_name" value="{{request.form.first_name}}">
                     <input type="text" class="patient-field" placeholder="Last name" name="last_name" value="{{request.form.last_name}}">
@@ -31,7 +31,7 @@
                     <input type="text" class="patient-field" placeholder="Consultation schedule away" name="consultation_schedule_away" value="{{request.form.consultation_schedule_away}}">
                     <input type="text" class="patient-field" placeholder="Assistants schedule" name="assistants_schedule" value="{{request.form.assistants_schedule}}">
                     <input type="password" class="patient-field" placeholder="Password" name="password" value="{{request.form.password}}">
-                    <input type="file" class="patient-field" placeholder="Proof of medic" name="proof_of_medic" value="{{request.form.proof_of_medic}}"><br><br>
+                    <input type="file" class="patient-field" placeholder="Proof of medic" name="proof_of_medic" value="{{request.files.proof_of_medic}}"><br><br>
                     <input type="submit" class="register-btn" value="Register">
                 </form>
                     {% if error %}
@@ -42,5 +42,18 @@
             </div>
         </div>
     </section>
+     <script>
+      window.onunload = function() {
+        window.location.reload(true);
+      };
+    </script>
+    <script>
+      window.addEventListener('beforeunload', function (event) {
+        // Send an AJAX request to the server to clear the session
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/clear-session', false);
+        xhr.send(null);
+      });
+    </script>
 </body>
 </html>
