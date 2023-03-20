@@ -21,8 +21,8 @@
                     </button>
                     <div class="dropdown-content">
                         <a href="/patient-list">Patient list</a>
-                        <a href="/invita-pacienti">Invite a patient</a>
-                        <a href="/transfer-pacienti">Transfer patients</a>
+                        <a href="/invite-patient">Invite a patient</a>
+                        <a href="/transfer-patients">Transfer patients</a>
                     </div>
                 </div>
                 <a href="{{ url_for('logout') }}">Logout</a>
@@ -57,6 +57,18 @@
                             <td>{{doctor.address}}</td>
                         </tr>
                         <tr>
+                            <th>Postalcode:</th>
+                            <td>{{doctor.postalcode}}</td>
+                        </tr>
+                        <tr>
+                            <th>City:</th>
+                            <td>{{doctor.city}}</td>
+                        </tr>
+                        <tr>
+                            <th>County:</th>
+                            <td>{{doctor.state}}</td>
+                        </tr>
+                        <tr>
                             <th>Date of birth:</th>
                             <td>{{doctor.birth_date}}</td>
                         </tr>
@@ -79,6 +91,10 @@
                         <tr>
                             <th>Password:</th>
                             <td>********</td>
+                        </tr>
+                        <tr>
+                            <th>Medical proof:</th>
+                            <td>{{doctor.medical_proof}}</td>
                         </tr>
                     </table>
                   </div>

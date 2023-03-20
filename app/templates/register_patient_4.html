@@ -18,11 +18,11 @@
                 <div class="login-text">
                     <h2>Sign up Step 3: Medical record</h2>
                 </div>
-                <p class="check-text">Please check those that apply (diseases):</p>
+                <p class="check-text">Please check those that apply (allergies):</p>
                 <form id="login" class="patient-group" action="" method="post">
-                    {% for disease in diseases %}
+                    {% for allergy in allergies %}
                     <div class="diseases">
-                        <input id="{{ disease['name'] }}" type="checkbox" class="checkbox-patient" name="{{ disease['name'] }}"><label for="{{ disease['name'] }}" class="checkbox-text">{{ disease['name'] }}</label>
+                        <input id="{{ allergy['name'] }}" type="checkbox" class="checkbox-patient" name="{{ allergy['name'] }}"><label for="{{ allergy['name'] }}" class="checkbox-text">{{ allergy['name'] }}</label>
                     </div>
                     {% endfor %}
                 <input type="submit" class="register-btn" value="Next step">

@@ -172,7 +172,7 @@ class Routes:
                     {'name': 'Depression', 'type': ''},
                     {'name': 'Diabetes', 'type': 'Type' 'How long'}, {'name': 'Emphysema', 'type': ''},
                     {'name': 'Eye Problems', 'type': ''}, {'name': 'Fibromyalgia', 'type': ''},
-                    {'name': 'Fott Cramps', 'type': ''}, {'name': 'Gastric Reflux', 'type': ''},
+                    {'name': 'Foot Cramps', 'type': ''}, {'name': 'Gastric Reflux', 'type': ''},
                     {'name': 'Gout', 'type': ''}, {'name': 'Headaches', 'type': ''},
                     {'name': 'Heart Attack', 'type': ''}, {'name': 'Heart Murmur', 'type': ''},
                     ]
@@ -198,6 +198,17 @@ class Routes:
                     {'name': 'Pregnant?', 'type': ''}, {'name': 'Breastfeeding?', 'type': ''}
                     ]
         return render_template('register_patient_3.html', diseases=diseases)
+
+    @staticmethod
+    @app.route('/register-patient-4')
+    def register_patient_4():
+        allergies = [
+            {'name': 'Local anesthesia'}, {'name': 'Aspirin'}, {'name': 'Anti-Inflammatory'}, {'name': 'Penicillin'},
+            {'name': 'Sulfa'}, {'name': 'IVP dye'}, {'name': 'Tetanus'}, {'name': 'General anesthesia'},
+            {'name': 'Latex'}, {'name': 'Tape/Adhesives'}, {'name': 'Iodine'}, {'name': 'Betadine'},
+            {'name': 'Codeine'}, {'name': 'Steroids'}
+        ]
+        return render_template('register_patient_4.html', allergies=allergies)
 
     @staticmethod
     @app.route('/choice')

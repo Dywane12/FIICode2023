@@ -23,7 +23,22 @@
                     <h2>Edit profile</h2>
                 </div>
                 <form id="login" class="patient-group" action="" method="post">
-
+                    <input type="text" class="patient-field" placeholder="Invite code" name="invite_code" value="{{request.form.invite_code}}">
+                    <input type="text" class="patient-field" placeholder="Username" name="username" value="{{request.form.username }}">
+                    <input type="text" class="patient-field" placeholder="First name" name="first_name" value="{{request.form.first_name}}">
+                    <input type="text" class="patient-field" placeholder="Last name" name="last_name" value="{{request.form.last_name}}">
+                    <input type="tel" class="patient-field" placeholder="Phone number" name="phone_number" value="{{request.form.phone_number}}">
+                    <input type="text" class="patient-field" placeholder="Email" name="email" value="{{request.form.email }}">
+                    <input type="text" class="patient-field" placeholder="Address" name="address" value="{{request.form.address}}">
+                    <input type="text" class="patient-field" placeholder="Zipcode" name="zipcode" value="{{request.form.zipcode}}">
+                    <input type="text" class="patient-field" placeholder="City" name="city" value="{{request.form.city}}">
+                    <input type="text" class="patient-field" placeholder="County" name="county" value="{{request.form.county}}">
+                    <input type="text" class="patient-field" placeholder="Passport ID" name="passport_id" value="{{request.form.passport_id}}">
+                    <input type="text" class="patient-field" placeholder="Date of birth (dd/mm/yyyy)" name="birth_date" value="{{request.form.birth_date}}">
+                    <input type="text" class="patient-field" placeholder="Marital status (Married/Not married)" name="marital_status" value="{{request.form.marital_status}}">
+                    <input type="text" class="patient-field" placeholder="Gender (Male/Female)" name="gender" value="{{request.form.gender}}">
+                    <input type="text" class="patient-field" placeholder="Occupation" name="occupation" value="{{request.form.occupation}}">
+                    <input type="password" class="patient-field" placeholder="Password" name="password" value="{{request.form.password}}"> <br><br>
                     <input type="submit" class="register-btn" value="Save changes">
                 </form>
                     {% if error %}
