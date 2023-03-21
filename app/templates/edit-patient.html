@@ -22,8 +22,7 @@
                 <div class="login-text">
                     <h2>Edit profile</h2>
                 </div>
-                <form id="login" class="patient-group" action="" method="post">
-                    <input type="text" class="patient-field" placeholder="Invite code" name="invite_code" value="{{request.form.invite_code}}">
+                <form id="login" class="patient-group" action="" method="post" enctype="multipart/form-data" >
                     <input type="text" class="patient-field" placeholder="Username" name="username" value="{{request.form.username }}">
                     <input type="text" class="patient-field" placeholder="First name" name="first_name" value="{{request.form.first_name}}">
                     <input type="text" class="patient-field" placeholder="Last name" name="last_name" value="{{request.form.last_name}}">
@@ -38,7 +37,7 @@
                     <input type="text" class="patient-field" placeholder="Marital status (Married/Not married)" name="marital_status" value="{{request.form.marital_status}}">
                     <input type="text" class="patient-field" placeholder="Gender (Male/Female)" name="gender" value="{{request.form.gender}}">
                     <input type="text" class="patient-field" placeholder="Occupation" name="occupation" value="{{request.form.occupation}}">
-                    <input type="password" class="patient-field" placeholder="Password" name="password" value="{{request.form.password}}"> <br><br
+                    <input type="password" class="patient-field" placeholder="Password" name="password" value="{{request.form.password}}"> <br><br>
                     <input type="file" class="patient-field" placeholder="Profile picture" name="profile_picture" value="{{request.files.profile_picture}}"><br><br>
                     <input type="submit" class="register-btn" value="Save changes">
                 </form>

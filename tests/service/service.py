@@ -13,6 +13,4 @@ from flask import session
 with app.app_context():
     db_1 = Database(db)
     service = Service(db_1, session)
-    print(os.path.abspath(os.path.join(FOLDER, 'profile_picture_doctor',
-                            'seu21.jpg')))
-
+    print(service.get_patient_by_id(1).profile_picture)

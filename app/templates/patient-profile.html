@@ -19,10 +19,11 @@
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>
             <div class="main-box">
-                {% if patient.profile_picture=='' %}
+                {% if patient.profile_picture==None %}
                     <img src="{{ patient.avatar(128) }}" class="profile-img" alt="{{ patient.username }}">
                 {% else %}
-                    <img src="{{patient.get_profile_picture}}" class="profile-img" alt="{{ patient.username }}">
+                    <img src="../static/files/profile_picture_patient/{{patient.profile_picture}}" class="profile-img" alt="{{ patient.username }}">
+                {% endif %}
                   <h1 class="name">{{patient.first_name}} {{patient.last_name}}</h1>
                   <div class="profile-box">
                     <table class="medic-table">

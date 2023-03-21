@@ -96,7 +96,7 @@ class Routes:
                 else:
                     error = 'Wrong password. Try again.'
             elif patient is not None:
-                if not check_password_hash(patient.password_hash, password):
+                if check_password_hash(patient.password_hash, password):
                     service.session['patient'] = patient.id
                     return redirect(url_for('patient_home'))
                 else:
@@ -354,6 +354,7 @@ class Routes:
                          request.form['zipcode'], request.form['city'], request.form['county'], request.files['profile_picture']]
             service.update_doctor_profile(doctor, form_data)
             service.update_database()
+            return redirect(url_for('medic_profile'))
         return render_template('edit-medic.html')
 
     @staticmethod
@@ -372,10 +373,11 @@ class Routes:
                          request.files['profile_picture']]
             service.update_patient_profile(patient, form_data)
             service.update_database()
+            return redirect(url_for('patient_profile'))
         return render_template('edit-patient.html')
     @staticmethod
-    @app.route('/profil-lista-pacient')
-    def profil_lista_pacient():
+    @app.route('/list_patient_profile')
+    def list_patient_profile():
         if "doctor" not in service.session:
             return redirect(url_for('home'))
         doctor = service.get_doctor_by_id(service.session['doctor'])

@@ -325,16 +325,17 @@ class Service:
                 register_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR] == "" or register_data[
                     CONSULTATION_SCHEDULE_AWAY_DOCTOR] == "" or
                 register_data[ASSISTANTS_SCHEDULE_DOCTOR] == "" or register_data[GENDER_DOCTOR] == "" or register_data[ZIPCODE_DOCTOR] == ''
-                or register_data[CITY_DOCTOR]=='' or register_data[COUNTY_DOCTOR]=='' or register_data[PROFILE_PICTURE_DOCTOR]==''):
+                or register_data[CITY_DOCTOR]=='' or register_data[COUNTY_DOCTOR]==''):
             raise ValueError("Invalid data")
         doctors = self.get_all_doctors()
         for doctor_in_database in doctors:
             if doctor.username == doctor_in_database.username:
                 raise ValueError("Username already exists")
-        profile_picture = register_data[PROFILE_PICTURE_DOCTOR]
-        profile_picture.filename = f'{doctor.username}.jpg'
-        self.save_file(profile_picture, 'profile_picture_doctor')
-        doctor.profile_picture = profile_picture.filename
+        if register_data[PROFILE_PICTURE_DOCTOR].name != '':
+            profile_picture = register_data[PROFILE_PICTURE_DOCTOR]
+            profile_picture.filename = f'{doctor.username}.jpg'
+            self.save_file(profile_picture, 'profile_picture_doctor')
+            doctor.profile_picture = profile_picture.filename
         doctor.first_name = register_data[FIRST_NAME_DOCTOR]
         doctor.last_name = register_data[LAST_NAME_DOCTOR]
         doctor.email = register_data[EMAIL_DOCTOR]
@@ -376,17 +377,18 @@ class Service:
                 or register_data[CITY_PATIENT] == "" or register_data[COUNTY_PATIENT] == "" or register_data[
                     PASSPORT_ID_PATIENT] == ""
                 or register_data[BIRTH_DATE_PATIENT] == "" or register_data[OCCUPATION_PATIENT] == "" or register_data[
-                    INVITE_CODE_PATIENT] == "" or register_data[PROFILE_PICTURE_PATIENT]==''):
+                    INVITE_CODE_PATIENT] == ""):
             raise ValueError("Empty fields")
         patient.username = register_data[USERNAME_PATIENT]
         patients = self.get_all_patients()
         for patient_in_database in patients:
             if patient.username == patient_in_database.username:
                 raise ValueError("Username already exists")
-        profile_picture = register_data[PROFILE_PICTURE_PATIENT]
-        profile_picture.filename = f'{patient.username}.jpg'
-        self.save_file(profile_picture, 'profile_picture_patient')
-        patient.profile_picture = profile_picture.filename
+        if register_data[PROFILE_PICTURE_PATIENT].name != '':
+            profile_picture = register_data[PROFILE_PICTURE_PATIENT]
+            profile_picture.filename = f'{patient.username}.jpg'
+            self.save_file(profile_picture, 'profile_picture_patient')
+            patient.profile_picture = profile_picture.filename
         patient.first_name = register_data[FIRST_NAME_PATIENT]
         patient.last_name = register_data[LAST_NAME_PATIENT]
         patient.email = register_data[EMAIL_PATIENT]
@@ -477,8 +479,9 @@ class Service:
             doctor.assistants_schedule = update_data[ASSISTANTS_SCHEDULE_DOCTOR]
         if update_data[PASSWORD_DOCTOR] != "":
             doctor.set_password(update_data[PASSWORD_DOCTOR])
-        if update_data[PROFILE_PICTURE_DOCTOR] != '':
-            os.remove(os.path.abspath(os.path.join(FOLDER,'profile_picture_doctor',doctor.profile_picture)))
+        if update_data[PROFILE_PICTURE_DOCTOR].name != '':
+            if doctor.profile_picture is not None:
+                os.remove(os.path.abspath(os.path.join(FOLDER,'profile_picture_doctor',doctor.profile_picture)))
             profile_picture = update_data[PROFILE_PICTURE_DOCTOR]
             profile_picture.filename = f'{doctor.username}.jpg'
             self.save_file(profile_picture, 'profile_picture_doctor')
@@ -509,19 +512,18 @@ class Service:
             patient.city = update_data[CITY_PATIENT]
         if update_data[COUNTY_PATIENT] != "":
             patient.state = update_data[COUNTY_PATIENT]
-        if update_data[INVITE_CODE_PATIENT] != "":
-            patient.invite_code = update_data[INVITE_CODE_PATIENT]
         if update_data[MARITAL_STATUS_PATIENT] != "":
             patient.martial_status = update_data[MARITAL_STATUS_PATIENT]
         if update_data[PASSWORD_PATIENT] != "":
             patient.set_password(update_data[PASSWORD_PATIENT])
         if update_data[GENDER_PATIENT] != "":
             patient.gender = update_data[GENDER_PATIENT]
-        if update_data[PROFILE_PICTURE_PATIENT] != '':
-            os.remove(os.path.abspath(os.path.join(FOLDER,'profile_picture_patient',patient.profile_picture)))
+        if update_data[PROFILE_PICTURE_PATIENT].name != '':
+            if patient.profile_picture is not None:
+                os.remove(os.path.abspath(os.path.join(FOLDER,'profile_picture_patient',patient.profile_picture)))
             profile_picture = update_data[PROFILE_PICTURE_PATIENT]
             profile_picture.filename = f'{patient.username}.jpg'
-            self.save_file(profile_picture, 'profile_picture_doctor')
+            self.save_file(profile_picture, 'profile_picture_patient')
 
     @staticmethod
     def generate_random_code():

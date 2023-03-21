@@ -45,7 +45,7 @@
                           { id: 'lname', name: 'Last name' },
                           { id: 'fisa_medicala', name: 'Passport ID', sort: false },
                           { id: 'detalii', name: 'Details', sort: false,
-                                formatter: (_, row) => gridjs.html(`<a href='{{url_for('profil_lista_pacient', doctor=pacient)}}'>Details</a>`)
+                                formatter: (_, row) => gridjs.html(`<a href='{{url_for('list_patient_profile', doctor=pacient)}}'>Details</a>`)
                           }
                         ],
                         data: [

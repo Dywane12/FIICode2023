@@ -300,3 +300,10 @@ class InviteCode(db.Model):
         self.invite_code = invite_code
         self.patient_id = patient_id
         self.doctor_id = doctor_id
+
+    def __str__(self):
+        return f'{self.invite_code}'
+
+    def __repr__(self):
+        return f'{self.invite_code}'
+

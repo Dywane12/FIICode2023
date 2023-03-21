@@ -28,7 +28,7 @@
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>
             <div class="main-box">
-                {% if doctor.profile_picture=='' %}
+                {% if doctor.profile_picture==None %}
                     <img src="{{ doctor.avatar(128) }}" class="profile-img" alt="{{ doctor.username }}">
                 {% else %}
                     <img src="../static/files/profile_picture_doctor/{{doctor.profile_picture}}" class="profile-img" alt="{{ doctor.username }}">
