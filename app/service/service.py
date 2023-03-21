@@ -527,7 +527,9 @@ class Service:
 
     @staticmethod
     def generate_random_code():
+        #fagssdfg
         return random.randint(1000000, 9999999)
+
 
     def send_welcome_email(self, email_patient, email_companie):
         sender_account = email_companie
