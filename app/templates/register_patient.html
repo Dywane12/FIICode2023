@@ -16,9 +16,9 @@
         <div class="hero">
             <div class="form-patient">
                 <div class="login-text">
-                    <h2>Sign up Step 2</h2>
+                    <h2>Sign up Step 2: General Information</h2>
                 </div>
-                <form id="login" class="patient-group" action="" method="post">
+                <form id="login" class="patient-group" action="" method="post" enctype="multipart/form-data">
                     <input type="text" class="patient-field" placeholder="Invite code" name="invite_code" value="{{request.form.invite_code}}">
                     <input type="text" class="patient-field" placeholder="Username" name="username" value="{{request.form.username }}">
                     <input type="text" class="patient-field" placeholder="First name" name="first_name" value="{{request.form.first_name}}">

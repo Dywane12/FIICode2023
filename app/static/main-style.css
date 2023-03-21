@@ -11,11 +11,12 @@
     background-position: center;
     background-size: cover;
     position: relative;
+    overflow: auto;
 
 }
 /* Navbar container */
 .navbar {
-  overflow: hidden;
+  overflow: auto;
   background-color: #333;
   font-family: Arial;
 }
@@ -92,7 +93,6 @@
     margin: 3% auto;
     background: #fff;
     padding: 5px;
-    overflow: hidden;
     text-align: center;
 }
 
@@ -112,7 +112,7 @@
   background-color: #000;
   text-align: center;
   cursor: pointer;
-  width: 100%;
+  width: 98%;
   font-size: 18px;
 }
 
@@ -137,12 +137,12 @@ button:hover, a:hover {
     margin: 3% auto;
     background: #fff;
     padding: 5px;
-    overflow: hidden;
+    overflow: auto;
     text-align: center;
 }
 
 .medic-table, th, td{
-    margin: 15px auto;
+    margin: auto;
     padding: 5px;
 }
 

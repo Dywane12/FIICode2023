@@ -18,7 +18,7 @@
                 <div class="login-text">
                     <h2>Sign up Step 3: Medical record</h2>
                 </div>
-                <p class="check-text">Please check those that apply (allergies):</p>
+                <p class="check-text">Please check those that apply (allergies/addictions):</p>
                 <form id="login" class="patient-group" action="" method="post">
                     {% for allergy in allergies %}
                     <div class="diseases">
@@ -30,7 +30,7 @@
                     {% if error %}
                     <p class="error"><strong>Error:</strong> {{ error }}
                       {% endif %}</p>
-                <a href="/choice" class="back-btn">Back</a>
+                <a href="/register-patient-3" class="back-btn">Back</a>
                 <a href="/login" class="back-to-login">Already have an account?</a>
             </div>
         </div>
