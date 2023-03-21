@@ -74,8 +74,6 @@ class Routes:
     def register_page_patient():
         return render_template('register_patient.html')
 
-
-
     @staticmethod
     @app.route('/login', methods=['GET', 'POST'])
     def login():
@@ -96,7 +94,7 @@ class Routes:
                 else:
                     error = 'Wrong password. Try again.'
             elif patient is not None:
-                if check_password_hash(patient.password_hash, password):
+                if not check_password_hash(patient.password_hash, password):
                     service.session['patient'] = patient.id
                     return redirect(url_for('patient_home'))
                 else:
@@ -124,8 +122,9 @@ class Routes:
                          request.form['birth_date'], request.form['consultation_schedule_office'],
                          request.form['consultation_schedule_away'],
                          request.form['assistants_schedule'], request.form['password'], request.form['gender'],
-                         request.form['zipcode'], request.form['city'], request.form['county'],
-                         request.files['profile_picture'],  request.files['proof_of_medic']]
+                         request.files['proof_of_medic'], request.form['zipcode'], request.form['city'],
+                         request.form['county'],
+                         request.files['profile_picture']]
             try:
                 service.register_medic(form_data)
             except ValueError as exception:
@@ -148,7 +147,7 @@ class Routes:
                          request.form['county'], request.form['passport_id'],
                          request.form['birth_date'], request.form['marital_status'],
                          request.form['gender'], request.form['occupation'], request.form['password'],
-                         request.files['profile_picture'], request.form['invite_code']]
+                         request.form['invite_code'], request.files['profile_picture']]
             try:
                 patient_id = service.register_patient(form_data)
             except ValueError as exception:
@@ -161,6 +160,7 @@ class Routes:
     @staticmethod
     @app.route('/register-patient-2')
     def register_patient_2():
+        error = None
         diseases = [{'name': 'AIDS/HIV', 'type': ''}, {'name': 'Anemia', 'type': ''}, {'name': 'Anxiety', 'type': ''},
                     {'name': 'Arthritis', 'type': 'Type'},
                     {'name': 'Artificial Heart Valve', 'type': ''}, {'name': 'Artificial Joint', 'type': ''},
@@ -179,14 +179,17 @@ class Routes:
                     ]
         if request.method == 'POST':
             form_data = [request.form['AIDS/HIV'], request.form['Anemia'], request.form['Anxiety'],
-                         request.form['Arthritis'], request.form['Artificial Heart Valve'], request.form['Artificial Joint'],
+                         request.form['Arthritis'], request.form['Artificial Heart Valve'],
+                         request.form['Artificial Joint'],
                          request.form['Asthma'], request.form['Back Problems'],
                          request.form['Bleeding Disorder'], request.form['Bipolar Disorder'],
                          request.form['Bloot Clot/DVT'], request.form['Bypass Surgery'],
                          request.form['Cancer'], request.form['Chemical Dependency'], request.form['Chest Pain'],
-                         request.form['Circulatory Problems'], request.form['Depression'], request.form['Diabetes']
-                         ,request.form['Emphysema'], request.form['Eye Problems'], request.form['Fibromyalgia'], request.form['Foot Cramps']
-                         ,request.form['Gout'], request.form['Headaches'], request.form['Heart Attack'], request.form['Heart Murmur']]
+                         request.form['Circulatory Problems'], request.form['Depression'], request.form['Diabetes'],
+                         request.form['Emphysema'], request.form['Eye Problems'], request.form['Fibromyalgia'],
+                         request.form['Foot Cramps'],
+                         request.form['Gout'], request.form['Headaches'], request.form['Heart Attack'],
+                         request.form['Heart Murmur']]
             try:
                 information_sheet_id = service.register_information_sheet_1(form_data, service.session['register_patient_id'], diseases)
             except ValueError as exception:
@@ -199,6 +202,7 @@ class Routes:
     @staticmethod
     @app.route('/register-patient-3')
     def register_patient_3():
+        error = None
         diseases = [{'name': 'Heart Failure', 'type': ''}, {'name': 'Hemophilia', 'type': ''},
                     {'name': 'Hepatitis', 'type': ''}, {'name': 'High Blood Pressure', 'type': ''},
                     {'name': 'Kidney Problems', 'type': ''},
@@ -217,16 +221,19 @@ class Routes:
                     ]
         if request.method == 'POST':
             form_data = [request.form['Heart Failure'], request.form['Hemophilia'], request.form['Hepatitis'],
-                         request.form['High Blood Pressure'], request.form['Kidney Problems'], request.form['Leg Cramps'],
+                         request.form['High Blood Pressure'], request.form['Kidney Problems'],
+                         request.form['Leg Cramps'],
                          request.form['Liver Disease'], request.form['Low Blood Pressure'],
                          request.form['Mental Illness'], request.form['Neuropathy'],
                          request.form['Pacemaker'], request.form['Paralysis'],
                          request.form['Phlebitis'], request.form['Psoriasis'], request.form['Rheumatic Fever'],
-                         request.form['Schizophrenia'], request.form['Shortness of Breath'], request.form['Stroke']
-                         ,request.form['Thyroid Problems'], request.form['Tuberculosis'], request.form['Ulcers (Stomach)'], request.form['Varicose Veins']
-                         ,request.form['Weight loss(unexplained)'], request.form['Pregnant'], request.form['Breastfeeding']]
+                         request.form['Schizophrenia'], request.form['Shortness of Breath'], request.form['Stroke'],
+                         request.form['Thyroid Problems'], request.form['Tuberculosis'],
+                         request.form['Ulcers (Stomach)'], request.form['Varicose Veins'],
+                         request.form['Weight loss(unexplained)'],
+                         request.form['Pregnant'], request.form['Breastfeeding']]
             try:
-                service.register_information_sheet_2(form_data, service.session['information_sheet_id'] , diseases)
+                service.register_information_sheet_2(form_data, service.session['information_sheet_id'], diseases)
             except ValueError as exception:
                 error = exception
             else:
@@ -236,6 +243,7 @@ class Routes:
     @staticmethod
     @app.route('/register-patient-4')
     def register_patient_4():
+        error = None
         allergies = [
             {'name': 'Local anesthesia'}, {'name': 'Aspirin'}, {'name': 'Anti-Inflammatory'}, {'name': 'Penicillin'},
             {'name': 'Sulfa'}, {'name': 'IVP dye'}, {'name': 'Tetanus'}, {'name': 'General anesthesia'},
@@ -244,16 +252,19 @@ class Routes:
         ]
         if request.method == 'POST':
             form_data = [request.form['Heart Failure'], request.form['Hemophilia'], request.form['Hepatitis'],
-                         request.form['High Blood Pressure'], request.form['Kidney Problems'], request.form['Leg Cramps'],
+                         request.form['High Blood Pressure'], request.form['Kidney Problems'],
+                         request.form['Leg Cramps'],
                          request.form['Liver Disease'], request.form['Low Blood Pressure'],
                          request.form['Mental Illness'], request.form['Neuropathy'],
                          request.form['Pacemaker'], request.form['Paralysis'],
                          request.form['Phlebitis'], request.form['Psoriasis'], request.form['Rheumatic Fever'],
-                         request.form['Schizophrenia'], request.form['Shortness of Breath'], request.form['Stroke']
-                         ,request.form['Thyroid Problems'], request.form['Tuberculosis'], request.form['Ulcers (Stomach)'], request.form['Varicose Veins']
-                         ,request.form['Weight loss(unexplained)'], request.form['Pregnant'], request.form['Breastfeeding']]
+                         request.form['Schizophrenia'], request.form['Shortness of Breath'],
+                         request.form['Stroke'], request.form['Thyroid Problems'], request.form['Tuberculosis'],
+                         request.form['Ulcers (Stomach)'], request.form['Varicose Veins'],
+                         request.form['Weight loss(unexplained)'], request.form['Pregnant'],
+                         request.form['Breastfeeding']]
             try:
-                service.register_information_sheet_3(form_data, service.session['information_sheet_id'] , allergies)
+                service.register_information_sheet_3(form_data, service.session['information_sheet_id'], allergies)
             except ValueError as exception:
                 error = exception
             else:
@@ -261,13 +272,8 @@ class Routes:
                 service.update_database()
                 service.session.pop('register_patient_id')
                 service.session.pop('information_sheet_id')
-                return redirect(url_for('register_patient_5'))
+                return redirect(url_for('login'))
         return render_template('register_patient_4.html', allergies=allergies, error=error)
-
-    @staticmethod
-    @app.route('/register-patient-5')
-    def register_patient_5():
-        return render_template('register_patient_5.html')
 
     @staticmethod
     @app.route('/choice')
@@ -302,8 +308,7 @@ class Routes:
     def transfer_patients():
         if "doctor" not in service.session:
             return redirect(url_for('home'))
-        patients = service.get_patients_that_want_to_transfer()
-        return render_template('transfer-patients.html', patients=patients)
+        return render_template('transfer-patients.html')
 
     @staticmethod
     @app.route('/invite-patient')
@@ -330,22 +335,6 @@ class Routes:
         return render_template('patient-profile.html', patient=patient)
 
     @staticmethod
-    @app.route('/invite-patient', methods=['GET', 'POST'])
-    def invitation():
-        if "doctor" not in service.session:
-            return redirect(url_for('home'))
-        email_companie = 'clinica_audi@gmail.com'
-        email_patient = request.form['email']
-        if request.method == 'POST':
-            if email_patient == 'admin@admin.com':
-                service.send_welcome_email(email_companie, email_patient)
-                message = 'Invite sent!'
-                return render_template('invite-patient.html', message=message)
-            else:
-                error = 'Wrong credentials. Try again.'
-                return render_template('invite-patient.html', error=error)
-
-    @staticmethod
     @app.route('/edit-medic', methods=['GET', 'POST'])
     def edit_medic():
         if "doctor" not in service.session:
@@ -356,34 +345,14 @@ class Routes:
                          request.form['email'], request.form['phone_number'], request.form['address'],
                          request.form['birth_date'], request.form['consultation_schedule_office'],
                          request.form['consultation_schedule_away'],
-                         request.form['assistants_schedule'], request.form['password'], request.form['gender'],
-                         request.form['zipcode'], request.form['city'], request.form['county'], request.files['profile_picture']]
+                         request.form['assistants_schedule'], request.form['password'], request.form['gender']]
             service.update_doctor_profile(doctor, form_data)
             service.update_database()
-            return redirect(url_for('medic_profile'))
         return render_template('edit-medic.html')
 
     @staticmethod
-    @app.route('/edit-patient', methods=['GET','POST'])
-    def edit_patient():
-        if 'patient' not in service.session:
-            return redirect(url_for('home'))
-        if request.method == 'POST':
-            patient = service.get_patient_by_id(service.session['patient'])
-            form_data = [request.form['username'], request.form['first_name'], request.form['last_name'],
-                         request.form['email'], request.form['phone_number'], request.form['address'],
-                         request.form['zipcode'], request.form['city'],
-                         request.form['county'], request.form['passport_id'],
-                         request.form['birth_date'], request.form['marital_status'],
-                         request.form['gender'], request.form['occupation'], request.form['password'],
-                         request.files['profile_picture']]
-            service.update_patient_profile(patient, form_data)
-            service.update_database()
-            return redirect(url_for('patient_profile'))
-        return render_template('edit-patient.html')
-    @staticmethod
-    @app.route('/list_patient_profile')
-    def list_patient_profile():
+    @app.route('/profil-lista-pacient')
+    def profil_lista_pacient():
         if "doctor" not in service.session:
             return redirect(url_for('home'))
         doctor = service.get_doctor_by_id(service.session['doctor'])
@@ -399,12 +368,27 @@ class Routes:
     @staticmethod
     @app.route('/change-medic')
     def change_medic():
-        patient_id = service.session['patient']
-        doctors = service.get_doctors_nearby_patient(patient_id)
-        return render_template('change-medic.html', doctors=doctors)
+        return render_template('change-medic.html')
 
     @staticmethod
     @app.route('/consultations/<filename>')
     def uploaded_consultation(filename):
         return send_from_directory(os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], 'consultation')),
                                    filename)
+
+    @staticmethod
+    @app.route('/invite-patient', methods=['GET', 'POST'])
+    def invitation():
+        if "doctor" not in service.session:
+            return redirect(url_for('home'))
+        email_companie = 'clinica_audi@gmail.com'
+        email_patient = request.form['email']
+        if request.method == 'POST':
+            if email_patient == 'admin@admin.com':
+                service.send_welcome_email(email_companie, email_patient)
+                message = 'Invite sent!'
+                return render_template('invite-patient.html', message=message)
+            else:
+                error = 'Wrong credentials. Try again.'
+                return render_template('invite-patient.html', error=error)
+
