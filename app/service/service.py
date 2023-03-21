@@ -31,11 +31,11 @@ CONSULTATION_SCHEDULE_AWAY_DOCTOR = 8
 ASSISTANTS_SCHEDULE_DOCTOR = 9
 PASSWORD_DOCTOR = 10
 GENDER_DOCTOR = 11
-MEDICAL_PROOF = 12
-ZIPCODE_DOCTOR = 13
-CITY_DOCTOR = 14
-COUNTY_DOCTOR = 15
-PROFILE_PICTURE_DOCTOR = 16
+ZIPCODE_DOCTOR = 12
+CITY_DOCTOR = 13
+COUNTY_DOCTOR = 14
+PROFILE_PICTURE_DOCTOR = 15
+MEDICAL_PROOF = 16
 
 
 USERNAME_PATIENT = 0
@@ -53,8 +53,8 @@ MARITAL_STATUS_PATIENT = 11
 GENDER_PATIENT = 12
 OCCUPATION_PATIENT = 13
 PASSWORD_PATIENT = 14
-INVITE_CODE_PATIENT = 15
-PROFILE_PICTURE_PATIENT = 16
+PROFILE_PICTURE_PATIENT = 15
+INVITE_CODE_PATIENT = 16
 
 
 class Service:
@@ -448,8 +448,7 @@ class Service:
     def update_database(self):
         self.db.save_to_database()
 
-    @staticmethod
-    def update_doctor_profile(doctor, update_data):
+    def update_doctor_profile(self, doctor, update_data):
         if update_data[USERNAME_DOCTOR] != "":
             doctor.username = update_data[USERNAME_DOCTOR]
         if update_data[FIRST_NAME_DOCTOR] != "":
@@ -462,6 +461,12 @@ class Service:
             doctor.phone_number = update_data[PHONE_NUMBER_DOCTOR]
         if update_data[ADDRESS_DOCTOR] != "":
             doctor.address = update_data[ADDRESS_DOCTOR]
+        if update_data[ZIPCODE_DOCTOR] != "":
+            doctor.zipcode = update_data[ZIPCODE_DOCTOR]
+        if update_data[CITY_DOCTOR] != '':
+            doctor.city = update_data[CITY_DOCTOR]
+        if update_data[COUNTY_DOCTOR] != '':
+            doctor.state = update_data[COUNTY_DOCTOR]
         if update_data[BIRTH_DATE_DOCTOR] != "":
             doctor.birth_date = update_data[BIRTH_DATE_DOCTOR]
         if update_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR] != "":
@@ -472,9 +477,14 @@ class Service:
             doctor.assistants_schedule = update_data[ASSISTANTS_SCHEDULE_DOCTOR]
         if update_data[PASSWORD_DOCTOR] != "":
             doctor.set_password(update_data[PASSWORD_DOCTOR])
+        if update_data[PROFILE_PICTURE_DOCTOR] != '':
+            os.remove(os.path.abspath(os.path.join(FOLDER,'profile_picture_doctor',doctor.profile_picture)))
+            profile_picture = update_data[PROFILE_PICTURE_DOCTOR]
+            profile_picture.filename = f'{doctor.username}.jpg'
+            self.save_file(profile_picture, 'profile_picture_doctor')
 
-    @staticmethod
-    def update_patient_profile(patient, update_data):
+
+    def update_patient_profile(self,patient, update_data):
         if update_data[USERNAME_PATIENT] != "":
             patient.username = update_data[USERNAME_PATIENT]
         if update_data[FIRST_NAME_PATIENT] != "":
@@ -507,6 +517,11 @@ class Service:
             patient.set_password(update_data[PASSWORD_PATIENT])
         if update_data[GENDER_PATIENT] != "":
             patient.gender = update_data[GENDER_PATIENT]
+        if update_data[PROFILE_PICTURE_PATIENT] != '':
+            os.remove(os.path.abspath(os.path.join(FOLDER,'profile_picture_patient',patient.profile_picture)))
+            profile_picture = update_data[PROFILE_PICTURE_PATIENT]
+            profile_picture.filename = f'{patient.username}.jpg'
+            self.save_file(profile_picture, 'profile_picture_doctor')
 
     @staticmethod
     def generate_random_code():

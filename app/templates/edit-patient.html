@@ -38,7 +38,8 @@
                     <input type="text" class="patient-field" placeholder="Marital status (Married/Not married)" name="marital_status" value="{{request.form.marital_status}}">
                     <input type="text" class="patient-field" placeholder="Gender (Male/Female)" name="gender" value="{{request.form.gender}}">
                     <input type="text" class="patient-field" placeholder="Occupation" name="occupation" value="{{request.form.occupation}}">
-                    <input type="password" class="patient-field" placeholder="Password" name="password" value="{{request.form.password}}"> <br><br>
+                    <input type="password" class="patient-field" placeholder="Password" name="password" value="{{request.form.password}}"> <br><br
+                    <input type="file" class="patient-field" placeholder="Profile picture" name="profile_picture" value="{{request.files.profile_picture}}"><br><br>
                     <input type="submit" class="register-btn" value="Save changes">
                 </form>
                     {% if error %}

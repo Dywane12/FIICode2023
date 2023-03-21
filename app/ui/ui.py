@@ -124,8 +124,8 @@ class Routes:
                          request.form['birth_date'], request.form['consultation_schedule_office'],
                          request.form['consultation_schedule_away'],
                          request.form['assistants_schedule'], request.form['password'], request.form['gender'],
-                         request.files['proof_of_medic'], request.form['zipcode'], request.form['city'], request.form['county'],
-                         request.files['profile_picture']]
+                         request.form['zipcode'], request.form['city'], request.form['county'],
+                         request.files['profile_picture'],  request.files['proof_of_medic']]
             try:
                 service.register_medic(form_data)
             except ValueError as exception:
@@ -148,7 +148,7 @@ class Routes:
                          request.form['county'], request.form['passport_id'],
                          request.form['birth_date'], request.form['marital_status'],
                          request.form['gender'], request.form['occupation'], request.form['password'],
-                         request.form['invite_code'], request.files['profile_picture']]
+                         request.files['profile_picture'], request.form['invite_code']]
             try:
                 patient_id = service.register_patient(form_data)
             except ValueError as exception:
@@ -350,11 +350,29 @@ class Routes:
                          request.form['email'], request.form['phone_number'], request.form['address'],
                          request.form['birth_date'], request.form['consultation_schedule_office'],
                          request.form['consultation_schedule_away'],
-                         request.form['assistants_schedule'], request.form['password'], request.form['gender']]
+                         request.form['assistants_schedule'], request.form['password'], request.form['gender'],
+                         request.form['zipcode'], request.form['city'], request.form['county'], request.files['profile_picture']]
             service.update_doctor_profile(doctor, form_data)
             service.update_database()
         return render_template('edit-medic.html')
 
+    @staticmethod
+    @app.route('/edit-patient', methods=['GET','POST'])
+    def edit_patient():
+        if 'patient' not in service.session:
+            return redirect(url_for('home'))
+        if request.method == 'POST':
+            patient = service.get_patient_by_id(service.session['patient'])
+            form_data = [request.form['username'], request.form['first_name'], request.form['last_name'],
+                         request.form['email'], request.form['phone_number'], request.form['address'],
+                         request.form['zipcode'], request.form['city'],
+                         request.form['county'], request.form['passport_id'],
+                         request.form['birth_date'], request.form['marital_status'],
+                         request.form['gender'], request.form['occupation'], request.form['password'],
+                         request.files['profile_picture']]
+            service.update_patient_profile(patient, form_data)
+            service.update_database()
+        return render_template('edit-patient.html')
     @staticmethod
     @app.route('/profil-lista-pacient')
     def profil_lista_pacient():
