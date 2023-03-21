@@ -317,15 +317,18 @@ class Service:
             os.remove(os.path.abspath(medical_proof_path))
             raise AttributeError("Invalid proof")
         doctor.medical_proof = medical_proof.filename
-        if (register_data[USERNAME_DOCTOR] == "" or register_data[PASSWORD_DOCTOR] == "" or register_data[FIRST_NAME_DOCTOR] == "" or
+        if (register_data[USERNAME_DOCTOR] == "" or register_data[PASSWORD_DOCTOR] == "" or
+                register_data[FIRST_NAME_DOCTOR] == "" or
                 register_data[LAST_NAME_DOCTOR] == "" or
                 register_data[EMAIL_DOCTOR] == "" or register_data[PHONE_NUMBER_DOCTOR] == "" or register_data[
                     ADDRESS_DOCTOR] == "" or
                 register_data[BIRTH_DATE_DOCTOR] == "" or
                 register_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR] == "" or register_data[
                     CONSULTATION_SCHEDULE_AWAY_DOCTOR] == "" or
-                register_data[ASSISTANTS_SCHEDULE_DOCTOR] == "" or register_data[GENDER_DOCTOR] == "" or register_data[ZIPCODE_DOCTOR] == ''
-                or register_data[CITY_DOCTOR]=='' or register_data[COUNTY_DOCTOR]=='' or register_data[PROFILE_PICTURE_DOCTOR]==''):
+                register_data[ASSISTANTS_SCHEDULE_DOCTOR] == "" or register_data[GENDER_DOCTOR] == "" or
+                register_data[ZIPCODE_DOCTOR] == ''
+                or register_data[CITY_DOCTOR] == '' or register_data[COUNTY_DOCTOR] =='' or
+                register_data[PROFILE_PICTURE_DOCTOR] == ''):
             raise ValueError("Invalid data")
         doctors = self.get_all_doctors()
         for doctor_in_database in doctors:
@@ -512,34 +515,6 @@ class Service:
     def generate_random_code():
         return random.randint(1000000, 9999999)
 
-    def send_welcome_email(self, email_patient, email_companie):
-        sender_account = email_companie
-        reciever_account = email_patient
-        cod = self.generate_random_code()
-        invite_code = InviteCode(invite_code=cod, doctor_id=self.session['doctor'])
-        self.db.add_entity(invite_code)
-        self.update_database()
-        message = f"Subject: BUN VENIT IN CLINICA NOASTRA!!\n Ne bucuram ca ati ales servicile noastre.\nCodul dumneavoastra de autentificare este:{cod}"
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
-            server.starttls()
-            server.login(sender_account, "your_password")
-            server.sendmail(sender_account, reciever_account, message)
-
-    def send_welcome_sms(self, sender_number, destination_number):
-        account_sid = "account_sid"  # gasim pe twilio
-        auth_token = "auth_token"
-        client = Client(account_sid, auth_token)
-        cod = self.generate_random_code()
-        invite_code = InviteCode(invite_code=cod, doctor_id=self.session['doctor'])
-        self.db.add_entity(invite_code)
-        self.update_database()
-        message_body = f"Subject: BUN VENIT IN CLINICA NOASTRA!!\n Ne bucuram ca ati ales servicile noastre.\nCodul dumneavoastra de autentificare este:{cod}"
-        destination_number = "+04" + destination_number
-        client.messages.create(
-            to=destination_number,
-            from_=sender_number,
-            body=message_body)
-
     def create_appointment_ad_hoc(self, time, urgency_grade):
         doctor_id = self.session['doctor']
         consultation = Consultation(doctor_id=doctor_id, time=time, urgency_grade=urgency_grade)
@@ -696,3 +671,32 @@ class Service:
     def link_patient_to_information_sheet(self):
         information_sheet = self.db.find_information_sheet_by_id(self.session['information_sheet_id'])
         information_sheet.patient_id = self.session['patient_id']
+
+    def send_welcome_email(self, email_patient, email_companie):
+        sender_account = email_companie
+        reciever_account = email_patient
+        cod = self.generate_random_code()
+        invite_code = InviteCode(invite_code=cod, doctor_id=self.session['doctor'])
+        self.db.add_entity(invite_code)
+        self.update_database()
+        message = f"Subject: BUN VENIT IN CLINICA NOASTRA!!\n Ne bucuram ca ati ales servicile noastre.\nCodul dumneavoastra de autentificare este:{cod}"
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(sender_account, "your_password")
+            server.sendmail(sender_account, reciever_account, message)
+
+    def send_welcome_sms(self, destination_number):
+        sender_number = "+40772093773"
+        account_sid = "ACe49ff3d982fa8beb419253807c8314a2"
+        auth_token = "e4c03664f0255564d4a36fcf54f606c2"
+        client = Client(account_sid, auth_token)
+        cod = self.generate_random_code()
+        invite_code = InviteCode(invite_code=cod, doctor_id=self.session['doctor'])
+        self.db.add_entity(invite_code)
+        self.update_database()
+        message_body = f"Subject:WELCOME TO OUR CLINIC!!\n We are very glad to see that you chose our services.\nThe authentification code is:{cod}"
+        destination_number = "+04" + destination_number
+        client.messages.create(
+            to=destination_number,
+            from_=sender_number,
+            body=message_body)
