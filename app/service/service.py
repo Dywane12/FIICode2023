@@ -11,14 +11,13 @@ from geopy import distance
 import re
 from pdfminer.high_level import extract_text
 from app import app
-from app import config
 from app.domain.entities import Patient, Doctor, Consultation, Drinker, Smoker, InformationSheet, Father, FamilyHistory, \
     Mother, Brother, Sister, Hospitalization, ChronicDisease, Allergy, InviteCode
 from twilio.rest import Client
 import os
 from werkzeug.utils import secure_filename
 import phone_gen
-
+FOLDER = os.path.abspath(os.path.join(app.root_path,'static/files'))
 ALLOWED_EXTENSIONS = {'jpg', 'pdf'}
 USERNAME_DOCTOR = 0
 FIRST_NAME_DOCTOR = 1
@@ -33,6 +32,11 @@ ASSISTANTS_SCHEDULE_DOCTOR = 9
 PASSWORD_DOCTOR = 10
 GENDER_DOCTOR = 11
 MEDICAL_PROOF = 12
+ZIPCODE_DOCTOR = 13
+CITY_DOCTOR = 14
+COUNTY_DOCTOR = 15
+PROFILE_PICTURE_DOCTOR = 16
+
 
 USERNAME_PATIENT = 0
 FIRST_NAME_PATIENT = 1
@@ -50,8 +54,7 @@ GENDER_PATIENT = 12
 OCCUPATION_PATIENT = 13
 PASSWORD_PATIENT = 14
 INVITE_CODE_PATIENT = 15
-
-DOCTOR_ID = 16
+PROFILE_PICTURE_PATIENT = 16
 
 
 class Service:
@@ -302,33 +305,50 @@ class Service:
     def register_medic(self, register_data):
         doctor = Doctor()
         medical_proof = register_data[MEDICAL_PROOF]
+        doctor.username = register_data[USERNAME_DOCTOR]
         if medical_proof.filename == '':
-            raise ValueError("No file selected")
+            raise ValueError("No medical proof found")
         if not self.allowed_file(medical_proof.filename):
             raise ValueError("Invalid file format")
-        medical_proof.filename = f'{doctor.id}.pdf'
+        medical_proof.filename = f'{doctor.username}.pdf'
         medical_proof_path = self.save_file(medical_proof, 'proofs')
         if not self.validate_medical_proof(os.path.abspath(medical_proof_path),
                                            register_data[FIRST_NAME_DOCTOR] + ' ' + register_data[LAST_NAME_DOCTOR]):
             os.remove(os.path.abspath(medical_proof_path))
             raise AttributeError("Invalid proof")
         doctor.medical_proof = medical_proof.filename
-        if (register_data[USERNAME_DOCTOR] == "" or register_data[PASSWORD_DOCTOR] == "" or register_data[
-            FIRST_NAME_DOCTOR] == "" or
+        if (register_data[USERNAME_DOCTOR] == "" or register_data[PASSWORD_DOCTOR] == "" or register_data[FIRST_NAME_DOCTOR] == "" or
                 register_data[LAST_NAME_DOCTOR] == "" or
                 register_data[EMAIL_DOCTOR] == "" or register_data[PHONE_NUMBER_DOCTOR] == "" or register_data[
                     ADDRESS_DOCTOR] == "" or
                 register_data[BIRTH_DATE_DOCTOR] == "" or
                 register_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR] == "" or register_data[
                     CONSULTATION_SCHEDULE_AWAY_DOCTOR] == "" or
-                register_data[ASSISTANTS_SCHEDULE_DOCTOR] == "" or register_data[GENDER_DOCTOR] == ""):
+                register_data[ASSISTANTS_SCHEDULE_DOCTOR] == "" or register_data[GENDER_DOCTOR] == "" or register_data[ZIPCODE_DOCTOR] == ''
+                or register_data[CITY_DOCTOR]=='' or register_data[COUNTY_DOCTOR]=='' or register_data[PROFILE_PICTURE_DOCTOR]==''):
             raise ValueError("Invalid data")
-        doctor.username = register_data[USERNAME_DOCTOR]
+        doctors = self.get_all_doctors()
+        for doctor_in_database in doctors:
+            if doctor.username == doctor_in_database.username:
+                raise ValueError("Username already exists")
+        profile_picture = register_data[PROFILE_PICTURE_DOCTOR]
+        profile_picture.filename = f'{doctor.username}.jpg'
+        self.save_file(profile_picture, 'profile_picture_doctor')
+        doctor.profile_picture = profile_picture.filename
         doctor.first_name = register_data[FIRST_NAME_DOCTOR]
         doctor.last_name = register_data[LAST_NAME_DOCTOR]
         doctor.email = register_data[EMAIL_DOCTOR]
+        for doctor_in_database in doctors:
+            if doctor.email == doctor_in_database.email:
+                raise ValueError("Email already registered")
         doctor.phone_number = register_data[PHONE_NUMBER_DOCTOR]
+        for doctor_in_database in doctors:
+            if doctor.phone_number == doctor_in_database.phone_number:
+                raise ValueError("Phone number already registered")
         doctor.address = register_data[ADDRESS_DOCTOR]
+        doctor.zipcode = register_data[ZIPCODE_DOCTOR]
+        doctor.city = register_data[CITY_DOCTOR]
+        doctor.state = register_data[COUNTY_DOCTOR]
         doctor.birth_date = register_data[BIRTH_DATE_DOCTOR]
         doctor.consultation_schedule_office = register_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR]
         doctor.consultation_schedule_away = register_data[CONSULTATION_SCHEDULE_AWAY_DOCTOR]
@@ -339,6 +359,7 @@ class Service:
 
     def register_patient(self, register_data):
         patient = Patient()
+        self.db.add_entity(patient)
         for invite_code in self.db.find_all_invite_codes():
             if int(register_data[INVITE_CODE_PATIENT]) == invite_code.invite_code and invite_code.patient_id is not None:
                 raise ValueError("Invalid invite code")
@@ -355,28 +376,42 @@ class Service:
                 or register_data[CITY_PATIENT] == "" or register_data[COUNTY_PATIENT] == "" or register_data[
                     PASSPORT_ID_PATIENT] == ""
                 or register_data[BIRTH_DATE_PATIENT] == "" or register_data[OCCUPATION_PATIENT] == "" or register_data[
-                    INVITE_CODE_PATIENT] == ""):
+                    INVITE_CODE_PATIENT] == "" or register_data[PROFILE_PICTURE_PATIENT]==''):
             raise ValueError("Empty fields")
         patient.username = register_data[USERNAME_PATIENT]
+        patients = self.get_all_patients()
+        for patient_in_database in patients:
+            if patient.username == patient_in_database.username:
+                raise ValueError("Username already exists")
+        profile_picture = register_data[PROFILE_PICTURE_PATIENT]
+        profile_picture.filename = f'{patient.username}.jpg'
+        self.save_file(profile_picture, 'profile_picture_patient')
+        patient.profile_picture = profile_picture.filename
         patient.first_name = register_data[FIRST_NAME_PATIENT]
         patient.last_name = register_data[LAST_NAME_PATIENT]
         patient.email = register_data[EMAIL_PATIENT]
+        for patient_in_database in patients:
+            if patient.email == patient_in_database.email:
+                raise ValueError("Email already registered")
         patient.phone_number = register_data[PHONE_NUMBER_PATIENT]
+        for patient_in_database in patients:
+            if patient.phone_number == patient_in_database.phone_number:
+                raise ValueError("Phone number already registered")
         patient.address = register_data[ADDRESS_PATIENT]
         patient.postalcode = register_data[ZIP_CODE_PATIENT]
         patient.city = register_data[CITY_PATIENT]
         patient.state = register_data[COUNTY_PATIENT]
         patient.passport_id = register_data[PASSPORT_ID_PATIENT]
+        for patient_in_database in patients:
+            if patient.passport_id == patient_in_database.passport_id:
+                raise ValueError("Passport id already registered")
         patient.birth_date = register_data[BIRTH_DATE_PATIENT]
         patient.occupation = register_data[OCCUPATION_PATIENT]
         patient.martial_status = register_data[MARITAL_STATUS_PATIENT]
         patient.set_password(register_data[PASSWORD_PATIENT])
         patient.gender = register_data[GENDER_PATIENT]
         patient.doctor_id = invite_code.doctor_id
-        self.db.add_entity(patient)
-        self.db.save_to_database()
         invite_code.patient_id = patient.id
-        self.db.save_to_database()
         return patient.id
 
     def get_all_doctors(self):
@@ -535,11 +570,9 @@ class Service:
     def allowed_file(filename):
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-    @staticmethod
-    def save_file(file, folder):
+    def save_file(self, file, folder):
         filename = secure_filename(file.filename)
-        file_path = os.path.join(os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], folder, filename
-                                                              )))
+        file_path = os.path.abspath(os.path.join(os.path.abspath(os.path.join(app.root_path,'static/files')), folder, filename))
         file.save(file_path)
         return file_path
 
@@ -564,7 +597,7 @@ class Service:
         consultation = Consultation(doctor_id=self.session['doctor'], patient_id=patient_id, time=time,
                                     urgency_grade=urgency_grade)
         if pdf is not None:
-            pdf_path = self.save_file(pdf)
+            pdf_path = self.save_file(pdf, 'consultation')
             consultation.pdf = pdf_path
         self.db.add_entity(consultation)
         self.db.save_to_database()
@@ -577,13 +610,13 @@ class Service:
             pdf.filename = f'{consultation_id}_extension.pdf'
             self.save_file(pdf, 'consultation')
             merger = PdfFileMerger()
-            pdfs_merge = [os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], consultation.pdf)),
-                          os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], pdf.filename))]
+            pdfs_merge = [os.path.abspath(os.path.join(FOLDER, consultation.pdf)),
+                          os.path.abspath(os.path.join(FOLDER, pdf.filename))]
             for pdf_merge in pdfs_merge:
                 merger.append(pdf_merge)
-            merger.write(os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], consultation.pdf)))
+            merger.write(os.path.abspath(os.path.join(FOLDER, consultation.pdf)))
             merger.close()
-            os.remove(os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], pdf.filename)))
+            os.remove(os.path.abspath(os.path.join(FOLDER, pdf.filename)))
         else:
             pdf.filename = f'{consultation_id}.pdf'
             self.save_file(pdf, 'consultation')

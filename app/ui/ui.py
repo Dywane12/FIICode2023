@@ -87,8 +87,8 @@ class Routes:
         if request.method == 'POST':
             username = request.form['username']
             password = request.form['password']
-            doctor = service.get_doctor_by_username(username)
-            patient = service.get_patient_by_username(username)
+            doctor = service.get_doctor_by_username(str(username))
+            patient = service.get_patient_by_username(str(username))
             if doctor is not None:
                 if check_password_hash(doctor.password_hash, password):
                     service.session['doctor'] = doctor.id
@@ -124,7 +124,8 @@ class Routes:
                          request.form['birth_date'], request.form['consultation_schedule_office'],
                          request.form['consultation_schedule_away'],
                          request.form['assistants_schedule'], request.form['password'], request.form['gender'],
-                         request.files['proof_of_medic']]
+                         request.files['proof_of_medic'], request.form['zipcode'], request.form['city'], request.form['county'],
+                         request.files['profile_picture']]
             try:
                 service.register_medic(form_data)
             except ValueError as exception:
@@ -147,7 +148,7 @@ class Routes:
                          request.form['county'], request.form['passport_id'],
                          request.form['birth_date'], request.form['marital_status'],
                          request.form['gender'], request.form['occupation'], request.form['password'],
-                         request.form['invite_code']]
+                         request.form['invite_code'], request.files['profile_picture']]
             try:
                 patient_id = service.register_patient(form_data)
             except ValueError as exception:

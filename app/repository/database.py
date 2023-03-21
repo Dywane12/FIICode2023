@@ -96,15 +96,11 @@ class Database:
     @staticmethod
     def find_doctor_username(username):
         doctor = Doctor.query.filter_by(username=username).first()
-        if doctor is None:
-            raise ValueError("Doctor not found")
         return doctor
 
     @staticmethod
     def find_patient_username(username):
         patient = Patient.query.filter_by(username=username).first()
-        if patient is None:
-            raise ValueError("Patient not found")
         return patient
 
     @staticmethod

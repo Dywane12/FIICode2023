@@ -1,7 +1,8 @@
+from flask import send_from_directory
+
 from app import db
 from werkzeug.security import check_password_hash, generate_password_hash
 from hashlib import md5
-
 
 class Patient(db.Model):
     __tablename__ = "patient"
@@ -24,6 +25,7 @@ class Patient(db.Model):
     password_hash = db.Column(db.String(256), index=True, unique=False)
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
     transfer = db.Column(db.Integer, index=True)
+    profile_picture = db.Column(db.String(256))
     consultations = db.relationship('Consultation', backref='patient')
     information_sheet = db.relationship('InformationSheet', backref='patient')
 
@@ -85,6 +87,7 @@ class Doctor(db.Model):
     assistants_schedule = db.Column(db.String(128), index=True)
     password_hash = db.Column(db.String(256), index=True)
     medical_proof = db.Column(db.String(256))
+    profile_picture = db.Column(db.String(256))
     patients = db.relationship('Patient', backref='doctor')
     consultations = db.relationship('Consultation', backref='doctor')
 

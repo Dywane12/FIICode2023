@@ -19,7 +19,10 @@
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>
             <div class="main-box">
-                  <img src="{{ patient.avatar(128) }}" class="profile-img" alt="{{ patient.username }}">
+                {% if patient.profile_picture=='' %}
+                    <img src="{{ patient.avatar(128) }}" class="profile-img" alt="{{ patient.username }}">
+                {% else %}
+                    <img src="{{patient.get_profile_picture}}" class="profile-img" alt="{{ patient.username }}">
                   <h1 class="name">{{patient.first_name}} {{patient.last_name}}</h1>
                   <div class="profile-box">
                     <table class="medic-table">
