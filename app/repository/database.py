@@ -108,6 +108,20 @@ class Database:
         return patient
 
     @staticmethod
+    def find_disease_by_name(name):
+        disease = ChronicDisease.query.filter_by(name=name).first()
+        if disease is None:
+            raise ValueError("No disease found")
+        return disease
+
+    @staticmethod
+    def find_allergy_by_name(name):
+        allergy = Allergy.query.filter_by(name=name).first()
+        if allergy is None:
+            raise ValueError("Allergy not found")
+        return allergy
+
+    @staticmethod
     def find_all_chronic_diseases():
         return ChronicDisease.query.all()
 
@@ -136,4 +150,25 @@ class Database:
         if consultation is None:
             raise ValueError("Consultation not found")
         consultation.remove()
+        self.db.session.commit()
+
+    def remove_patient(self, patient_id):
+        patient = self.find_patient_by_id(patient_id)
+        if patient is None:
+            raise ValueError("Patient not found")
+        patient.remove()
+        self.db.session.commit()
+
+    def remove_information_sheet(self, information_sheet_id):
+        information_sheet = self.find_information_sheet_by_id(information_sheet_id)
+        if information_sheet is None:
+            raise ValueError("Information sheet not found")
+        information_sheet.remove()
+        self.db.session.commit()
+
+    def remove_doctor(self, doctor_id):
+        doctor = self.find_doctor_by_id(doctor_id)
+        if doctor is None:
+            raise ValueError("Doctor not found")
+        doctor.remove()
         self.db.session.commit()

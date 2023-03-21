@@ -336,7 +336,6 @@ class Service:
         doctor.set_password(register_data[PASSWORD_DOCTOR])
         doctor.gender = register_data[GENDER_DOCTOR]
         self.db.add_entity(doctor)
-        self.db.save_to_database()
 
     def register_patient(self, register_data):
         patient = Patient()
@@ -346,7 +345,6 @@ class Service:
         invite_code = self.db.find_invite_code(int(register_data[INVITE_CODE_PATIENT]))
         if invite_code.patient_id is not None:
             raise ValueError("Invite code already used")
-        information_sheet = InformationSheet(patient_id=patient)
         if (register_data[USERNAME_PATIENT] == "" or register_data[FIRST_NAME_PATIENT] == "" or register_data[
             LAST_NAME_PATIENT] == "" or
                 register_data[EMAIL_PATIENT] == ""
@@ -379,6 +377,7 @@ class Service:
         self.db.save_to_database()
         invite_code.patient_id = patient.id
         self.db.save_to_database()
+        return patient.id
 
     def get_all_doctors(self):
         return self.db.find_all_doctors()
@@ -632,3 +631,35 @@ class Service:
             if consultation.date_time > datetime.now():
                 future_consulations.append(consultation)
         return future_consulations
+
+    def register_information_sheet_1(self, form_data, patient_id, diseases):
+        information_sheet = InformationSheet(patient_id=patient_id)
+        for disease in diseases:
+            if form_data[disease['name']] == "":
+                raise ValueError("Empty fields")
+        for disease in diseases:
+            information_sheet.medical_history.append(self.db.find_disease_by_name(form_data[disease['name']]))
+        self.db.add_entity(information_sheet)
+        return information_sheet.id
+
+    def register_information_sheet_2(self, form_data, information_sheet_id, diseases):
+        information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+        for disease in diseases:
+            if form_data[disease['name']] == "":
+                raise ValueError("Empty fields")
+        for disease in diseases:
+            information_sheet.medical_history.append(self.db.find_disease_by_name(form_data[disease['name']]))
+        return information_sheet.id
+
+    def register_information_sheet_3(self, form_data, information_sheet_id, allergies):
+        information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+        for allergy in allergies:
+            if form_data[allergy['name']] == "":
+                raise ValueError("Empty fields")
+        for allergy in allergies:
+            information_sheet.allergies.append(self.db.find_allergy_by_name(form_data[allergy['name']]))
+        return information_sheet.id
+
+    def link_patient_to_information_sheet(self):
+        information_sheet = self.db.find_information_sheet_by_id(self.session['information_sheet_id'])
+        information_sheet.patient_id = self.session['patient_id']

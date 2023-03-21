@@ -149,11 +149,11 @@ class Routes:
                          request.form['gender'], request.form['occupation'], request.form['password'],
                          request.form['invite_code']]
             try:
-                service.register_patient(form_data)
+                patient_id = service.register_patient(form_data)
             except ValueError as exception:
                 error = exception
             else:
-                service.update_database()
+                service.session['register_patient_id'] = patient_id
                 return redirect(url_for('register_patient_2'))
         return render_template('register_patient.html', error=error)
 
@@ -176,7 +176,24 @@ class Routes:
                     {'name': 'Gout', 'type': ''}, {'name': 'Headaches', 'type': ''},
                     {'name': 'Heart Attack', 'type': ''}, {'name': 'Heart Murmur', 'type': ''},
                     ]
-        return render_template('register_patient_2.html', diseases=diseases)
+        if request.method == 'POST':
+            form_data = [request.form['AIDS/HIV'], request.form['Anemia'], request.form['Anxiety'],
+                         request.form['Arthritis'], request.form['Artificial Heart Valve'], request.form['Artificial Joint'],
+                         request.form['Asthma'], request.form['Back Problems'],
+                         request.form['Bleeding Disorder'], request.form['Bipolar Disorder'],
+                         request.form['Bloot Clot/DVT'], request.form['Bypass Surgery'],
+                         request.form['Cancer'], request.form['Chemical Dependency'], request.form['Chest Pain'],
+                         request.form['Circulatory Problems'], request.form['Depression'], request.form['Diabetes']
+                         ,request.form['Emphysema'], request.form['Eye Problems'], request.form['Fibromyalgia'], request.form['Foot Cramps']
+                         ,request.form['Gout'], request.form['Headaches'], request.form['Heart Attack'], request.form['Heart Murmur']]
+            try:
+                information_sheet_id = service.register_information_sheet_1(form_data, service.session['register_patient_id'], diseases)
+            except ValueError as exception:
+                error = exception
+            else:
+                service.session['information_sheet_id'] = information_sheet_id
+                return redirect(url_for('register_patient_3'))
+        return render_template('register_patient_2.html', diseases=diseases, error=error)
 
     @staticmethod
     @app.route('/register-patient-3')
@@ -194,10 +211,26 @@ class Routes:
                     {'name': 'Stroke', 'type': ''},
                     {'name': 'Thyroid Problems', 'type': 'Type'},
                     {'name': 'Tuberculosis', 'type': ''}, {'name': 'Ulcers (Stomach)', 'type': ''},
-                    {'name': 'Varicose Veins', 'type': ''}, {'name': 'Wight loss, unexplained', 'type': ''},
+                    {'name': 'Varicose Veins', 'type': ''}, {'name': 'Weight loss(unexplained)', 'type': ''},
                     {'name': 'Pregnant?', 'type': ''}, {'name': 'Breastfeeding?', 'type': ''}
                     ]
-        return render_template('register_patient_3.html', diseases=diseases)
+        if request.method == 'POST':
+            form_data = [request.form['Heart Failure'], request.form['Hemophilia'], request.form['Hepatitis'],
+                         request.form['High Blood Pressure'], request.form['Kidney Problems'], request.form['Leg Cramps'],
+                         request.form['Liver Disease'], request.form['Low Blood Pressure'],
+                         request.form['Mental Illness'], request.form['Neuropathy'],
+                         request.form['Pacemaker'], request.form['Paralysis'],
+                         request.form['Phlebitis'], request.form['Psoriasis'], request.form['Rheumatic Fever'],
+                         request.form['Schizophrenia'], request.form['Shortness of Breath'], request.form['Stroke']
+                         ,request.form['Thyroid Problems'], request.form['Tuberculosis'], request.form['Ulcers (Stomach)'], request.form['Varicose Veins']
+                         ,request.form['Weight loss(unexplained)'], request.form['Pregnant'], request.form['Breastfeeding']]
+            try:
+                service.register_information_sheet_2(form_data, service.session['information_sheet_id'] , diseases)
+            except ValueError as exception:
+                error = exception
+            else:
+                return redirect(url_for('register_patient_4'))
+        return render_template('register_patient_3.html', diseases=diseases, error=error)
 
     @staticmethod
     @app.route('/register-patient-4')
@@ -208,7 +241,27 @@ class Routes:
             {'name': 'Latex'}, {'name': 'Tape/Adhesives'}, {'name': 'Iodine'}, {'name': 'Betadine'},
             {'name': 'Codeine'}, {'name': 'Steroids'}
         ]
-        return render_template('register_patient_4.html', allergies=allergies)
+        if request.method == 'POST':
+            form_data = [request.form['Heart Failure'], request.form['Hemophilia'], request.form['Hepatitis'],
+                         request.form['High Blood Pressure'], request.form['Kidney Problems'], request.form['Leg Cramps'],
+                         request.form['Liver Disease'], request.form['Low Blood Pressure'],
+                         request.form['Mental Illness'], request.form['Neuropathy'],
+                         request.form['Pacemaker'], request.form['Paralysis'],
+                         request.form['Phlebitis'], request.form['Psoriasis'], request.form['Rheumatic Fever'],
+                         request.form['Schizophrenia'], request.form['Shortness of Breath'], request.form['Stroke']
+                         ,request.form['Thyroid Problems'], request.form['Tuberculosis'], request.form['Ulcers (Stomach)'], request.form['Varicose Veins']
+                         ,request.form['Weight loss(unexplained)'], request.form['Pregnant'], request.form['Breastfeeding']]
+            try:
+                service.register_information_sheet_3(form_data, service.session['information_sheet_id'] , allergies)
+            except ValueError as exception:
+                error = exception
+            else:
+                service.link_patient_to_information_sheet()
+                service.update_database()
+                service.session.pop('register_patient_id')
+                service.session.pop('information_sheet_id')
+                return redirect(url_for('login'))
+        return render_template('register_patient_4.html', allergies=allergies, error=error)
 
     @staticmethod
     @app.route('/choice')
