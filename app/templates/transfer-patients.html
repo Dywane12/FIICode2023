@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
 </head>
 <body>
     <section class="header">
@@ -28,10 +29,51 @@
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>
             <div class="main-box">
-
+                <div>
+                    <h1 class="name">Patients that requested transfer</h1>
+                    <hr>
+                    <div id="table"></div>
+                </div>
             </div>
 
     </section>
+    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+    <script>
+                      new gridjs.Grid({
+                        columns: [
+                          { id: 'fname', name: 'First name' },
+                          { id: 'lname', name: 'Last name' },
+                          { id: 'fisa_medicala', name: 'Passport ID', sort: false },
+                          { id: 'transfer', name: 'Transfer', sort: false,
+                                attributes: (cell) => {
+                                // add these attributes to the td elements only
+                                if (cell) {
+                                    return {
+                                        'data-cell-content': cell,
+                                        'onclick': () => confirm("Are you sure you want to approve?"),
+                                        'style': 'cursor: pointer',
+                                    };
+                                }
+                            }
+                          }
+                        ],
+                        data: [
+                          {% for patient in patients %}
+                            {
+                              fname: '{{ patient.first_name }}',
+                              lname: '{{ patient.last_name }}',
+                              fisa_medicala: '{{ patient.passport_id }}',
+                              transfer: 'Approve'
+                            },
+                          {% endfor %}
+                        ],
+                        search: {
+                          selector: (cell, rowIndex, cellIndex) => [0, 1, 3].includes(cellIndex) ? cell : null,
+                        },
+                        sort: true,
+                        pagination: true,
+                      }).render(document.getElementById('table'));
+    </script>
      <script>
       window.onunload = function() {
         window.location.reload(true);

@@ -261,8 +261,13 @@ class Routes:
                 service.update_database()
                 service.session.pop('register_patient_id')
                 service.session.pop('information_sheet_id')
-                return redirect(url_for('login'))
+                return redirect(url_for('register_patient_5'))
         return render_template('register_patient_4.html', allergies=allergies, error=error)
+
+    @staticmethod
+    @app.route('/register-patient-5')
+    def register_patient_5():
+        return render_template('register_patient_5.html')
 
     @staticmethod
     @app.route('/choice')
@@ -297,7 +302,8 @@ class Routes:
     def transfer_patients():
         if "doctor" not in service.session:
             return redirect(url_for('home'))
-        return render_template('transfer-patients.html')
+        patients = service.get_patients_that_want_to_transfer()
+        return render_template('transfer-patients.html', patients=patients)
 
     @staticmethod
     @app.route('/invite-patient')
@@ -393,7 +399,9 @@ class Routes:
     @staticmethod
     @app.route('/change-medic')
     def change_medic():
-        return render_template('change-medic.html')
+        patient_id = service.session['patient']
+        doctors = service.get_doctors_nearby_patient(patient_id)
+        return render_template('change-medic.html', doctors=doctors)
 
     @staticmethod
     @app.route('/consultations/<filename>')

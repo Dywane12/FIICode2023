@@ -16,21 +16,22 @@
         <div class="hero">
             <div class="form-patient">
                 <div class="login-text">
-                    <h2>Sign up Step 3: Medical record</h2>
+                    <h2>Sign up Step 4: Information</h2>
                 </div>
-                <p class="check-text">Please check those that apply (diseases):</p>
                 <form id="login" class="patient-group" action="" method="post">
-                    {% for disease in diseases %}
-                    <div class="diseases">
-                        <input id="{{ disease['name'] }}" type="checkbox" class="checkbox-patient" name="{{ disease['name'] }}"><label for="{{ disease['name'] }}" class="checkbox-text">{{ disease['name'] }}</label>
-                    </div>
-                    {% endfor %}
-                <input type="submit" class="register-btn" value="Next step">
+                    <input type="text" class="patient-field" placeholder="Weight" name="weight" value="{{request.form.weight}}">
+                    <input type="text" class="patient-field" placeholder="Height" name="height" value="{{request.form.height }}">
+                    <input type="text" class="patient-field" placeholder="Shoe size" name="shoe_size" value="{{request.form.shoe_size}}">
+                    <input type="text" class="patient-field" placeholder="Medications" name="medications" value="{{request.form.medications}}">
+                    <input type="text" class="patient-field" placeholder="Hospitalization" name="hospitalization" value="{{request.form.hospitalization}}">
+                    <input id="smoking" type="checkbox" class="checkbox-patient" name="smoking"><label for="smoking" class="checkbox-text">Smoking</label>
+                    <input id="drinking" type="checkbox" class="checkbox-patient" name="drinking"><label for="drinking" class="checkbox-text">Drinking</label><br><br>
+                    <input type="submit" class="register-btn" value="Next step">
                 </form>
                     {% if error %}
                     <p class="error"><strong>Error:</strong> {{ error }}
                       {% endif %}</p>
-                <a href="/register-patient-2" class="back-btn">Back</a>
+                <a href="/register-patient-4" class="back-btn">Back</a>
                 <a href="/login" class="back-to-login">Already have an account?</a>
             </div>
         </div>
