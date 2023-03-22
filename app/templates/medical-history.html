@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+        <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
 </head>
 <body>
     <section class="header">
@@ -21,8 +21,7 @@
             </div>
             <div class="main-box">
                 <div>
-                    <h1 class="name">Doctors nearby</h1>
-                    <h2>Current Doctor: {{current_doctor.first_name}} {{current_doctor.last_name}} </h2>
+                    <h1 class="name">Consultation history</h1>
                     <hr>
                     <div id="table"></div>
                 </div>
@@ -33,42 +32,30 @@
     <script>
                       new gridjs.Grid({
                         columns: [
-                          { id: 'fname', name: 'First name' },
-                          { id: 'lname', name: 'Last name' },
-                          { id: 'number_patients', name: 'Number of Patients', sort: false },
-                          { id: 'address', name: 'Address', sort: false },
-                          { id: 'rating', name: 'Rating', sort: true},
-                          { id: 'transfer', name: 'Transfer', sort: false,
-                                attributes: (cell) => {
-                                // add these attributes to the td elements only
-                                if (cell) {
-                                    return {
-                                        'data-cell-content': cell,
-                                        'onclick': () => confirm("Are you sure you want to transfer to this doctor?"),
-                                        'style': 'cursor: pointer',
-                                    };
-                                }
-                            }
-                          }
+                          { id: 'date', name: 'Date and time' },
+                          { id: 'urgency', name: 'Urgency grade' },
+                          { id: 'details', name: 'Details', sort: false}
                         ],
                         data: [
-                          {% for doctor in doctors %}
+                          {% for consultation in medical_history %}
                             {
-                              fname: '{{ doctor.first_name }}',
-                              lname: '{{ doctor.last_name }}',
-                              number_patients: '{{ doctor.phone_number }}',
-                              address: '{{ doctor.address }}',
-                              rating: '5/5',
-                              transfer: 'Transfer'
+                              date: '{{ consultation.date_time }}',
+                              urgency: '{{ consultation.urgency_grade }}',
+                              details: '{{ consultation.pdf }}'
                             },
                           {% endfor %}
                         ],
                         search: {
-                          selector: (cell, rowIndex, cellIndex) => [0, 1, 5].includes(cellIndex) ? cell : null,
+                          selector: (cell, rowIndex, cellIndex) => [0, 1, 2].includes(cellIndex) ? cell : null,
                         },
                         sort: true,
                         pagination: true,
                       }).render(document.getElementById('table'));
+    </script>
+     <script>
+      window.onunload = function() {
+        window.location.reload(true);
+      };
     </script>
     <script>
       window.addEventListener('beforeunload', function (event) {

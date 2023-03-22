@@ -24,80 +24,56 @@
                 {% else %}
                     <img src="../static/files/profile_picture_patient/{{patient.profile_picture}}" class="profile-img" alt="{{ patient.username }}">
                 {% endif %}
-                  <h1 class="name">{{patient.first_name}} {{patient.last_name}}</h1>
+                  <h1 class="name">{{patient.first_name}} {{patient.last_name}}'s Information sheet</h1>
                   <div class="profile-box">
                     <table class="medic-table">
                         <tr>
-                            <th>Username:</th>
+                            <th>Weight:</th>
                             <td>{{patient.username}}</td>
                         </tr>
                         <tr>
-                            <th>Last name:</th>
+                            <th>Height:</th>
                             <td>{{patient.last_name}}</td>
                         </tr>
                         <tr>
-                            <th>First name:</th>
+                            <th>Show size:</th>
                             <td>{{patient.first_name}}</td>
                         </tr>
                         <tr>
-                            <th>Phone number:</th>
+                            <th>Blood type:</th>
                             <td>{{patient.phone_number}}</td>
                         </tr>
                         <tr>
-                            <th>Email:</th>
+                            <th>Medical history:</th>
                             <td>{{patient.email}}</td>
                         </tr>
                         <tr>
-                            <th>Address:</th>
+                            <th>Medications:</th>
                             <td>{{patient.address}}</td>
                         </tr>
                         <tr>
-                            <th>Postalcode:</th>
+                            <th>Allergies:</th>
                             <td>{{patient.postalcode}}</td>
                         </tr>
                         <tr>
-                            <th>City:</th>
+                            <th>Hospitalization:</th>
                             <td>{{patient.city}}</td>
                         </tr>
                         <tr>
-                            <th>County:</th>
+                            <th>Smoking:</th>
                             <td>{{patient.state}}</td>
                         </tr>
                         <tr>
-                            <th>Date of birth:</th>
+                            <th>Drinking:</th>
                             <td>{{patient.birth_date}}</td>
                         </tr>
                         <tr>
-                            <th>Marital status:</th>
-                            <td>{{patient.marital_status}}</td>
-                        </tr>
-                        <tr>
-                            <th>Gender:</th>
-                            <td>{{patient.gender}}</td>
-                        </tr>
-                        <tr>
-                            <th>Occupation:</th>
-                            <td>{{patient.occupation}}</td>
-                        </tr>
-                        <tr>
-                            <th>Invite code:</th>
-                            <td>{{patient.invite_code}}</td>
-                        </tr>
-                        <tr>
-                            <th>Information sheet:</th>
-                            <td><a href="/information-sheet">Click to open</a></td>
-                        </tr>
-                        <tr>
-                            <th>Consultation history:</th>
+                            <th>Medical history:</th>
                             <td><a href="/consultation-history">Click to open</a></td>
-                        </tr>
-                        <tr>
-                            <th>Password:</th>
-                            <td>********</td>
                         </tr>
                     </table>
                   </div>
-                  <p><a href="/edit-patient" class="contact-btn">Edit profile</a></p>
+                  <p><a href="/patient-profile" class="contact-btn">Back to profile</a></p>
             </div>
 
     </section>

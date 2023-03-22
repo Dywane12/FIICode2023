@@ -359,16 +359,20 @@ class Routes:
         return render_template('list-patient-profile.html', doctor=doctor)
 
     @staticmethod
-    @app.route('/medical-history')
+    @app.route('/consultation-history')
     def patient_medical_history():
         patient_id = service.session['patient']
         medical_history = service.get_consultation_history(patient_id)
-        return render_template('medical_history.html', medical_history=medical_history)
+        return render_template('medical-history.html', medical_history=medical_history)
 
     @staticmethod
     @app.route('/change-medic')
     def change_medic():
-        return render_template('change-medic.html')
+        patient_id = service.session['patient']
+        patient = service.get_patient_by_id(patient_id)
+        current_doctor = service.get_doctor_by_id(patient.doctor_id)
+        doctors = service.get_doctors_nearby_patient(patient_id)
+        return render_template('change-medic.html', current_doctor=current_doctor, doctors=doctors)
 
     @staticmethod
     @app.route('/consultations/<filename>')
@@ -391,4 +395,10 @@ class Routes:
             else:
                 error = 'Wrong credentials. Try again.'
                 return render_template('invite-patient.html', error=error)
+
+    @staticmethod
+    @app.route('/information-sheet')
+    def information_sheet():
+        patient = service.get_patient_by_id(service.session['patient'])
+        return render_template('information-sheet.html', patient=patient)
 
