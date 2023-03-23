@@ -420,6 +420,7 @@ class Routes:
     @staticmethod
     @app.route('/information-sheet')
     def information_sheet_function():
-        patient = service.get_patient_by_id(service.session['patient'])
-        information_sheet = patient.information_sheet
-        return render_template('information-sheet.html', patient=patient, information_sheet = information_sheet)
+        patient_id = service.session['patient']
+        patient = service.get_patient_by_id(patient_id)
+        information_sheet = service.get_information_sheet_by_patient_id(service.session['patient'])
+        return render_template('information-sheet.html', patient=patient, information_sheet=information_sheet)

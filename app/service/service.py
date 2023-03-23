@@ -764,3 +764,11 @@ class Service:
     def link_patient_to_information_sheet(self):
         information_sheet = self.db.find_information_sheet_by_id(self.session['information_sheet_id'])
         information_sheet.patient_id = self.session['patient_id']
+
+    def get_information_sheet_by_patient_id(self, patient_id):
+        patient = self.db.find_patient_by_id(patient_id)
+        if patient is None:
+            raise ValueError("Patient not found")
+        for sheet in patient.information_sheet:
+            if sheet.patient_id == patient.id:
+                return sheet
