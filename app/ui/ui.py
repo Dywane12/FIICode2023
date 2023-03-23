@@ -389,7 +389,7 @@ class Routes:
         email_patient = request.form['email']
         if request.method == 'POST':
             if email_patient == 'admin@admin.com':
-                service.send_welcome_email(email_companie, email_patient)
+                service.send_welcome_email(email_companie)
                 message = 'Invite sent!'
                 return render_template('invite-patient.html', message=message)
             else:
