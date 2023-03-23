@@ -11,15 +11,15 @@ import datetime
 
 with app.app_context():
     db_1 = Database(db)
-    """db_1.clear_patients_table()
+    db_1.clear_patients_table()
     db_1.clear_consultation_table()
     db_1.clear_doctors_table()
     db_1.clear_hospitalization_table()
-    db_1.clear_drinker_table()
-    db_1.clear_smoker_table()
+    # db_1.clear_drinker_table()
+    # db_1.clear_smoker_table()
     db_1.clear_information_sheet_table()
-    db_1.clear_invite_code_table()"""
-    service = Service(db_1, session, choice=False)
+    db_1.clear_invite_code_table()
+    service = Service(db_1, session, choice=True)
 
 
 class Routes:
@@ -419,7 +419,7 @@ class Routes:
 
     @staticmethod
     @app.route('/information-sheet')
-    def information_sheet():
+    def information_sheet_function():
         patient = service.get_patient_by_id(service.session['patient'])
-        return render_template('information-sheet.html', patient=patient)
-
+        information_sheet = patient.information_sheet
+        return render_template('information-sheet.html', patient=patient, information_sheet = information_sheet)
