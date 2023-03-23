@@ -238,57 +238,6 @@ class Drinker(db.Model):
         self.frequency = frequency
 
 
-class Mother(db.Model):
-    __tablename__ = "mother"
-    id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('family_history.patient_id'))
-    death_age = db.Column(db.Integer, nullable=True)
-    cause = db.Column(db.String(256), nullable=False)
-
-
-class Father(db.Model):
-    __tablename__ = "father"
-    id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('family_history.patient_id'))
-    death_age = db.Column(db.Integer, nullable=True)
-    cause = db.Column(db.String(256), nullable=False)
-
-
-class Sister(db.Model):
-    __tablename__ = "sister"
-    id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('family_history.patient_id'))
-    death_age = db.Column(db.Integer, nullable=True)
-    cause = db.Column(db.String(256), nullable=False)
-
-
-class Brother(db.Model):
-    __tablename__ = "brother"
-    id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('family_history.patient_id'))
-    death_age = db.Column(db.Integer, nullable=True)
-    cause = db.Column(db.String(256), nullable=False)
-
-
-class FamilyHistory(db.Model):
-    __tablename__ = "family_history"
-    patient_id = db.Column(db.Integer, db.ForeignKey('information_sheet.patient_id'), primary_key=True)
-    heart_disease = db.Column(db.String(256), nullable=False)
-    diabetes = db.Column(db.String(256), nullable=False)
-    high_blood_pressure = db.Column(db.String(256), nullable=False)
-    stroke = db.Column(db.String(256), nullable=False)
-    varicose_veins = db.Column(db.String(256), nullable=False)
-    gout = db.Column(db.String(256), nullable=False)
-    arthritis = db.Column(db.String(256), nullable=False)
-    neuropathy = db.Column(db.String(256), nullable=False)
-    bleeding_disorder = db.Column(db.String(256), nullable=False)
-    foot_problems = db.Column(db.String(256), nullable=False)
-    brothers = db.relationship('Brother', backref='patient')
-    sisters = db.relationship('Sister', backref='patient')
-    mother = db.relationship('Mother', backref='patient')
-    father = db.relationship('Father', backref='patient')
-
-
 class InviteCode(db.Model):
     __tablename__ = "invite_code"
     id = db.Column(db.Integer, index=True, primary_key=True)
