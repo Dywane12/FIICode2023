@@ -168,20 +168,20 @@ class InformationSheet(db.Model):
     height = db.Column(db.Integer, index=True)
     shoe_size = db.Column(db.Integer, index=True)
     blood_type = db.Column(db.String(256), index=True)
+    smoking = db.Column(db.Integer, index=True)
+    drinking = db.Column(db.Integer, index=True)
     medical_history = db.relationship('ChronicDisease', secondary=information_sheet_chronic_disease, backref='patients')
     medications = db.relationship('Drug', backref='patient')
     allergies = db.relationship('Allergy', secondary=information_sheet_allergy, backref='patients')
-    hospitalization = db.relationship('Hospitalization', backref='patient')
-    smoking = db.relationship('Smoker', backref='patient')
-    drinking = db.relationship('Drinker', backref='patient')
-    family_history = db.relationship('FamilyHistory', backref='patient')
 
-    def init(self, patient_id=None, weigth=None, height=None, shoe_size=None, blood_type=None):
+    def init(self, patient_id=None, weigth=None, height=None, shoe_size=None, blood_type=None, smoking=None, drinking=None):
         self.patient_id = patient_id
         self.weight = weigth
         self.height = height
         self.shoe_size = shoe_size
         self.blood_type = blood_type
+        self.smoking = smoking
+        self.drinking = drinking
 
 
 class ChronicDisease(db.Model):
@@ -210,83 +210,6 @@ class Hospitalization(db.Model):
     patient_id = db.Column(db.Integer, db.ForeignKey('information_sheet.patient_id'))
     date = db.Column(db.Date)
     reason = db.Column(db.String(500))
-
-
-class Smoker(db.Model):
-    __tablename__ = "smoker"
-    id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('information_sheet.patient_id'))
-    current_packs_per_day = db.Column(db.Integer, nullable=True)
-    previous_pack_per_day = db.Column(db.Integer, nullable=True)
-    smoking_years = db.Column(db.Integer, nullable=True)
-
-    def __init__(self, current_packs_per_day=None, previous_pack_per_day=None, smoking_years=None):
-        self.current_packs_per_day = current_packs_per_day
-        self.previous_pack_per_day = previous_pack_per_day
-        self.smoking_years = smoking_years
-
-
-class Drinker(db.Model):
-    __tablename__ = "drinker"
-    id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('information_sheet.patient_id'))
-    quantity = db.Column(db.Integer, nullable=True)
-    frequency = db.Column(db.Integer, nullable=True)
-
-    def __init__(self, quantity, frequency):
-        self.quantity = quantity
-        self.frequency = frequency
-
-
-class Mother(db.Model):
-    __tablename__ = "mother"
-    id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('family_history.patient_id'))
-    death_age = db.Column(db.Integer, nullable=True)
-    cause = db.Column(db.String(256), nullable=False)
-
-
-class Father(db.Model):
-    __tablename__ = "father"
-    id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('family_history.patient_id'))
-    death_age = db.Column(db.Integer, nullable=True)
-    cause = db.Column(db.String(256), nullable=False)
-
-
-class Sister(db.Model):
-    __tablename__ = "sister"
-    id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('family_history.patient_id'))
-    death_age = db.Column(db.Integer, nullable=True)
-    cause = db.Column(db.String(256), nullable=False)
-
-
-class Brother(db.Model):
-    __tablename__ = "brother"
-    id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('family_history.patient_id'))
-    death_age = db.Column(db.Integer, nullable=True)
-    cause = db.Column(db.String(256), nullable=False)
-
-
-class FamilyHistory(db.Model):
-    __tablename__ = "family_history"
-    patient_id = db.Column(db.Integer, db.ForeignKey('information_sheet.patient_id'), primary_key=True)
-    heart_disease = db.Column(db.String(256), nullable=False)
-    diabetes = db.Column(db.String(256), nullable=False)
-    high_blood_pressure = db.Column(db.String(256), nullable=False)
-    stroke = db.Column(db.String(256), nullable=False)
-    varicose_veins = db.Column(db.String(256), nullable=False)
-    gout = db.Column(db.String(256), nullable=False)
-    arthritis = db.Column(db.String(256), nullable=False)
-    neuropathy = db.Column(db.String(256), nullable=False)
-    bleeding_disorder = db.Column(db.String(256), nullable=False)
-    foot_problems = db.Column(db.String(256), nullable=False)
-    brothers = db.relationship('Brother', backref='patient')
-    sisters = db.relationship('Sister', backref='patient')
-    mother = db.relationship('Mother', backref='patient')
-    father = db.relationship('Father', backref='patient')
 
 
 class InviteCode(db.Model):

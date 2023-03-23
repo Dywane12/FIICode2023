@@ -11,13 +11,14 @@ from geopy import distance
 import re
 from pdfminer.high_level import extract_text
 from app import app
-from app.domain.entities import Patient, Doctor, Consultation, Drinker, Smoker, InformationSheet, Father, FamilyHistory, \
-    Mother, Brother, Sister, Hospitalization, ChronicDisease, Allergy, InviteCode
+from app.domain.entities import Patient, Doctor, Consultation, InformationSheet, Hospitalization, \
+    ChronicDisease, Allergy, InviteCode
 from twilio.rest import Client
 import os
 from werkzeug.utils import secure_filename
 import phone_gen
-FOLDER = os.path.abspath(os.path.join(app.root_path,'static/files'))
+
+FOLDER = os.path.abspath(os.path.join(app.root_path, 'static/files'))
 ALLOWED_EXTENSIONS = {'jpg', 'pdf'}
 USERNAME_DOCTOR = 0
 FIRST_NAME_DOCTOR = 1
@@ -31,12 +32,11 @@ CONSULTATION_SCHEDULE_AWAY_DOCTOR = 8
 ASSISTANTS_SCHEDULE_DOCTOR = 9
 PASSWORD_DOCTOR = 10
 GENDER_DOCTOR = 11
-MEDICAL_PROOF = 12
-ZIPCODE_DOCTOR = 13
-CITY_DOCTOR = 14
-COUNTY_DOCTOR = 15
-PROFILE_PICTURE_DOCTOR = 16
-
+ZIPCODE_DOCTOR = 12
+CITY_DOCTOR = 13
+COUNTY_DOCTOR = 14
+PROFILE_PICTURE_DOCTOR = 15
+MEDICAL_PROOF = 16
 
 USERNAME_PATIENT = 0
 FIRST_NAME_PATIENT = 1
@@ -53,8 +53,8 @@ MARITAL_STATUS_PATIENT = 11
 GENDER_PATIENT = 12
 OCCUPATION_PATIENT = 13
 PASSWORD_PATIENT = 14
-INVITE_CODE_PATIENT = 15
-PROFILE_PICTURE_PATIENT = 16
+PROFILE_PICTURE_PATIENT = 15
+INVITE_CODE_PATIENT = 16
 
 
 class Service:
@@ -112,16 +112,6 @@ class Service:
         self.db.save_to_database()
 
     def __add_fake_patients(self, n):
-        zip_codes = [90011, 91331, 90650, 90201, 90250, 90044, 90805, 90280, 91342, 91744,
-                     91335, 91706, 90706, 90003, 93550, 90255, 93535, 91766, 90262, 91402,
-                     93536, 90631, 90026, 90022, 91343, 90037, 90660, 90019, 91770, 90640,
-                     90042, 90001, 90066, 91732, 90004, 90006, 90731, 91702, 90813, 91406,
-                     90744, 91605, 91405, 91304, 91801, 91745, 90723, 93551, 90018, 90063,
-                     90745, 90221, 90002, 90034, 91344, 90047, 90220, 90046, 91767, 90703,
-                     90023, 90065, 90638, 90057, 90032, 91306, 90033, 91789, 90025, 91352,
-                     91790, 90027, 91733, 90247, 90016, 90007, 90059, 90043, 90024, 91765,
-                     91367, 90503, 90241, 91748, 90242, 92821, 90604, 90806, 91311, 91355,
-                     91606, 91016, 90045]
         for i in range(n):
             doctor = random.choice(self.get_all_doctors())
             patient = Patient(doctor_id=doctor.id)
@@ -167,6 +157,8 @@ class Service:
             information_sheet.weight = weight
             information_sheet.shoe_size = shoe_size
             information_sheet.blood_type = blood_type
+            information_sheet.smoking = randint(0, 1)
+            information_sheet.drinking = randint(0, 1)
             choice = random.choice([True, False])
             if choice:
                 for chronic_disease in self.db.find_all_chronic_diseases():
@@ -190,28 +182,6 @@ class Service:
                 hospitalization_date = self.__random_date(date(2010, 1, 1), datetime.now().date())
                 hospitalization.date = hospitalization_date
                 self.db.add_entity(hospitalization)
-            is_smoking = randint(0, 1)
-            if is_smoking:
-                current_packs_per_day = randint(1, 5)
-                smoking_years = randint(0, 10)
-                smoker = Smoker(current_packs_per_day=current_packs_per_day, smoking_years=smoking_years)
-                smoker.patient_id = patient.id
-                self.db.add_entity(smoker)
-            else:
-                was_smoking = randint(0, 1)
-                if was_smoking:
-                    previous_pack_per_day = randint(1, 5)
-                    smoking_years = randint(0, 10)
-                    smoker = Smoker(previous_pack_per_day=previous_pack_per_day, smoking_years=smoking_years)
-                    smoker.patient_id = patient.id
-                    self.db.add_entity(smoker)
-            is_drinking = randint(0, 1)
-            if is_drinking:
-                quantity = randint(1, 5)
-                frequency = randint(1, 7)
-                drinker = Drinker(quantity, frequency)
-                drinker.patient_id = patient.id
-                self.db.add_entity(drinker)
             password = 'nacho'
             patient.set_password(password)
             self.db.add_entity(information_sheet)
@@ -221,16 +191,6 @@ class Service:
             self.db.save_to_database()
 
     def __add_fake_doctors(self, n):
-        zip_codes = [90011, 91331, 90650, 90201, 90250, 90044, 90805, 90280, 91342, 91744,
-                     91335, 91706, 90706, 90003, 93550, 90255, 93535, 91766, 90262, 91402,
-                     93536, 90631, 90026, 90022, 91343, 90037, 90660, 90019, 91770, 90640,
-                     90042, 90001, 90066, 91732, 90004, 90006, 90731, 91702, 90813, 91406,
-                     90744, 91605, 91405, 91304, 91801, 91745, 90723, 93551, 90018, 90063,
-                     90745, 90221, 90002, 90034, 91344, 90047, 90220, 90046, 91767, 90703,
-                     90023, 90065, 90638, 90057, 90032, 91306, 90033, 91789, 90025, 91352,
-                     91790, 90027, 91733, 90247, 90016, 90007, 90059, 90043, 90024, 91765,
-                     91367, 90503, 90241, 91748, 90242, 92821, 90604, 90806, 91311, 91355,
-                     91606, 91016, 90045]
         for i in range(n):
             gender = random.choice(['Male', 'Female'])
             first_name, last_name = names.get_full_name(gender=gender.lower()).split()
@@ -317,15 +277,17 @@ class Service:
             os.remove(os.path.abspath(medical_proof_path))
             raise AttributeError("Invalid proof")
         doctor.medical_proof = medical_proof.filename
-        if (register_data[USERNAME_DOCTOR] == "" or register_data[PASSWORD_DOCTOR] == "" or register_data[FIRST_NAME_DOCTOR] == "" or
+        if (register_data[USERNAME_DOCTOR] == "" or register_data[PASSWORD_DOCTOR] == "" or register_data[
+            FIRST_NAME_DOCTOR] == "" or
                 register_data[LAST_NAME_DOCTOR] == "" or
                 register_data[EMAIL_DOCTOR] == "" or register_data[PHONE_NUMBER_DOCTOR] == "" or register_data[
                     ADDRESS_DOCTOR] == "" or
                 register_data[BIRTH_DATE_DOCTOR] == "" or
                 register_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR] == "" or register_data[
                     CONSULTATION_SCHEDULE_AWAY_DOCTOR] == "" or
-                register_data[ASSISTANTS_SCHEDULE_DOCTOR] == "" or register_data[GENDER_DOCTOR] == "" or register_data[ZIPCODE_DOCTOR] == ''
-                or register_data[CITY_DOCTOR]=='' or register_data[COUNTY_DOCTOR]=='' or register_data[PROFILE_PICTURE_DOCTOR]==''):
+                register_data[ASSISTANTS_SCHEDULE_DOCTOR] == "" or register_data[GENDER_DOCTOR] == "" or register_data[
+                    ZIPCODE_DOCTOR] == ''
+                or register_data[CITY_DOCTOR] == '' or register_data[COUNTY_DOCTOR] == ''):
             raise ValueError("Invalid data")
         if(register_data[GENDER_DOCTOR] != 'M' and register_data[GENDER_DOCTOR] != 'F' ):
             raise ValueError("Genders can only be M(male) or F(femmale)")
@@ -333,37 +295,51 @@ class Service:
         for doctor_in_database in doctors:
             if doctor.username == doctor_in_database.username:
                 raise ValueError("Username already exists")
-        profile_picture = register_data[PROFILE_PICTURE_DOCTOR]
-        profile_picture.filename = f'{doctor.username}.jpg'
-        self.save_file(profile_picture, 'profile_picture_doctor')
-        doctor.profile_picture = profile_picture.filename
-        doctor.first_name = register_data[FIRST_NAME_DOCTOR]
-        doctor.last_name = register_data[LAST_NAME_DOCTOR]
-        doctor.email = register_data[EMAIL_DOCTOR]
+        if register_data[PROFILE_PICTURE_DOCTOR].name != '':
+            profile_picture = register_data[PROFILE_PICTURE_DOCTOR]
+            profile_picture.filename = f'{doctor.username}.jpg'
+            self.save_file(profile_picture, 'profile_picture_doctor')
+            doctor.profile_picture = profile_picture.filename
+        doctor.first_name = register_data[FIRST_NAME_DOCTOR].title().strip()
+        doctor.last_name = register_data[LAST_NAME_DOCTOR].title().strip()
+        if "@" not in register_data[EMAIL_DOCTOR]:
+            raise ValueError("Invalid email")
+        doctor.email = register_data[EMAIL_DOCTOR].strip()
         for doctor_in_database in doctors:
             if doctor.email == doctor_in_database.email:
                 raise ValueError("Email already registered")
+        try:
+            int(register_data[PHONE_NUMBER_DOCTOR])
+        except ValueError:
+            raise ValueError("Invalid phone number")
         doctor.phone_number = register_data[PHONE_NUMBER_DOCTOR]
         for doctor_in_database in doctors:
             if doctor.phone_number == doctor_in_database.phone_number:
                 raise ValueError("Phone number already registered")
-        doctor.address = register_data[ADDRESS_DOCTOR]
+        doctor.address = register_data[ADDRESS_DOCTOR].strip()
+        try:
+            int(register_data[ZIPCODE_DOCTOR])
+        except ValueError:
+            raise ValueError("Invalid zipcode")
         doctor.zipcode = register_data[ZIPCODE_DOCTOR]
-        doctor.city = register_data[CITY_DOCTOR]
-        doctor.state = register_data[COUNTY_DOCTOR]
+        doctor.city = register_data[CITY_DOCTOR].title().strip()
+        doctor.state = register_data[COUNTY_DOCTOR].title().strip()
         doctor.birth_date = register_data[BIRTH_DATE_DOCTOR]
         doctor.consultation_schedule_office = register_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR]
         doctor.consultation_schedule_away = register_data[CONSULTATION_SCHEDULE_AWAY_DOCTOR]
         doctor.assistants_schedule = register_data[ASSISTANTS_SCHEDULE_DOCTOR]
         doctor.set_password(register_data[PASSWORD_DOCTOR])
-        doctor.gender = register_data[GENDER_DOCTOR]
+        if register_data[GENDER_DOCTOR].strip().lower() not in ("male", "female"):
+            raise ValueError("Invalid gender")
+        doctor.gender = register_data[GENDER_DOCTOR].title().strip()
         self.db.add_entity(doctor)
 
     def register_patient(self, register_data):
         patient = Patient()
         self.db.add_entity(patient)
         for invite_code in self.db.find_all_invite_codes():
-            if int(register_data[INVITE_CODE_PATIENT]) == invite_code.invite_code and invite_code.patient_id is not None:
+            if int(register_data[
+                       INVITE_CODE_PATIENT]) == invite_code.invite_code and invite_code.patient_id is not None:
                 raise ValueError("Invalid invite code")
         invite_code = self.db.find_invite_code(int(register_data[INVITE_CODE_PATIENT]))
         if invite_code.patient_id is not None:
@@ -378,40 +354,59 @@ class Service:
                 or register_data[CITY_PATIENT] == "" or register_data[COUNTY_PATIENT] == "" or register_data[
                     PASSPORT_ID_PATIENT] == ""
                 or register_data[BIRTH_DATE_PATIENT] == "" or register_data[OCCUPATION_PATIENT] == "" or register_data[
-                    INVITE_CODE_PATIENT] == "" or register_data[PROFILE_PICTURE_PATIENT]==''):
+                    INVITE_CODE_PATIENT] == ""):
             raise ValueError("Empty fields")
         patient.username = register_data[USERNAME_PATIENT]
         patients = self.get_all_patients()
         for patient_in_database in patients:
             if patient.username == patient_in_database.username:
                 raise ValueError("Username already exists")
-        profile_picture = register_data[PROFILE_PICTURE_PATIENT]
-        profile_picture.filename = f'{patient.username}.jpg'
-        self.save_file(profile_picture, 'profile_picture_patient')
-        patient.profile_picture = profile_picture.filename
-        patient.first_name = register_data[FIRST_NAME_PATIENT]
-        patient.last_name = register_data[LAST_NAME_PATIENT]
-        patient.email = register_data[EMAIL_PATIENT]
+        if register_data[PROFILE_PICTURE_PATIENT].name != '':
+            profile_picture = register_data[PROFILE_PICTURE_PATIENT]
+            profile_picture.filename = f'{patient.username}.jpg'
+            self.save_file(profile_picture, 'profile_picture_patient')
+            patient.profile_picture = profile_picture.filename
+        patient.first_name = register_data[FIRST_NAME_PATIENT].title().strip()
+        patient.last_name = register_data[LAST_NAME_PATIENT].title().strip()
+        if "@" not in register_data[EMAIL_PATIENT]:
+            raise ValueError("Invalid email")
+        patient.email = register_data[EMAIL_PATIENT].strip()
         for patient_in_database in patients:
             if patient.email == patient_in_database.email:
                 raise ValueError("Email already registered")
+        try:
+            int(register_data[PHONE_NUMBER_PATIENT])
+        except ValueError:
+            raise ValueError("Invalid phone number")
         patient.phone_number = register_data[PHONE_NUMBER_PATIENT]
         for patient_in_database in patients:
             if patient.phone_number == patient_in_database.phone_number:
                 raise ValueError("Phone number already registered")
         patient.address = register_data[ADDRESS_PATIENT]
+        try:
+            int(register_data[ZIP_CODE_PATIENT])
+        except ValueError:
+            raise ValueError("Invalid zipcode")
         patient.postalcode = register_data[ZIP_CODE_PATIENT]
-        patient.city = register_data[CITY_PATIENT]
-        patient.state = register_data[COUNTY_PATIENT]
+        patient.city = register_data[CITY_PATIENT].title().strip()
+        patient.state = register_data[COUNTY_PATIENT].title().strip()
+        try:
+            int(register_data[PASSPORT_ID_PATIENT])
+        except ValueError:
+            raise ValueError("Invalid passport id")
         patient.passport_id = register_data[PASSPORT_ID_PATIENT]
         for patient_in_database in patients:
             if patient.passport_id == patient_in_database.passport_id:
                 raise ValueError("Passport id already registered")
         patient.birth_date = register_data[BIRTH_DATE_PATIENT]
         patient.occupation = register_data[OCCUPATION_PATIENT]
-        patient.martial_status = register_data[MARITAL_STATUS_PATIENT]
+        if register_data[MARITAL_STATUS_PATIENT].lower().strip() not in ('married','single','divorced','widowed'):
+            raise ValueError("Invalid marital status")
+        patient.martial_status = register_data[MARITAL_STATUS_PATIENT].title().strip()
         patient.set_password(register_data[PASSWORD_PATIENT])
-        patient.gender = register_data[GENDER_PATIENT]
+        if register_data[GENDER_PATIENT].strip().lower() not in ("male", "female"):
+            raise ValueError("Invalid gender")
+        patient.gender = register_data[GENDER_PATIENT].title().strip()
         patient.doctor_id = invite_code.doctor_id
         invite_code.patient_id = patient.id
         return patient.id
@@ -450,22 +445,51 @@ class Service:
     def update_database(self):
         self.db.save_to_database()
 
-    @staticmethod
-    def update_doctor_profile(doctor, update_data):
+    def update_doctor_profile(self, doctor, update_data):
+        doctors = self.get_all_doctors()
         if update_data[USERNAME_DOCTOR] != "":
-            doctor.username = update_data[USERNAME_DOCTOR]
+            doctor.username = update_data[USERNAME_DOCTOR].strip()
+            for doctor_in_database in doctors:
+                if doctor.username == doctor_in_database.username:
+                    raise ValueError("Username already exists")
         if update_data[FIRST_NAME_DOCTOR] != "":
-            doctor.first_name = update_data[FIRST_NAME_DOCTOR]
+            doctor.first_name = update_data[FIRST_NAME_DOCTOR].title().strip()
         if update_data[LAST_NAME_DOCTOR] != "":
-            doctor.last_name = update_data[LAST_NAME_DOCTOR]
+            doctor.last_name = update_data[LAST_NAME_DOCTOR].title().strip()
         if update_data[EMAIL_DOCTOR] != "":
-            doctor.email = update_data[EMAIL_DOCTOR]
+            if "@" not in update_data[EMAIL_DOCTOR]:
+                raise ValueError("Invalid email")
+            doctor.email = update_data[EMAIL_DOCTOR].strip()
+            for doctor_in_database in doctors:
+                if doctor.email == doctor_in_database.email:
+                    raise ValueError("Email already registered")
         if update_data[PHONE_NUMBER_DOCTOR] != "":
+            try:
+                int(update_data[PHONE_NUMBER_DOCTOR])
+            except ValueError:
+                raise ValueError("Invalid phone number")
             doctor.phone_number = update_data[PHONE_NUMBER_DOCTOR]
+            for doctor_in_database in doctors:
+                if doctor.phone_number == doctor_in_database.phone_number:
+                    raise ValueError("Phone number already registered")
         if update_data[ADDRESS_DOCTOR] != "":
-            doctor.address = update_data[ADDRESS_DOCTOR]
+            doctor.address = update_data[ADDRESS_DOCTOR].strip()
+        if update_data[ZIPCODE_DOCTOR] != "":
+            try:
+                int(update_data[ZIPCODE_DOCTOR])
+            except ValueError:
+                raise ValueError("Invalid zipcode")
+            doctor.zipcode = update_data[ZIPCODE_DOCTOR]
+        if update_data[CITY_DOCTOR] != '':
+            doctor.city = update_data[CITY_DOCTOR].title().strip()
+        if update_data[COUNTY_DOCTOR] != '':
+            doctor.state = update_data[COUNTY_DOCTOR].title().strip()
         if update_data[BIRTH_DATE_DOCTOR] != "":
             doctor.birth_date = update_data[BIRTH_DATE_DOCTOR]
+        if update_data[GENDER_DOCTOR] != "":
+            if update_data[GENDER_DOCTOR].strip().lower() not in ("male", "female"):
+                raise ValueError("Invalid gender")
+            doctor.gender = update_data[GENDER_DOCTOR].title().strip()
         if update_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR] != "":
             doctor.consultation_schedule_office = update_data[CONSULTATION_SCHEDULE_OFFICE_DOCTOR]
         if update_data[CONSULTATION_SCHEDULE_AWAY_DOCTOR] != "":
@@ -474,45 +498,84 @@ class Service:
             doctor.assistants_schedule = update_data[ASSISTANTS_SCHEDULE_DOCTOR]
         if update_data[PASSWORD_DOCTOR] != "":
             doctor.set_password(update_data[PASSWORD_DOCTOR])
+        if update_data[PROFILE_PICTURE_DOCTOR].name != '':
+            if doctor.profile_picture is not None:
+                os.remove(os.path.abspath(os.path.join(FOLDER, 'profile_picture_doctor', doctor.profile_picture)))
+            profile_picture = update_data[PROFILE_PICTURE_DOCTOR]
+            profile_picture.filename = f'{doctor.username}.jpg'
+            self.save_file(profile_picture, 'profile_picture_doctor')
 
-    @staticmethod
-    def update_patient_profile(patient, update_data):
+    def update_patient_profile(self, patient, update_data):
+        patients = self.get_all_patients()
         if update_data[USERNAME_PATIENT] != "":
             patient.username = update_data[USERNAME_PATIENT]
+            for patient_in_database in patients:
+                if patient.username == patient_in_database.username:
+                    raise ValueError("Username already exists")
         if update_data[FIRST_NAME_PATIENT] != "":
-            patient.first_name = update_data[FIRST_NAME_PATIENT]
+            patient.first_name = update_data[FIRST_NAME_PATIENT].title().strip()
         if update_data[LAST_NAME_PATIENT] != "":
-            patient.last_name = update_data[LAST_NAME_PATIENT]
+            patient.last_name = update_data[LAST_NAME_PATIENT].title().strip()
         if update_data[EMAIL_PATIENT] != "":
+            if "@" not in update_data[EMAIL_PATIENT]:
+                raise ValueError("Invalid email")
             patient.email = update_data[EMAIL_PATIENT]
+            for patient_in_database in patients:
+                if patient.email == patient_in_database.email:
+                    raise ValueError("Email already registered")
         if update_data[PHONE_NUMBER_PATIENT] != "":
+            try:
+                int(update_data[PHONE_NUMBER_PATIENT])
+            except ValueError:
+                raise ValueError("Invalid phone number")
             patient.phone_number = update_data[PHONE_NUMBER_PATIENT]
+            for patient_in_database in patients:
+                if patient.phone_number == patient_in_database.phone_number:
+                    raise ValueError("Phone number already registered")
         if update_data[ADDRESS_PATIENT] != "":
-            patient.address = update_data[ADDRESS_PATIENT]
+            patient.address = update_data[ADDRESS_PATIENT].strip()
         if update_data[ZIP_CODE_PATIENT] != "":
+            try:
+                int(update_data[ZIP_CODE_PATIENT])
+            except ValueError:
+                raise ValueError("Invalid zipcode")
             patient.postalcode = update_data[ZIP_CODE_PATIENT]
         if update_data[PASSPORT_ID_PATIENT] != "":
+            try:
+                int(update_data[PASSPORT_ID_PATIENT])
+            except ValueError:
+                raise ValueError("Invalid passport id")
             patient.passport_id = update_data[PASSPORT_ID_PATIENT]
+            for patient_in_database in patients:
+                if patient.passport_id == patient_in_database.passport_id:
+                    raise ValueError("Passport id already registered")
         if update_data[BIRTH_DATE_PATIENT] != "":
             patient.birth_date = update_data[BIRTH_DATE_PATIENT]
         if update_data[OCCUPATION_PATIENT] != "":
-            patient.occupation = update_data[OCCUPATION_PATIENT]
+            patient.occupation = update_data[OCCUPATION_PATIENT].title().strip()
         if update_data[CITY_PATIENT] != "":
-            patient.city = update_data[CITY_PATIENT]
+            patient.city = update_data[CITY_PATIENT].title().strip()
         if update_data[COUNTY_PATIENT] != "":
-            patient.state = update_data[COUNTY_PATIENT]
-        if update_data[INVITE_CODE_PATIENT] != "":
-            patient.invite_code = update_data[INVITE_CODE_PATIENT]
+            patient.state = update_data[COUNTY_PATIENT].title().strip()
         if update_data[MARITAL_STATUS_PATIENT] != "":
-            patient.martial_status = update_data[MARITAL_STATUS_PATIENT]
+            if update_data[MARITAL_STATUS_PATIENT].lower().strip() not in ('married', 'single', 'divorced', 'widowed'):
+                raise ValueError("Invalid marital status")
+            patient.martial_status = update_data[MARITAL_STATUS_PATIENT].title().strip()
         if update_data[PASSWORD_PATIENT] != "":
             patient.set_password(update_data[PASSWORD_PATIENT])
         if update_data[GENDER_PATIENT] != "":
-            patient.gender = update_data[GENDER_PATIENT]
+            if update_data[GENDER_PATIENT].strip().lower() not in ("male", "female"):
+                raise ValueError("Invalid gender")
+            patient.gender = update_data[GENDER_PATIENT].title().strip()
+        if update_data[PROFILE_PICTURE_PATIENT].name != '':
+            if patient.profile_picture is not None:
+                os.remove(os.path.abspath(os.path.join(FOLDER, 'profile_picture_patient', patient.profile_picture)))
+            profile_picture = update_data[PROFILE_PICTURE_PATIENT]
+            profile_picture.filename = f'{patient.username}.jpg'
+            self.save_file(profile_picture, 'profile_picture_patient')
 
     @staticmethod
     def generate_random_code():
-        #fagssdfg
         return random.randint(1000000, 9999999)
 
     def send_welcome_email(self, email_patient):
@@ -576,7 +639,8 @@ class Service:
 
     def save_file(self, file, folder):
         filename = secure_filename(file.filename)
-        file_path = os.path.abspath(os.path.join(os.path.abspath(os.path.join(app.root_path,'static/files')), folder, filename))
+        file_path = os.path.abspath(
+            os.path.join(os.path.abspath(os.path.join(app.root_path, 'static/files')), folder, filename))
         file.save(file_path)
         return file_path
 

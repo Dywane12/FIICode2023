@@ -29,46 +29,42 @@
                     <table class="medic-table">
                         <tr>
                             <th>Weight:</th>
-                            <td>{{patient.username}}</td>
+                            <td>{{ patient.information_sheet.weight }}</td>
                         </tr>
                         <tr>
                             <th>Height:</th>
-                            <td>{{patient.last_name}}</td>
+                            <td>{{ patient.information_sheet.height }}</td>
                         </tr>
                         <tr>
                             <th>Show size:</th>
-                            <td>{{patient.first_name}}</td>
+                            <td>{{ patient.information_sheet.shoe_size }}</td>
                         </tr>
                         <tr>
                             <th>Blood type:</th>
-                            <td>{{patient.phone_number}}</td>
-                        </tr>
-                        <tr>
-                            <th>Medical history:</th>
-                            <td>{{patient.email}}</td>
+                            <td>{{ patient.information_sheet.blood_type }}</td>
                         </tr>
                         <tr>
                             <th>Medications:</th>
-                            <td>{{patient.address}}</td>
+                            <td>{{ patient.information_sheet.medications }}</td>
                         </tr>
                         <tr>
                             <th>Allergies:</th>
-                            <td>{{patient.postalcode}}</td>
+                            <td>{{ patient.information_sheet.allergies }}</td>
                         </tr>
                         <tr>
                             <th>Hospitalization:</th>
-                            <td>{{patient.city}}</td>
+                            <td>{{ patient.information_sheet.hospitalization }}</td>
                         </tr>
                         <tr>
                             <th>Smoking:</th>
-                            <td>{{patient.state}}</td>
+                            <td>{{ patient.information_sheet.smoking }}</td>
                         </tr>
                         <tr>
                             <th>Drinking:</th>
-                            <td>{{patient.birth_date}}</td>
+                            <td>{{ patient.information_sheet.drinking }}</td>
                         </tr>
                         <tr>
-                            <th>Medical history:</th>
+                            <th>Consultation history:</th>
                             <td><a href="/consultation-history">Click to open</a></td>
                         </tr>
                     </table>
