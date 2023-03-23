@@ -15,8 +15,6 @@ with app.app_context():
     db_1.clear_consultation_table()
     db_1.clear_doctors_table()
     db_1.clear_hospitalization_table()
-    db_1.clear_drinker_table()
-    db_1.clear_smoker_table()
     db_1.clear_information_sheet_table()
     db_1.clear_invite_code_table()"""
     service = Service(db_1, session, choice=False)
@@ -351,8 +349,8 @@ class Routes:
         return render_template('edit-medic.html')
 
     @staticmethod
-    @app.route('/profil-lista-pacient')
-    def profil_lista_pacient():
+    @app.route('/list-patient-profile')
+    def list_patient_profile():
         if "doctor" not in service.session:
             return redirect(url_for('home'))
         doctor = service.get_doctor_by_id(service.session['doctor'])

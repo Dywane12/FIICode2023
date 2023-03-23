@@ -168,20 +168,20 @@ class InformationSheet(db.Model):
     height = db.Column(db.Integer, index=True)
     shoe_size = db.Column(db.Integer, index=True)
     blood_type = db.Column(db.String(256), index=True)
+    smoking = db.Column(db.Integer, index=True)
+    drinking = db.Column(db.Integer, index=True)
     medical_history = db.relationship('ChronicDisease', secondary=information_sheet_chronic_disease, backref='patients')
     medications = db.relationship('Drug', backref='patient')
     allergies = db.relationship('Allergy', secondary=information_sheet_allergy, backref='patients')
-    hospitalization = db.relationship('Hospitalization', backref='patient')
-    smoking = db.relationship('Smoker', backref='patient')
-    drinking = db.relationship('Drinker', backref='patient')
-    family_history = db.relationship('FamilyHistory', backref='patient')
 
-    def init(self, patient_id=None, weigth=None, height=None, shoe_size=None, blood_type=None):
+    def init(self, patient_id=None, weigth=None, height=None, shoe_size=None, blood_type=None, smoking=None, drinking=None):
         self.patient_id = patient_id
         self.weight = weigth
         self.height = height
         self.shoe_size = shoe_size
         self.blood_type = blood_type
+        self.smoking = smoking
+        self.drinking = drinking
 
 
 class ChronicDisease(db.Model):
@@ -210,32 +210,6 @@ class Hospitalization(db.Model):
     patient_id = db.Column(db.Integer, db.ForeignKey('information_sheet.patient_id'))
     date = db.Column(db.Date)
     reason = db.Column(db.String(500))
-
-
-class Smoker(db.Model):
-    __tablename__ = "smoker"
-    id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('information_sheet.patient_id'))
-    current_packs_per_day = db.Column(db.Integer, nullable=True)
-    previous_pack_per_day = db.Column(db.Integer, nullable=True)
-    smoking_years = db.Column(db.Integer, nullable=True)
-
-    def __init__(self, current_packs_per_day=None, previous_pack_per_day=None, smoking_years=None):
-        self.current_packs_per_day = current_packs_per_day
-        self.previous_pack_per_day = previous_pack_per_day
-        self.smoking_years = smoking_years
-
-
-class Drinker(db.Model):
-    __tablename__ = "drinker"
-    id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('information_sheet.patient_id'))
-    quantity = db.Column(db.Integer, nullable=True)
-    frequency = db.Column(db.Integer, nullable=True)
-
-    def __init__(self, quantity, frequency):
-        self.quantity = quantity
-        self.frequency = frequency
 
 
 class InviteCode(db.Model):

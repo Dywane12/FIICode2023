@@ -1,6 +1,6 @@
 import datetime
 
-from app.domain.entities import Doctor, Patient, Consultation, ChronicDisease, Allergy, Drinker, Smoker, \
+from app.domain.entities import Doctor, Patient, Consultation, ChronicDisease, Allergy, \
     Hospitalization, InformationSheet, InviteCode
 
 
@@ -124,14 +124,6 @@ class Database:
     @staticmethod
     def find_all_allergies():
         return Allergy.query.all()
-
-    def clear_smoker_table(self):
-        self.db.session.query(Smoker).delete()
-        self.db.session.commit()
-
-    def clear_drinker_table(self):
-        self.db.session.query(Drinker).delete()
-        self.db.session.commit()
 
     def clear_hospitalization_table(self):
         self.db.session.query(Hospitalization).delete()
