@@ -513,9 +513,8 @@ class Service:
         #fagssdfg
         return random.randint(1000000, 9999999)
 
-
-    def send_welcome_email(self, email_patient, email_companie):
-        sender_account = email_companie
+    def send_welcome_email(self, email_patient):
+        sender_account = "clinica.fiicode@gmail.com"
         reciever_account = email_patient
         cod = self.generate_random_code()
         invite_code = InviteCode(invite_code=cod, doctor_id=self.session['doctor'])

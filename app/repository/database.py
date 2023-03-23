@@ -22,19 +22,19 @@ class Database:
     def find_consultation_by_id(self, consultation_id):
         consultation = self.db.session.get(Consultation, consultation_id)
         if consultation is None:
-            raise ValueError("Doctor not found")
+            raise ValueError("Consultation not found")
         return consultation
 
     def find_information_sheet_by_id(self, information_sheet_id):
         information_sheet = self.db.session.get(InformationSheet, information_sheet_id)
         if information_sheet is None:
-            raise ValueError("Consultation not found")
+            raise ValueError("Information sheet not found")
         return information_sheet
 
     def find_patient_by_id(self, patient_id):
         patient = self.db.session.get(Patient, patient_id)
         if patient is None:
-            raise ValueError("Doctor not found")
+            raise ValueError("Patient not found")
         return patient
 
     def find_invite_code(self, code):
