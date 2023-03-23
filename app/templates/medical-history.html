@@ -34,14 +34,14 @@
                         columns: [
                           { id: 'date', name: 'Date and time' },
                           { id: 'urgency', name: 'Urgency grade' },
-                          { id: 'details', name: 'Details', sort: false}
+                          { id: 'details', name: 'Details', sort: false,formatter: (_, row) => gridjs.html(`<a href='../static/files/consultation/<id>.pdf'>Details</a>`)}
                         ],
                         data: [
                           {% for consultation in medical_history %}
                             {
                               date: '{{ consultation.date_time }}',
                               urgency: '{{ consultation.urgency_grade }}',
-                              details: '{{ consultation.pdf }}'
+                              details: 'Consultation'
                             },
                           {% endfor %}
                         ],
