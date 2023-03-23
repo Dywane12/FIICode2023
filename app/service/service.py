@@ -327,6 +327,8 @@ class Service:
                 register_data[ASSISTANTS_SCHEDULE_DOCTOR] == "" or register_data[GENDER_DOCTOR] == "" or register_data[ZIPCODE_DOCTOR] == ''
                 or register_data[CITY_DOCTOR]=='' or register_data[COUNTY_DOCTOR]=='' or register_data[PROFILE_PICTURE_DOCTOR]==''):
             raise ValueError("Invalid data")
+        if(register_data[GENDER_DOCTOR] != 'M' and register_data[GENDER_DOCTOR] != 'F' ):
+            raise ValueError("Genders can only be M(male) or F(femmale)")
         doctors = self.get_all_doctors()
         for doctor_in_database in doctors:
             if doctor.username == doctor_in_database.username:
