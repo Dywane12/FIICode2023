@@ -781,7 +781,14 @@ class Service:
             if sheet.patient_id == patient.id:
                 return sheet
 
-    def rating_average(self, given_rating):
-        pass
-    # atributa la patient cu all ratings, dam search daca e legatura intre pacient si doctor si dupa adunam si impartim la cati
-    # au rating diferit de none
+    def get_average_rating_by_doctor(self, doctor_id):
+        doctor = Doctor.query.get(doctor_id)
+        patients = doctor.patients
+        ratings = [patient.given_rating for patient in patients if patient.given_rating is not None]
+        if ratings:
+            average_rating = sum(ratings) / len(ratings)
+        else:
+            average_rating = None
+        doctor.rating = average_rating
+        self.db.session.commit()
+        return average_rating
