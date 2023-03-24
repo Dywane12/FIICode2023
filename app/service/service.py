@@ -37,6 +37,7 @@ CITY_DOCTOR = 13
 COUNTY_DOCTOR = 14
 PROFILE_PICTURE_DOCTOR = 15
 MEDICAL_PROOF = 16
+RATING_DOCTOR = 17
 
 USERNAME_PATIENT = 0
 FIRST_NAME_PATIENT = 1
@@ -205,6 +206,7 @@ class Service:
             birth_date = self.__random_date(date(1960, 1, 1), date(1995, 12, 30))
             consultation_schedule_office = self.__random_schedule()
             consultation_schedule_away = consultation_schedule_office
+            rating = 0
             while consultation_schedule_office == consultation_schedule_away:
                 consultation_schedule_away = self.__random_schedule()
             password = 'nacho'
@@ -214,7 +216,7 @@ class Service:
                             birth_date=birth_date, gender=gender, consultation_schedule_office
                             =''.join(day for day in consultation_schedule_office),
                             consultation_schedule_away=', '.join(day for day in consultation_schedule_away),
-                            assistants_schedule=' , '.join(day for day in assistants_schedule))
+                            assistants_schedule=' , '.join(day for day in assistants_schedule), rating=rating)
             doctor.set_password(password)
             """medical_degree_date = {'university_name': "University of Nacho's",
                                    'student_name': f'{doctor.first_name} {doctor.last_name}',
@@ -772,3 +774,6 @@ class Service:
         for sheet in patient.information_sheet:
             if sheet.patient_id == patient.id:
                 return sheet
+
+    def rating_average(self,given_rating):
+        pass

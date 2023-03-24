@@ -90,12 +90,13 @@ class Doctor(db.Model):
     profile_picture = db.Column(db.String(256))
     patients = db.relationship('Patient', backref='doctor')
     consultations = db.relationship('Consultation', backref='doctor')
+    rating = db.Column(db.Integer, index=True, primary_key=False)
 
     def __init__(self, username=None, first_name=None, last_name=None, phone_number=None, email=None, address=None,
                  city=None, state=None, postalcode=None,
                  birth_date=None,
                  gender=None, consultation_schedule_office=None, consultation_schedule_away=None,
-                 assistants_schedule=None, password_hash=None):
+                 assistants_schedule=None, password_hash=None, rating=None):
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
@@ -111,6 +112,7 @@ class Doctor(db.Model):
         self.consultation_schedule_away = consultation_schedule_away
         self.assistants_schedule = assistants_schedule
         self.password_hash = password_hash
+        self.rating = rating
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
