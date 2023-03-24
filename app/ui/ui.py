@@ -310,6 +310,20 @@ class Routes:
             return redirect(url_for('home'))
         return render_template('transfer-patients.html')
 
+    """@app.route('/transfer-patients')
+    def transfer_patients():
+        error = None
+        if "doctor" not in service.session:
+            return redirect(url_for('home'))
+        if request.method == 'POST':
+            patient_id = request.form['patient_id']
+            doctor_id = request.form['doctor_id']
+            service.transfer_patient(patient_id, doctor_id)
+            return redirect(url_for('transfer_patients'))
+        patients = service.get_patients_that_want_to_transfer()
+        doctors = service.get_all_doctors()
+        return render_template('transfer-patients.html', patients=patients, doctors=doctors)"""
+
     @staticmethod
     @app.route('/invite-patient')
     def invite_patient():
@@ -393,6 +407,7 @@ class Routes:
         patient = service.get_patient_by_id(patient_id)
         current_doctor = service.get_doctor_by_id(patient.doctor_id)
         doctors = service.get_doctors_nearby_patient(patient_id)
+
         return render_template('change-medic.html', current_doctor=current_doctor, doctors=doctors)
 
     @staticmethod

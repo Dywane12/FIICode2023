@@ -4,6 +4,7 @@ from app import db
 from werkzeug.security import check_password_hash, generate_password_hash
 from hashlib import md5
 
+
 class Patient(db.Model):
     __tablename__ = "patient"
     id = db.Column(db.Integer, primary_key=True)
@@ -28,11 +29,12 @@ class Patient(db.Model):
     profile_picture = db.Column(db.String(256))
     consultations = db.relationship('Consultation', backref='patient')
     information_sheet = db.relationship('InformationSheet', backref='patient')
+    given_rating = db.Column(db.Integer, index=True)
 
     def __init__(self, username=None, first_name=None, last_name=None, phone_number=None, email=None, address=None,
                  city=None, state=None, postalcode=None, passport_id=None,
                  birth_date=None, marital_status=None, gender=None, occupation=None, invite_code=None,
-                 doctor_id=None, password_hash=None):
+                 doctor_id=None, password_hash=None, given_rating=None):
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
@@ -49,6 +51,7 @@ class Patient(db.Model):
         self.occupation = occupation
         self.password_hash = password_hash
         self.doctor_id = doctor_id
+        self.given_rating = given_rating
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
