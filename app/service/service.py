@@ -3,6 +3,7 @@ import smtplib
 from datetime import date, timedelta, datetime
 import names
 import random_address
+from randomtimestamp import randomtimestamp
 from PyPDF2 import PdfFileMerger
 from RandomDataGenerators import *
 from random import randint
@@ -229,7 +230,7 @@ class Service:
         for i in range(n):
             patient = random.choice(self.get_all_patients())
             doctor_id = patient.doctor_id
-            time = self.__random_date(date(2015, 1, 1), datetime.now().date())
+            time = randomtimestamp(start_year=2010).replace(second=0)
             pdf = randint(100, 1000 - 1)
             urgency_grade = randint(1, 5)
             consultation = Consultation(patient_id=patient.id, doctor_id=doctor_id, time=time, pdf=pdf,

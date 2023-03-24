@@ -11,13 +11,13 @@ import datetime
 
 with app.app_context():
     db_1 = Database(db)
-    """db_1.clear_patients_table()
+    db_1.clear_patients_table()
     db_1.clear_consultation_table()
     db_1.clear_doctors_table()
     db_1.clear_hospitalization_table()
     db_1.clear_information_sheet_table()
-    db_1.clear_invite_code_table()"""
-    service = Service(db_1, session, choice=False)
+    db_1.clear_invite_code_table()
+    service = Service(db_1, session, choice=True)
 
 
 class Routes:
@@ -344,9 +344,13 @@ class Routes:
                          request.form['birth_date'], request.form['consultation_schedule_office'],
                          request.form['consultation_schedule_away'],
                          request.form['assistants_schedule'], request.form['password'], request.form['gender']]
-            service.update_doctor_profile(doctor, form_data)
-            service.update_database()
-        return render_template('edit-medic.html')
+            try:
+                service.update_doctor_profile(doctor, form_data)
+            except ValueError as exception:
+                error = exception
+            else:
+                service.update_database()
+        return render_template('edit-medic.html',error=error)
 
     @staticmethod
     @app.route('/list-patient-profile')
