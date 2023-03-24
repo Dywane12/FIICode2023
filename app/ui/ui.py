@@ -349,6 +349,7 @@ class Routes:
     @staticmethod
     @app.route('/edit-medic', methods=['GET', 'POST'])
     def edit_medic():
+        error = None
         if "doctor" not in service.session:
             return redirect(url_for('home'))
         if request.method == "POST":
@@ -367,11 +368,12 @@ class Routes:
                 error = exception
             else:
                 service.update_database()
-        return render_template('edit-medic.html',error=error)
+        return render_template('edit-medic.html', error=error)
 
     @staticmethod
     @app.route('/edit-patient', methods=['GET', 'POST'])
     def edit_patient():
+        error = None
         if "patient" not in service.session:
             return redirect(url_for('home'))
         if request.method == "POST":
