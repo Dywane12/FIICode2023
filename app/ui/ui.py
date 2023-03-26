@@ -189,7 +189,9 @@ class Routes:
                          request.form['Gout'], request.form['Headaches'], request.form['Heart Attack'],
                          request.form['Heart Murmur']]
             try:
-                information_sheet_id = service.register_information_sheet_1(form_data, service.session['register_patient_id'], diseases)
+                information_sheet_id = service.register_information_sheet_1(form_data,
+                                                                            service.session['register_patient_id'],
+                                                                            diseases)
             except ValueError as exception:
                 error = exception
             else:
@@ -218,18 +220,19 @@ class Routes:
                     {'name': 'Pregnant?', 'type': ''}, {'name': 'Breastfeeding?', 'type': ''}
                     ]
         if request.method == 'POST':
-            form_data = [request.form['Heart Failure'], request.form['Hemophilia'], request.form['Hepatitis'],
-                         request.form['High Blood Pressure'], request.form['Kidney Problems'],
-                         request.form['Leg Cramps'],
-                         request.form['Liver Disease'], request.form['Low Blood Pressure'],
-                         request.form['Mental Illness'], request.form['Neuropathy'],
-                         request.form['Pacemaker'], request.form['Paralysis'],
-                         request.form['Phlebitis'], request.form['Psoriasis'], request.form['Rheumatic Fever'],
-                         request.form['Schizophrenia'], request.form['Shortness of Breath'], request.form['Stroke'],
-                         request.form['Thyroid Problems'], request.form['Tuberculosis'],
-                         request.form['Ulcers (Stomach)'], request.form['Varicose Veins'],
-                         request.form['Weight loss(unexplained)'],
-                         request.form['Pregnant'], request.form['Breastfeeding']]
+            form_data = [request.form.get('Heart Failure'), request.form.get('Hemophilia'), request.form.get('Hepatitis'),
+                         request.form.get('High Blood Pressure'), request.form.get('Kidney Problems'),
+                         request.form.get('Leg Cramps'),
+                         request.form.get('Liver Disease'), request.form.get('Low Blood Pressure'),
+                         request.form.get('Mental Illness'), request.form.get('Neuropathy'),
+                         request.form.get('Pacemaker'), request.form.get('Paralysis'),
+                         request.form.get('Phlebitis'), request.form.get('Psoriasis'),
+                         request.form.get('Rheumatic Fever'), request.form.get('Schizophrenia'),
+                         request.form.get('Shortness of Breath'), request.form.get('Stroke'),
+                         request.form.get('Thyroid Problems'), request.form.get('Tuberculosis'),
+                         request.form.get('Ulcers (Stomach)'), request.form.get('Varicose Veins'),
+                         request.form.get('Weight loss(unexplained)'),
+                         request.form.get('Pregnant'), request.form.get('Breastfeeding')]
             try:
                 service.register_information_sheet_2(form_data, service.session['information_sheet_id'], diseases)
             except ValueError as exception:
@@ -249,20 +252,33 @@ class Routes:
             {'name': 'Codeine'}, {'name': 'Steroids'}
         ]
         if request.method == 'POST':
-            form_data = [request.form['Heart Failure'], request.form['Hemophilia'], request.form['Hepatitis'],
-                         request.form['High Blood Pressure'], request.form['Kidney Problems'],
-                         request.form['Leg Cramps'],
-                         request.form['Liver Disease'], request.form['Low Blood Pressure'],
-                         request.form['Mental Illness'], request.form['Neuropathy'],
-                         request.form['Pacemaker'], request.form['Paralysis'],
-                         request.form['Phlebitis'], request.form['Psoriasis'], request.form['Rheumatic Fever'],
-                         request.form['Schizophrenia'], request.form['Shortness of Breath'],
-                         request.form['Stroke'], request.form['Thyroid Problems'], request.form['Tuberculosis'],
-                         request.form['Ulcers (Stomach)'], request.form['Varicose Veins'],
-                         request.form['Weight loss(unexplained)'], request.form['Pregnant'],
-                         request.form['Breastfeeding']]
+            form_data = [request.form.get('Local anesthesia'), request.form.get('Aspirin'), request.form.get('Anti-Inflammatory'),
+                         request.form.get('Penicillin'), request.form.get('Sulfa'),
+                         request.form.get('IVP dye'),
+                         request.form.get('Tetanus'), request.form.get('General anesthesia'),
+                         request.form.get('Latex'), request.form.get('Tape/Adhesives'),
+                         request.form.get('Iodine'), request.form.get('Betadine'),
+                         request.form.get('Codeine'), request.form.get('Steroids')]
             try:
                 service.register_information_sheet_3(form_data, service.session['information_sheet_id'], allergies)
+            except ValueError as exception:
+                error = exception
+            else:
+
+                return redirect(url_for('register_patient_5'))
+        return render_template('register_patient_4.html', allergies=allergies, error=error)
+
+    @staticmethod
+    @app.route('/register-patient-5')
+    def register_patient_5():
+        error = None
+        if request.method == 'POST':
+            form_data = [request.form['weight'], request.form['height'], request.form['shoe_size'],
+                         request.form['medications'], request.form['hospitalization'],
+                         request.form.get('smoking'),
+                         request.form.get('drinking')]
+            try:
+                service.register_information_sheet_4(form_data, service.session['information_sheet_id'])
             except ValueError as exception:
                 error = exception
             else:
@@ -271,7 +287,7 @@ class Routes:
                 service.session.pop('register_patient_id')
                 service.session.pop('information_sheet_id')
                 return redirect(url_for('login'))
-        return render_template('register_patient_4.html', allergies=allergies, error=error)
+        return render_template('register_patient_5.html', error=error)
 
     @staticmethod
     @app.route('/choice')
@@ -391,7 +407,7 @@ class Routes:
                 error = exception
             else:
                 service.update_database()
-        return render_template('edit-patient.html',error=error)
+        return render_template('edit-patient.html', error=error)
 
     @staticmethod
     @app.route('/list-patient-profile')

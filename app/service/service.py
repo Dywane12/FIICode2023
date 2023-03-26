@@ -58,6 +58,14 @@ PASSWORD_PATIENT = 14
 PROFILE_PICTURE_PATIENT = 15
 INVITE_CODE_PATIENT = 16
 GIVEN_RATING_PATIENT = 17
+WEIGHT = 0
+HEIGHT = 1
+SHOE_SIZE = 2
+MEDICATIONS = 3
+HOSPITALIZATION = 4
+SMOKING = 5
+DRINKING = 6
+
 
 class Service:
     def __init__(self, db, session, choice=False):
@@ -216,8 +224,8 @@ class Service:
             assistants_schedule = self.__random_schedule()
             doctor = Doctor(username=username, first_name=first_name, last_name=last_name, phone_number=phone_number,
                             email=email, address=address, city=city, state=state, postalcode=postal_code,
-                            birth_date=birth_date, gender=gender, consultation_schedule_office
-                            =''.join(day for day in consultation_schedule_office),
+                            birth_date=birth_date, gender=gender, consultation_schedule_office=''.join(
+                    day for day in consultation_schedule_office),
                             consultation_schedule_away=', '.join(day for day in consultation_schedule_away),
                             assistants_schedule=' , '.join(day for day in assistants_schedule), rating=rating)
             doctor.set_password(password)
@@ -294,7 +302,7 @@ class Service:
                     ZIPCODE_DOCTOR] == ''
                 or register_data[CITY_DOCTOR] == '' or register_data[COUNTY_DOCTOR] == ''):
             raise ValueError("Invalid data")
-        if(register_data[GENDER_DOCTOR] != 'M' and register_data[GENDER_DOCTOR] != 'F' ):
+        if register_data[GENDER_DOCTOR] != 'M' and register_data[GENDER_DOCTOR] != 'F':
             raise ValueError("Genders can only be M(male) or F(femmale)")
         doctors = self.get_all_doctors()
         for doctor_in_database in doctors:
@@ -405,7 +413,7 @@ class Service:
                 raise ValueError("Passport id already registered")
         patient.birth_date = register_data[BIRTH_DATE_PATIENT]
         patient.occupation = register_data[OCCUPATION_PATIENT]
-        if register_data[MARITAL_STATUS_PATIENT].lower().strip() not in ('married','single','divorced','widowed'):
+        if register_data[MARITAL_STATUS_PATIENT].lower().strip() not in ('married', 'single', 'divorced', 'widowed'):
             raise ValueError("Invalid marital status")
         patient.martial_status = register_data[MARITAL_STATUS_PATIENT].title().strip()
         patient.set_password(register_data[PASSWORD_PATIENT])
@@ -642,7 +650,8 @@ class Service:
     def allowed_file(filename):
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-    def save_file(self, file, folder):
+    @staticmethod
+    def save_file(file, folder):
         filename = secure_filename(file.filename)
         file_path = os.path.abspath(
             os.path.join(os.path.abspath(os.path.join(app.root_path, 'static/files')), folder, filename))
@@ -701,7 +710,6 @@ class Service:
     def request_transfer(self, doctor_id):
         patient_id = self.get_patient_by_id(self.session['patient'])
 
-
     def get_patients_that_want_to_transfer(self):
         patients_that_want_to_transfer = []
         for patient in self.get_doctor_patients():
@@ -748,7 +756,8 @@ class Service:
             if form_data[disease['name']] == "":
                 raise ValueError("Empty fields")
         for disease in diseases:
-            information_sheet.medical_history.append(self.db.find_disease_by_name(form_data[disease['name']]))
+            if form_data[disease['name']] is not None:
+                information_sheet.medical_history.append(self.db.find_disease_by_name(disease))
         self.db.add_entity(information_sheet)
         return information_sheet.id
 
@@ -758,8 +767,8 @@ class Service:
             if form_data[disease['name']] == "":
                 raise ValueError("Empty fields")
         for disease in diseases:
-            information_sheet.medical_history.append(self.db.find_disease_by_name(form_data[disease['name']]))
-        return information_sheet.id
+            if form_data[disease['name']] is not None:
+                information_sheet.medical_history.append(self.db.find_disease_by_name(disease))
 
     def register_information_sheet_3(self, form_data, information_sheet_id, allergies):
         information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
@@ -767,8 +776,34 @@ class Service:
             if form_data[allergy['name']] == "":
                 raise ValueError("Empty fields")
         for allergy in allergies:
-            information_sheet.allergies.append(self.db.find_allergy_by_name(form_data[allergy['name']]))
-        return information_sheet.id
+            if form_data[allergy['name']] is not None:
+                information_sheet.allergies.append(self.db.find_allergy_by_name(allergy))
+
+    def register_information_sheet_4(self, form_data, information_sheet_id):
+        information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+        try:
+            int(form_data[WEIGHT])
+        except ValueError:
+            raise ValueError("Invalid weight")
+        try:
+            int(form_data[HEIGHT])
+        except ValueError:
+            raise ValueError("Invalid height")
+        try:
+            int(form_data[SHOE_SIZE])
+        except ValueError:
+            raise ValueError("Invalid shoe size")
+        information_sheet.height = form_data[HEIGHT]
+        information_sheet.weight = form_data[WEIGHT]
+        information_sheet.shoe_size = form_data[SHOE_SIZE]
+        if form_data[DRINKING] is not None:
+            information_sheet.drinking = 1
+        else:
+            information_sheet.drinking = 0
+        if form_data[SMOKING] is not None:
+            information_sheet.smoking = 1
+        else:
+            information_sheet.smoking = 0
 
     def link_patient_to_information_sheet(self):
         information_sheet = self.db.find_information_sheet_by_id(self.session['information_sheet_id'])
@@ -793,3 +828,7 @@ class Service:
         doctor.rating = average_rating
         self.db.session.commit()
         return average_rating
+
+    def edit_information_sheet(self, information_sheet_id):
+        information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+
