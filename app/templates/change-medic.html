@@ -22,7 +22,7 @@
             <div class="main-box">
                 <div>
                     <h1 class="name">Doctors nearby</h1>
-                    <h2>Current Doctor: {{current_doctor.first_name}} {{current_doctor.last_name}} </h2>
+                    <h2>Current Doctor: {{current_doctor.first_name}} {{current_doctor.last_name}}  Rating: {{ current_doctor.average_rating }}</h2>
                     <hr>
                     <div id="table"></div>
                 </div>
@@ -58,8 +58,8 @@
                               lname: '{{ doctor.last_name }}',
                               number_patients: '{{ doctor.phone_number }}',
                               address: '{{ doctor.address }}',
-                              rating: '5/5',
-                              transfer: 'Transfer'
+                              rating: '{{ doctor.average_rating }}',
+                              transfer: 'Want to transfer?'
                             },
                           {% endfor %}
                         ],

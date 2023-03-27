@@ -93,7 +93,6 @@ class Doctor(db.Model):
     profile_picture = db.Column(db.String(256))
     patients = db.relationship('Patient', backref='doctor')
     consultations = db.relationship('Consultation', backref='doctor')
-    rating = db.Column(db.Integer, index=True, primary_key=False)
 
     def __init__(self, username=None, first_name=None, last_name=None, phone_number=None, email=None, address=None,
                  city=None, state=None, postalcode=None,
@@ -118,8 +117,19 @@ class Doctor(db.Model):
         self.rating = rating
 
     @property
+    def average_rating(self):
+        patients = self.patients
+        ratings = [patient.given_rating for patient in patients if patient.given_rating is not None]
+        if ratings:
+            return round(sum(ratings) / len(ratings), 2)
+        else:
+            return "No rating given"
+
+
+    @property
     def number_of_patients(self):
         return len(self.patients)
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -182,7 +192,8 @@ class InformationSheet(db.Model):
     medications = db.relationship('Drug', backref='patient')
     allergies = db.relationship('Allergy', secondary=information_sheet_allergy, backref='patients')
 
-    def init(self, patient_id=None, weigth=None, height=None, shoe_size=None, blood_type=None, smoking=None, drinking=None):
+    def init(self, patient_id=None, weigth=None, height=None, shoe_size=None, blood_type=None, smoking=None,
+             drinking=None):
         self.patient_id = patient_id
         self.weight = weigth
         self.height = height
@@ -191,6 +202,17 @@ class InformationSheet(db.Model):
         self.smoking = smoking
         self.drinking = drinking
 
+    @property
+    def get_smoking(self):
+        if self.smoking == 1:
+            return "Yes"
+        return "No"
+
+    @property
+    def get_drinking(self):
+        if self.drinking == 1:
+            return "Yes"
+        return "No"
 
 class ChronicDisease(db.Model):
     __tablename__ = "chronic_disease"
@@ -237,4 +259,3 @@ class InviteCode(db.Model):
 
     def __repr__(self):
         return f'{self.invite_code}'
-

@@ -139,7 +139,7 @@ class Service:
             occupation = random_pretentious_job_title(1, number_of_words=2)
             birth_date = self.__random_date(date(1940, 1, 1), date(2008, 12, 30))
             marital_status = random.choice(['Married', 'Divorced', 'Widow', 'Single'])
-            given_rating = 0
+            given_rating = randint(1,5)
             patient.gender = gender
             patient.email = email
             patient.address = address
@@ -216,7 +216,6 @@ class Service:
             birth_date = self.__random_date(date(1960, 1, 1), date(1995, 12, 30))
             consultation_schedule_office = self.__random_schedule()
             consultation_schedule_away = consultation_schedule_office
-            rating = 0
             while consultation_schedule_office == consultation_schedule_away:
                 consultation_schedule_away = self.__random_schedule()
             password = 'nacho'
@@ -226,7 +225,7 @@ class Service:
                             birth_date=birth_date, gender=gender, consultation_schedule_office=''.join(
                     day for day in consultation_schedule_office),
                             consultation_schedule_away=', '.join(day for day in consultation_schedule_away),
-                            assistants_schedule=' , '.join(day for day in assistants_schedule), rating=rating)
+                            assistants_schedule=' , '.join(day for day in assistants_schedule))
             doctor.set_password(password)
             """medical_degree_date = {'university_name': "University of Nacho's",
                                    'student_name': f'{doctor.first_name} {doctor.last_name}',
@@ -459,6 +458,7 @@ class Service:
 
     def update_doctor_profile(self, doctor, update_data):
         doctors = self.get_all_doctors()
+        doctors.remove(doctor)
         if update_data[USERNAME_DOCTOR] != "":
             doctor.username = update_data[USERNAME_DOCTOR].strip()
             for doctor_in_database in doctors:
@@ -510,15 +510,17 @@ class Service:
             doctor.assistants_schedule = update_data[ASSISTANTS_SCHEDULE_DOCTOR]
         if update_data[PASSWORD_DOCTOR] != "":
             doctor.set_password(update_data[PASSWORD_DOCTOR])
-        if update_data[PROFILE_PICTURE_DOCTOR].name != '':
+        if update_data[PROFILE_PICTURE_DOCTOR].filename != '':
             if doctor.profile_picture is not None:
                 os.remove(os.path.abspath(os.path.join(FOLDER, 'profile_picture_doctor', doctor.profile_picture)))
             profile_picture = update_data[PROFILE_PICTURE_DOCTOR]
             profile_picture.filename = f'{doctor.username}.jpg'
+            doctor.profile_picture = profile_picture.filename
             self.save_file(profile_picture, 'profile_picture_doctor')
 
     def update_patient_profile(self, patient, update_data):
         patients = self.get_all_patients()
+        patients.remove(patient)
         if update_data[USERNAME_PATIENT] != "":
             patient.username = update_data[USERNAME_PATIENT]
             for patient_in_database in patients:
@@ -579,11 +581,12 @@ class Service:
             if update_data[GENDER_PATIENT].strip().lower() not in ("male", "female"):
                 raise ValueError("Invalid gender")
             patient.gender = update_data[GENDER_PATIENT].title().strip()
-        if update_data[PROFILE_PICTURE_PATIENT].name != '':
+        if update_data[PROFILE_PICTURE_PATIENT].filename != '':
             if patient.profile_picture is not None:
                 os.remove(os.path.abspath(os.path.join(FOLDER, 'profile_picture_patient', patient.profile_picture)))
             profile_picture = update_data[PROFILE_PICTURE_PATIENT]
             profile_picture.filename = f'{patient.username}.jpg'
+            patient.profile_picture = profile_picture.filename
             self.save_file(profile_picture, 'profile_picture_patient')
 
     @staticmethod
@@ -635,14 +638,16 @@ class Service:
     def get_doctors_nearby_patient(self, patient_id):
         geolocator = Nominatim(user_agent="medical_app")
         patient = self.get_patient_by_id(patient_id)
-        patient_location = geolocator.geocode(patient.address + ' ' + patient.state)
+        patient_location = geolocator.geocode(patient.postalcode)
         doctors_nearby = []
         for doctor in self.get_all_doctors():
-            doctor_location = geolocator.geocode(doctor.address + ' ' + doctor.state)
+            doctor_location = geolocator.geocode(doctor.postalcode)
             distance_doctor_to_patient = distance.distance((patient_location.latitude, patient_location.longitude),
                                                            (doctor_location.latitude, doctor_location.longitude)).km
             if distance_doctor_to_patient < 30:
                 doctors_nearby.append(doctor)
+        doctor = self.get_doctor_by_id(patient.doctor_id)
+        doctors_nearby.remove(doctor)
         return doctors_nearby
 
     @staticmethod
@@ -712,7 +717,7 @@ class Service:
     def get_patients_that_want_to_transfer(self):
         patients_that_want_to_transfer = []
         for patient in self.get_doctor_patients():
-            if patient.transfer == 1:
+            if patient.transfer is not None:
                 patients_that_want_to_transfer.append(patient)
         return patients_that_want_to_transfer
 
@@ -807,17 +812,6 @@ class Service:
             if sheet.patient_id == patient.id:
                 return sheet
 
-    def get_average_rating_by_doctor(self, doctor_id):
-        doctor = Doctor.query.get(doctor_id)
-        patients = doctor.patients
-        ratings = [patient.given_rating for patient in patients if patient.given_rating is not None]
-        if ratings:
-            average_rating = sum(ratings) / len(ratings)
-        else:
-            average_rating = None
-        doctor.rating = average_rating
-        self.db.session.commit()
-        return average_rating
 
     def edit_information_sheet_1(self, information_sheet_id, form_data, diseases):
         information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)

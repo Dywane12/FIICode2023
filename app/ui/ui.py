@@ -120,9 +120,9 @@ class Routes:
                          request.form['birth_date'], request.form['consultation_schedule_office'],
                          request.form['consultation_schedule_away'],
                          request.form['assistants_schedule'], request.form['password'], request.form['gender'],
-                         request.files['proof_of_medic'], request.form['zipcode'], request.form['city'],
+                         request.form['zipcode'], request.form['city'],
                          request.form['county'],
-                         request.files['profile_picture']]
+                         request.files['profile_picture'], request.files['proof_of_medic']]
             try:
                 service.register_medic(form_data)
             except ValueError as exception:
@@ -145,7 +145,7 @@ class Routes:
                          request.form['county'], request.form['passport_id'],
                          request.form['birth_date'], request.form['marital_status'],
                          request.form['gender'], request.form['occupation'], request.form['password'],
-                         request.form['invite_code'], request.files['profile_picture']]
+                         request.files['profile_picture'], request.form['invite_code']]
             try:
                 patient_id = service.register_patient(form_data)
             except ValueError as exception:
@@ -358,7 +358,8 @@ class Routes:
     def transfer_patients():
         if "doctor" not in service.session:
             return redirect(url_for('home'))
-        return render_template('transfer-patients.html')
+        patients = service.get_patients_that_want_to_transfer()
+        return render_template('transfer-patients.html', patients=patients)
 
     """@app.route('/transfer-patients')
     def transfer_patients():
@@ -411,7 +412,7 @@ class Routes:
                          request.form['birth_date'], request.form['consultation_schedule_office'],
                          request.form['consultation_schedule_away'],
                          request.form['assistants_schedule'], request.form['password'], request.form['gender'],
-                         request.files['proof_of_medic'], request.form['zipcode'], request.form['city'],
+                         request.form['zipcode'], request.form['city'],
                          request.form['county'],
                          request.files['profile_picture']]
             try:
@@ -420,6 +421,7 @@ class Routes:
                 error = exception
             else:
                 service.update_database()
+                return redirect(url_for('medic_profile'))
         return render_template('edit-medic.html', error=error)
 
     @staticmethod
@@ -436,13 +438,14 @@ class Routes:
                          request.form['county'], request.form['passport_id'],
                          request.form['birth_date'], request.form['marital_status'],
                          request.form['gender'], request.form['occupation'], request.form['password'],
-                         request.form['invite_code'], request.files['profile_picture']]
+                         request.files['profile_picture']]
             try:
                 service.update_patient_profile(patient, form_data)
             except ValueError as exception:
                 error = exception
             else:
                 service.update_database()
+                return redirect(url_for('patient_profile'))
         return render_template('edit-patient.html', error=error)
 
     @staticmethod
