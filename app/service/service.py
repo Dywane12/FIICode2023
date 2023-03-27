@@ -525,6 +525,12 @@ class Service:
             profile_picture.filename = f'{patient.username}.jpg'
             self.save_file(profile_picture, 'profile_picture_patient')
 
+    def edit_information_sheet(self, information_sheet_id, update_data):
+        information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+
+
+
+
     @staticmethod
     def generate_random_code():
         #fagssdfg
@@ -715,3 +721,4 @@ class Service:
     def link_patient_to_information_sheet(self):
         information_sheet = self.db.find_information_sheet_by_id(self.session['information_sheet_id'])
         information_sheet.patient_id = self.session['patient_id']
+
