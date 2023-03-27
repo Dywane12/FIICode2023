@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="with=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
     <title>FIICode2023 Challenge</title>
     <link rel="stylesheet" href="../static/main-style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -9,6 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="src/calendarjs.css" />
+
 </head>
 <body>
     <section class="header">
@@ -29,9 +32,18 @@
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>
             <div class="main-box">
+                <div id="calendar"></div>
 
             </div>
     </section>
+    <script src="src/calendarjs.js"></script>
+    <script>
+        var calendarInstance = calendarJs( "calendar", {
+        manualEditingEnabled: true,
+        showTimesInMainCalendarEvents: true
+        // All your options can be set here
+            } );
+    </script>
     <script>
       window.onunload = function() {
         window.location.reload(true);
