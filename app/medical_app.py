@@ -5,7 +5,6 @@ from app.ui.ui import Routes
 if __name__ == '__main__':
     app.run(debug=True)
     routes = Routes()
-    #adfasdfasd
 
 
     @app.shell_context_processor

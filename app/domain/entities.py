@@ -117,6 +117,9 @@ class Doctor(db.Model):
         self.password_hash = password_hash
         self.rating = rating
 
+    @property
+    def number_of_patients(self):
+        return len(self.patients)
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 

@@ -176,18 +176,32 @@ class Routes:
                     {'name': 'Heart Attack', 'type': ''}, {'name': 'Heart Murmur', 'type': ''},
                     ]
         if request.method == 'POST':
-            form_data = [request.form['AIDS/HIV'], request.form['Anemia'], request.form['Anxiety'],
-                         request.form['Arthritis'], request.form['Artificial Heart Valve'],
-                         request.form['Artificial Joint'],
-                         request.form['Asthma'], request.form['Back Problems'],
-                         request.form['Bleeding Disorder'], request.form['Bipolar Disorder'],
-                         request.form['Bloot Clot/DVT'], request.form['Bypass Surgery'],
-                         request.form['Cancer'], request.form['Chemical Dependency'], request.form['Chest Pain'],
-                         request.form['Circulatory Problems'], request.form['Depression'], request.form['Diabetes'],
-                         request.form['Emphysema'], request.form['Eye Problems'], request.form['Fibromyalgia'],
-                         request.form['Foot Cramps'],
-                         request.form['Gout'], request.form['Headaches'], request.form['Heart Attack'],
-                         request.form['Heart Murmur']]
+            form_data = {'AIDS/HIV': request.form['AIDS/HIV'],
+                         'Anemia': request.form['Anemia'],
+                         'Anxiety': request.form['Anxiety'],
+                         'Arthritis': request.form['Arthritis'],
+                         'Artificial Heart Valve': request.form['Artificial Heart Valve'],
+                         'Artificial Joint': request.form['Artificial Joint'],
+                         'Asthma': request.form['Asthma'],
+                         'Back Problems': request.form['Back Problems'],
+                         'Bleeding Disorder': request.form['Bleeding Disorder'],
+                         'Bipolar Disorder': request.form['Bipolar Disorder'],
+                         'Bloot Clot/DVT': request.form['Bloot Clot/DVT'],
+                         'Bypass Surgery': request.form['Bypass Surgery'],
+                         'Cancer': request.form['Cancer'],
+                         'Chemical Dependency': request.form['Chemical Dependency'],
+                         'Chest Pain': request.form['Chest Pain'],
+                         'Circulatory Problems': request.form['Circulatory Problems'],
+                         'Depression': request.form['Depression'],
+                         'Diabetes': request.form['Diabetes'],
+                         'Emphysema': request.form['Emphysema'],
+                         'Eye Problems': request.form['Eye Problems'],
+                         'Fibromyalgia': request.form['Fibromyalgia'],
+                         'Foot Cramps': request.form['Foot Cramps'],
+                         'Gout': request.form['Gout'],
+                         'Headaches': request.form['Headaches'],
+                         'Heart Attack': request.form['Heart Attack'],
+                         'Heart Murmur': request.form['Heart Murmur']}
             try:
                 information_sheet_id = service.register_information_sheet_1(form_data,
                                                                             service.session['register_patient_id'],
@@ -220,19 +234,31 @@ class Routes:
                     {'name': 'Pregnant?', 'type': ''}, {'name': 'Breastfeeding?', 'type': ''}
                     ]
         if request.method == 'POST':
-            form_data = [request.form.get('Heart Failure'), request.form.get('Hemophilia'), request.form.get('Hepatitis'),
-                         request.form.get('High Blood Pressure'), request.form.get('Kidney Problems'),
-                         request.form.get('Leg Cramps'),
-                         request.form.get('Liver Disease'), request.form.get('Low Blood Pressure'),
-                         request.form.get('Mental Illness'), request.form.get('Neuropathy'),
-                         request.form.get('Pacemaker'), request.form.get('Paralysis'),
-                         request.form.get('Phlebitis'), request.form.get('Psoriasis'),
-                         request.form.get('Rheumatic Fever'), request.form.get('Schizophrenia'),
-                         request.form.get('Shortness of Breath'), request.form.get('Stroke'),
-                         request.form.get('Thyroid Problems'), request.form.get('Tuberculosis'),
-                         request.form.get('Ulcers (Stomach)'), request.form.get('Varicose Veins'),
-                         request.form.get('Weight loss(unexplained)'),
-                         request.form.get('Pregnant'), request.form.get('Breastfeeding')]
+            form_data = {'Heart Failure': request.form.get('Heart Failure'),
+                         'Hemophilia': request.form.get('Hemophilia'),
+                         'Hepatitis': request.form.get('Hepatitis'),
+                         'High Blood Pressure': request.form.get('High Blood Pressure'),
+                         'Kidney Problems': request.form.get('Kidney Problems'),
+                         'Leg Cramps': request.form.get('Leg Cramps'),
+                         'Liver Disease': request.form.get('Liver Disease'),
+                         'Low Blood Pressure': request.form.get('Low Blood Pressure'),
+                         'Mental Illness': request.form.get('Mental Illness'),
+                         'Neuropathy': request.form.get('Neuropathy'),
+                         'Pacemaker': request.form.get('Pacemaker'),
+                         'Paralysis': request.form.get('Paralysis'),
+                         'Phlebitis': request.form.get('Phlebitis'),
+                         'Psoriasis': request.form.get('Psoriasis'),
+                         'Rheumatic Fever': request.form.get('Rheumatic Fever'),
+                         'Schizophrenia': request.form.get('Schizophrenia'),
+                         'Shortness of Breath': request.form.get('Shortness of Breath'),
+                         'Stroke': request.form.get('Stroke'),
+                         'Thyroid Problems': request.form.get('Thyroid Problems'),
+                         'Tuberculosis': request.form.get('Tuberculosis'),
+                         'Ulcers (Stomach)': request.form.get('Ulcers (Stomach)'),
+                         'Varicose Veins': request.form.get('Varicose Veins'),
+                         'Weight loss(unexplained)': request.form.get('Weight loss(unexplained)'),
+                         'Pregnant': request.form.get('Pregnant'),
+                         'Breastfeeding': request.form.get('Breastfeeding')}
             try:
                 service.register_information_sheet_2(form_data, service.session['information_sheet_id'], diseases)
             except ValueError as exception:
@@ -252,13 +278,20 @@ class Routes:
             {'name': 'Codeine'}, {'name': 'Steroids'}
         ]
         if request.method == 'POST':
-            form_data = [request.form.get('Local anesthesia'), request.form.get('Aspirin'), request.form.get('Anti-Inflammatory'),
-                         request.form.get('Penicillin'), request.form.get('Sulfa'),
-                         request.form.get('IVP dye'),
-                         request.form.get('Tetanus'), request.form.get('General anesthesia'),
-                         request.form.get('Latex'), request.form.get('Tape/Adhesives'),
-                         request.form.get('Iodine'), request.form.get('Betadine'),
-                         request.form.get('Codeine'), request.form.get('Steroids')]
+            form_data = {'Local anesthesia': request.form.get('Local anesthesia'),
+                         'Aspirin': request.form.get('Aspirin'),
+                         'Anti-Inflammatory': request.form.get('Anti-Inflammatory'),
+                         'Penicillin': request.form.get('Penicillin'),
+                         'Sulfa': request.form.get('Sulfa'),
+                         'IVP dye': request.form.get('IVP dye'),
+                         'Tetanus': request.form.get('Tetanus'),
+                         'General anesthesia': request.form.get('General anesthesia'),
+                         'Latex': request.form.get('Latex'),
+                         'Tape/Adhesives': request.form.get('Tape/Adhesives'),
+                         'Iodine': request.form.get('Iodine'),
+                         'Betadine': request.form.get('Betadine'),
+                         'Codeine': request.form.get('Codeine'),
+                         'Steroids': request.form.get('Steroids')}
             try:
                 service.register_information_sheet_3(form_data, service.session['information_sheet_id'], allergies)
             except ValueError as exception:
@@ -273,8 +306,11 @@ class Routes:
     def register_patient_5():
         error = None
         if request.method == 'POST':
-            form_data = [request.form['weight'], request.form['height'], request.form['shoe_size'],
-                         request.form['medications'], request.form['hospitalization'],
+            form_data = [request.form['weight'],
+                         request.form['height'],
+                         request.form['shoe_size'],
+                         request.form['medications'],
+                         request.form['hospitalization'],
                          request.form.get('smoking'),
                          request.form.get('drinking')]
             try:

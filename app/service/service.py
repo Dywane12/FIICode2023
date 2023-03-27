@@ -201,7 +201,6 @@ class Service:
                                      doctor_id=patient.doctor_id)
             self.db.add_entity(invite_code)
             self.db.save_to_database()
-
     def __add_fake_doctors(self, n):
         for i in range(n):
             gender = random.choice(['Male', 'Female'])
@@ -753,31 +752,22 @@ class Service:
     def register_information_sheet_1(self, form_data, patient_id, diseases):
         information_sheet = InformationSheet(patient_id=patient_id)
         for disease in diseases:
-            if form_data[disease['name']] == "":
-                raise ValueError("Empty fields")
-        for disease in diseases:
             if form_data[disease['name']] is not None:
-                information_sheet.medical_history.append(self.db.find_disease_by_name(disease))
+                information_sheet.medical_history.append(self.db.find_disease_by_name(disease['name']))
         self.db.add_entity(information_sheet)
         return information_sheet.id
 
     def register_information_sheet_2(self, form_data, information_sheet_id, diseases):
         information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
         for disease in diseases:
-            if form_data[disease['name']] == "":
-                raise ValueError("Empty fields")
-        for disease in diseases:
             if form_data[disease['name']] is not None:
-                information_sheet.medical_history.append(self.db.find_disease_by_name(disease))
+                information_sheet.medical_history.append(self.db.find_disease_by_name(disease['name']))
 
     def register_information_sheet_3(self, form_data, information_sheet_id, allergies):
         information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
         for allergy in allergies:
-            if form_data[allergy['name']] == "":
-                raise ValueError("Empty fields")
-        for allergy in allergies:
             if form_data[allergy['name']] is not None:
-                information_sheet.allergies.append(self.db.find_allergy_by_name(allergy))
+                information_sheet.allergies.append(self.db.find_allergy_by_name(allergy['name']))
 
     def register_information_sheet_4(self, form_data, information_sheet_id):
         information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
@@ -829,6 +819,50 @@ class Service:
         self.db.session.commit()
         return average_rating
 
-    def edit_information_sheet(self, information_sheet_id):
+    def edit_information_sheet_1(self, information_sheet_id, form_data, diseases):
         information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+        information_sheet.medical_history.clear()
+        for disease in diseases:
+            if form_data[disease['name']] is not None:
+                information_sheet.medical_history.append(self.db.find_disease_by_name(disease['name']))
+
+    def edit_information_sheet_2(self, information_sheet_id, form_data, diseases):
+        information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+        for disease in diseases:
+            if form_data[disease['name']] is not None:
+                information_sheet.medical_history.append(self.db.find_disease_by_name(disease['name']))
+
+    def edit_information_sheet_3(self, information_sheet_id, form_data, allergies):
+        information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+        information_sheet.allergies.clear()
+        for allergy in allergies:
+            if form_data[allergy['name']] is not None:
+                information_sheet.allergies.append(self.db.find_disease_by_name(allergy['name']))
+
+    def edit_information_sheet_4(self, form_data, information_sheet_id):
+        information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+        try:
+            int(form_data[WEIGHT])
+        except ValueError:
+            raise ValueError("Invalid weight")
+        try:
+            int(form_data[HEIGHT])
+        except ValueError:
+            raise ValueError("Invalid height")
+        try:
+            int(form_data[SHOE_SIZE])
+        except ValueError:
+            raise ValueError("Invalid shoe size")
+        information_sheet.height = form_data[HEIGHT]
+        information_sheet.weight = form_data[WEIGHT]
+        information_sheet.shoe_size = form_data[SHOE_SIZE]
+        if form_data[DRINKING] is not None:
+            information_sheet.drinking = 1
+        else:
+            information_sheet.drinking = 0
+        if form_data[SMOKING] is not None:
+            information_sheet.smoking = 1
+        else:
+            information_sheet.smoking = 0
+
 
