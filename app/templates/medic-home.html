@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="src/calendarjs.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/evo-calendar@1.1.2/evo-calendar/css/evo-calendar.min.css"/>
 
 </head>
 <body>
@@ -32,17 +32,15 @@
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>
             <div class="main-box">
+                <br><br><br><br>
                 <div id="calendar"></div>
 
             </div>
     </section>
-    <script src="src/calendarjs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/evo-calendar@1.1.2/evo-calendar/js/evo-calendar.min.js"></script>
     <script>
-        var calendarInstance = calendarJs( "calendar", {
-        manualEditingEnabled: true,
-        showTimesInMainCalendarEvents: true
-        // All your options can be set here
-            } );
+        $("#calendar").evoCalendar();
     </script>
     <script>
       window.onunload = function() {
