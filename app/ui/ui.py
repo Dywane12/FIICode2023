@@ -7,6 +7,7 @@ from flask import render_template, redirect, url_for, request, session, send_fro
 from app.repository.database import Database
 from app.service.service import Service
 from werkzeug.security import check_password_hash
+from werkzeug.exceptions import BadRequest
 import datetime
 
 with app.app_context():
@@ -527,7 +528,7 @@ class Routes:
         return render_template('patient-information-sheet.html', patient=patient, information_sheet=information_sheet)
 
     @staticmethod
-    @app.route('/approve_transfer/<patient_id>/<doctor_id>', methods=['POST'])
+    @app.route('/approve-transfer/<patient_id>/<doctor_id>', methods=['POST'])
     def approve_transfer(patient_id, doctor_id):
         data = request.get_json()
         confirmed = data['confirmed']
@@ -536,12 +537,13 @@ class Routes:
         return 'OK'
 
     @staticmethod
-    @app.route('/create_transfer/<doctor_id>', methods=['POST'])
+    @app.route('/create-transfer/<doctor_id>', methods=['POST'])
     def create_transfer(doctor_id):
         data = request.get_json()
         confirmed = data['confirmed']
         if confirmed:
-            patient = service.get_patient_by_id(service.session['patient'])
-            patient.transfer = doctor_id
-            service.update_database()
-        return 'OK'
+            try:
+                service.request_transfer(doctor_id)
+            except Exception as error:
+                return str(error), 400
+        return 'OK', 200

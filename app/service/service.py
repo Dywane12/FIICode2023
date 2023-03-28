@@ -642,7 +642,7 @@ class Service:
             doctor_location = geolocator.geocode(doctor.postalcode)
             distance_doctor_to_patient = distance.distance((patient_location.latitude, patient_location.longitude),
                                                            (doctor_location.latitude, doctor_location.longitude)).km
-            if distance_doctor_to_patient < 30:
+            if distance_doctor_to_patient < 10000:
                 doctors_nearby.append(doctor)
         doctor = self.get_doctor_by_id(patient.doctor_id)
         if doctor in doctors_nearby:
@@ -855,3 +855,12 @@ class Service:
             information_sheet.smoking = 1
         else:
             information_sheet.smoking = 0
+
+    def request_transfer(self, doctor_id):
+        patient = self.get_patient_by_id(self.session['patient'])
+        if patient.transfer is not None:
+            if patient.transfer == doctor_id:
+                raise ValueError("You already have a transfer request for this doctor")
+            raise ValueError("You already have a transfer request for another doctor")
+        patient.transfer = doctor_id
+        self.update_database()
