@@ -386,17 +386,17 @@ class Routes:
     @staticmethod
     @app.route('/medic-profile')
     def medic_profile():
-        doctor = service.get_doctor_by_id(service.session['doctor'])
         if "doctor" not in service.session:
             return redirect(url_for('home'))
+        doctor = service.get_doctor_by_id(service.session['doctor'])
         return render_template('medic-profile.html', doctor=doctor)
 
     @staticmethod
     @app.route('/patient-profile')
     def patient_profile():
-        patient = service.get_patient_by_id(service.session['patient'])
         if "patient" not in service.session:
             return redirect(url_for('home'))
+        patient = service.get_patient_by_id(service.session['patient'])
         return render_template('patient-profile.html', patient=patient)
 
     @staticmethod
@@ -449,21 +449,29 @@ class Routes:
         return render_template('edit-patient.html', error=error)
 
     @staticmethod
-    @app.route('/list-patient-profile')
-    def list_patient_profile():
+    @app.route('/patient/<patient_id>')
+    def patient(patient_id):
         if "doctor" not in service.session:
             return redirect(url_for('home'))
-        doctor = service.get_doctor_by_id(service.session['doctor'])
-        return render_template('list-patient-profile.html', doctor=doctor)
+        patient = service.get_patient_by_id(patient_id)
+        return render_template('patient.html', patient=patient)
 
     @staticmethod
     @app.route('/consultation-history')
-    def patient_medical_history():
+    def consultation_history():
         if "patient" not in service.session:
             return redirect(url_for('home'))
         patient_id = service.session['patient']
         medical_history = service.get_consultation_history(patient_id)
         return render_template('medical-history.html', medical_history=medical_history)
+
+    @staticmethod
+    @app.route('/patient-consultation-history/<patient_id>')
+    def patient_consultation_history(patient_id):
+        if "doctor" not in service.session:
+            return redirect(url_for('home'))
+        medical_history = service.get_consultation_history(patient_id)
+        return render_template('patient-medical-history.html', medical_history=medical_history)
 
     @staticmethod
     @app.route('/change-medic')
@@ -501,10 +509,22 @@ class Routes:
 
     @staticmethod
     @app.route('/information-sheet')
-    def information_sheet_function():
-        if "doctor" not in service.session :
+    def information_sheet():
+        if "patient" not in service.session:
             return redirect(url_for('home'))
         patient_id = service.session['patient']
         patient = service.get_patient_by_id(patient_id)
         information_sheet = service.get_information_sheet_by_patient_id(service.session['patient'])
         return render_template('information-sheet.html', patient=patient, information_sheet=information_sheet)
+
+    @staticmethod
+    @app.route('/patient-information-sheet/<patient_id>')
+    def patient_information_sheet(patient_id):
+        if "doctor" not in service.session:
+            return redirect(url_for('home'))
+        patient = service.get_patient_by_id(patient_id)
+        information_sheet = service.get_information_sheet_by_patient_id(patient_id)
+        return render_template('patient-information-sheet.html', patient=patient, information_sheet=information_sheet)
+
+
+

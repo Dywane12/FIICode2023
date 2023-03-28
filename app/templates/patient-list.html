@@ -45,7 +45,11 @@
                           { id: 'lname', name: 'Last name' },
                           { id: 'medical_history', name: 'Passport ID', sort: false },
                           { id: 'detalii', name: 'Details', sort: false,
-                                formatter: (_, row) => gridjs.html(`<a href='{{url_for('list_patient_profile')}}'>Details</a>`)
+                                formatter: (_, row) => {
+                                    let patientId = row.cells[3].data;
+                                    const patientProfileUrl = `{{ url_for('patient', patient_id='')}}${patientId}`;
+                             return gridjs.html(`<a href='${patientProfileUrl}'>Details</a>`);
+                                }
                           }
                         ],
                         data: [
@@ -54,7 +58,7 @@
                               fname: '{{ patient.first_name }}',
                               lname: '{{ patient.last_name }}',
                               medical_history: '{{ patient.passport_id }}',
-                              detalii: 'Details'
+                              detalii: '{{ patient.id }}'
                             },
                           {% endfor %}
                         ],

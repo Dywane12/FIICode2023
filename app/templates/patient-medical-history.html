@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
 </head>
 <body>
     <section class="header">
@@ -28,51 +29,38 @@
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>
             <div class="main-box">
-                  <img src="{{ doctor.avatar(128) }}" class="profile-img" alt="{{ doctor.username }}">
-                  <h1 class="name">{{doctor.first_name}} {{doctor.last_name}}</h1>
-                  <div class="profile-box">
-                    <table class="medic-table">
-                        <tr>
-                            <th>Username:</th>
-                            <td>{{doctor.username}}</td>
-                        </tr>
-                        <tr>
-                            <th>Last name:</th>
-                            <td>{{doctor.last_name}}</td>
-                        </tr>
-                        <tr>
-                            <th>First name:</th>
-                            <td>{{doctor.first_name}}</td>
-                        </tr>
-                        <tr>
-                            <th>Phone number:</th>
-                            <td>{{doctor.phone_number}}</td>
-                        </tr>
-                        <tr>
-                            <th>Email:</th>
-                            <td>{{doctor.email}}</td>
-                        </tr>
-                        <tr>
-                            <th>Address:</th>
-                            <td>{{doctor.address}}</td>
-                        </tr>
-                        <tr>
-                            <th>Date of birth:</th>
-                            <td>{{doctor.birth_date}}</td>
-                        </tr>
-                        <tr>
-                            <th>Gender:</th>
-                            <td>{{doctor.gender}}</td>
-                        </tr>
-                        <tr>
-                            <th>Medical record:</th>
-                            <td>2132131</td>
-                        </tr>
-                    </table>
-                  </div>
+                <div>
+                    <h1 class="name">Consultation history</h1>
+                    <hr>
+                    <div id="table"></div>
+                </div>
             </div>
 
     </section>
+    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+    <script>
+                      new gridjs.Grid({
+                        columns: [
+                          { id: 'date', name: 'Date and time' },
+                          { id: 'urgency', name: 'Urgency grade' },
+                          { id: 'details', name: 'Details', sort: false,formatter: (_, row) => gridjs.html(`<a href="../static/files/consultation/${row.cells[2].data}.pdf">Details</a>`)}
+                        ],
+                        data: [
+                          {% for consultation in medical_history %}
+                            {
+                              date: '{{ consultation.date_time }}',
+                              urgency: '{{ consultation.urgency_grade }}',
+                              details:  '{{ consultation.pdf }}'
+                            },
+                          {% endfor %}
+                        ],
+                        search: {
+                          selector: (cell, rowIndex, cellIndex) => [0, 1, 2].includes(cellIndex) ? cell : null,
+                        },
+                        sort: true,
+                        pagination: true,
+                      }).render(document.getElementById('table'));
+    </script>
      <script>
       window.onunload = function() {
         window.location.reload(true);

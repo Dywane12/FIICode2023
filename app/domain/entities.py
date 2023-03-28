@@ -1,3 +1,5 @@
+import json
+
 from flask import send_from_directory
 
 from app import db
@@ -52,6 +54,10 @@ class Patient(db.Model):
         self.password_hash = password_hash
         self.doctor_id = doctor_id
         self.given_rating = given_rating
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
