@@ -6,6 +6,7 @@ from app import app, db
 from flask import render_template, redirect, url_for, request, session, send_from_directory, send_file, flash
 from app.repository.database import Database
 from app.service.service import Service
+from twilio.rest import Client
 from werkzeug.security import check_password_hash
 from werkzeug.exceptions import BadRequest
 import datetime
@@ -629,16 +630,18 @@ class Routes:
     def invitation():
         if "doctor" not in service.session:
             return redirect(url_for('home'))
-        email_companie = 'clinica_audi@gmail.com'
-        email_patient = request.form['email']
+
+        destination_number = '+40772093773'
         if request.method == 'POST':
-            if email_patient == 'admin@admin.com':
-                service.send_welcome_email(email_companie)
+            if request.form['phone_number'] == '+4007720937733':
+                service.send_welcome_sms(destination_number)
                 message = 'Invite sent!'
                 return render_template('invite-patient.html', message=message)
             else:
                 error = 'Wrong credentials. Try again.'
                 return render_template('invite-patient.html', error=error)
+        else:
+            return render_template('invite-patient.html')
 
     @staticmethod
     @app.route('/information-sheet')
