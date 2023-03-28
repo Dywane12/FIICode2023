@@ -48,12 +48,7 @@
                  let consultation_id = row.cells[2].data;
                                     const consultation_url = `{{ url_for('consultation', consultation_id='')}}${consultation_id}`;
                 return gridjs.html(`<a href='${consultation_url}'>Details</a>`);
-              }},
-              { id: 'new_pdf', name: 'New PDF', sort: false, formatter: (_,row) => {
-              return gridjs.html(`<input type="file" placeholder="New PDF">`);
-              }
-
-              }
+              }}
          ],
             data: [
               {% for consultation in medical_history %}

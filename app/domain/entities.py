@@ -131,7 +131,6 @@ class Doctor(db.Model):
         else:
             return "No rating given"
 
-
     @property
     def number_of_patients(self):
         return len(self.patients)
@@ -220,10 +219,17 @@ class InformationSheet(db.Model):
             return "Yes"
         return "No"
 
+
 class ChronicDisease(db.Model):
     __tablename__ = "chronic_disease"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(256), index=True)
+
+    def __repr__(self):
+        return f'{self.name}'
+
+    def __str__(self):
+        return f'{self.name}'
 
 
 class Drug(db.Model):
@@ -233,11 +239,23 @@ class Drug(db.Model):
     dosage = db.Column(db.String(256))
     frequency = db.Column(db.String(256))
 
+    def __repr__(self):
+        return f'{self.name}'
+
+    def __str__(self):
+        return f'{self.name}'
+
 
 class Allergy(db.Model):
     __tablename__ = "allergy"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(256), index=True)
+
+    def __repr__(self):
+        return f'{self.name}'
+
+    def __str__(self):
+        return f'{self.name}'
 
 
 class Hospitalization(db.Model):
@@ -246,6 +264,12 @@ class Hospitalization(db.Model):
     patient_id = db.Column(db.Integer, db.ForeignKey('information_sheet.patient_id'))
     date = db.Column(db.Date)
     reason = db.Column(db.String(500))
+
+    def __repr__(self):
+        return f'{self.name}'
+
+    def __str__(self):
+        return f'{self.name}'
 
 
 class InviteCode(db.Model):
