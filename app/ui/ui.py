@@ -262,9 +262,7 @@ class Routes:
                          'Heart Attack': request.form['Heart Attack'],
                          'Heart Murmur': request.form['Heart Murmur']}
             try:
-                information_sheet_id = service.edit_information_sheet_1(form_data,
-                                                                        patient_id,
-                                                                        diseases)
+                service.edit_information_sheet_1(form_data, patient_id, diseases)
             except ValueError as exception:
                 error = exception
             else:
@@ -412,6 +410,40 @@ class Routes:
 
                 return redirect(url_for('register_patient_5'))
         return render_template('register_patient_4.html', allergies=allergies, error=error)
+
+    @staticmethod
+    @app.route('/edit-information-sheet-3/<patient_id>')
+    def edit_information_sheet_3(patient_id):
+        error = None
+        allergies = [
+            {'name': 'Local anesthesia'}, {'name': 'Aspirin'}, {'name': 'Anti-Inflammatory'}, {'name': 'Penicillin'},
+            {'name': 'Sulfa'}, {'name': 'IVP dye'}, {'name': 'Tetanus'}, {'name': 'General anesthesia'},
+            {'name': 'Latex'}, {'name': 'Tape/Adhesives'}, {'name': 'Iodine'}, {'name': 'Betadine'},
+            {'name': 'Codeine'}, {'name': 'Steroids'}
+        ]
+        if request.method == 'POST':
+            form_data = {'Local anesthesia': request.form.get('Local anesthesia'),
+                         'Aspirin': request.form.get('Aspirin'),
+                         'Anti-Inflammatory': request.form.get('Anti-Inflammatory'),
+                         'Penicillin': request.form.get('Penicillin'),
+                         'Sulfa': request.form.get('Sulfa'),
+                         'IVP dye': request.form.get('IVP dye'),
+                         'Tetanus': request.form.get('Tetanus'),
+                         'General anesthesia': request.form.get('General anesthesia'),
+                         'Latex': request.form.get('Latex'),
+                         'Tape/Adhesives': request.form.get('Tape/Adhesives'),
+                         'Iodine': request.form.get('Iodine'),
+                         'Betadine': request.form.get('Betadine'),
+                         'Codeine': request.form.get('Codeine'),
+                         'Steroids': request.form.get('Steroids')}
+            try:
+                service.edit_information_sheet_3(form_data, patient_id, allergies)
+            except ValueError as exception:
+                error = exception
+            else:
+
+                return redirect(url_for('edit_information_sheet_3', patient_id=patient_id))
+        return render_template('edit-information-sheet-3', allergies=allergies, error=error)
 
     @staticmethod
     @app.route('/register-patient-5')
@@ -605,11 +637,11 @@ class Routes:
             return send_from_directory(os.path.abspath(os.path.join(app.root_path, 'static/files/consultation')),
                                        filename)
         else:
-            return render_template('error.html', error_message='File not found'), 404
+            return render_template('error.html', error_message='No pdf uploaded'), 404
 
     @staticmethod
     @app.errorhandler(404)
-    def not_found_error(error):
+    def not_found_error():
         return render_template('error.html', error_message='Page not found'), 404
 
     @staticmethod
