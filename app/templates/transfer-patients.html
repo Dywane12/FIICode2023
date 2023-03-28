@@ -55,11 +55,17 @@
                                 'onclick': () => {
                                   if (confirm("Are you sure you want to approve?")) {
                                     const xhr = new XMLHttpRequest();
-                                    xhr.open("POST", `/approve_transfer/${row.cells[4].data}/${row.cells[3].data}`);
+                                    xhr.open("POST", `/approve-transfer/${row.cells[4].data}/${row.cells[3].data}`);
                                     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
                                     xhr.send(JSON.stringify({ confirmed: true }));
+                                    xhr.onload = function() {
+                                    if (xhr.status === 200) {
+                                        location.reload();
+                                        alert("Transfer has been done!");
+                                    }
                                   }
-                                },
+
+                                }},
                                 'style': 'cursor: pointer',
                               };
                             }
