@@ -3,6 +3,8 @@
 ## moto:"Making healthcare accessible to all"
 
 ## ![logo](https://user-images.githubusercontent.com/115073797/228282178-b3dd99ae-5781-4804-8fcf-6c901688d9ba.jpg)
+### Presentation video: https://youtu.be/ckYANJDRGcw
+
 Welcome to our medical application: MedEase !!!
  
 This project was meant to improve the work of each patient, but also make consultation scheduling for doctors
