@@ -1,5 +1,5 @@
 import random
-import smtplib
+import smtplib, ssl
 from datetime import date, timedelta, datetime
 import names
 import random_address
@@ -593,34 +593,31 @@ class Service:
     def generate_random_code():
         return random.randint(1000000, 9999999)
 
-    def send_welcome_email(self, email_patient):
-        sender_account = "clinica.fiicode@gmail.com"
-        reciever_account = email_patient
+    def send_welcome_email(self, receiver_account):
         cod = self.generate_random_code()
-        invite_code = InviteCode(invite_code=cod, doctor_id=self.session['doctor'])
-        self.db.add_entity(invite_code)
-        self.update_database()
+        port = 465
+        smtp_server = "smtp.gmail.com"
+        sender_account = "clinica.fiicode@gmail.com"
         message = f"Subject: WELCOME TO OUR CLINIC!!\nYour code is:{cod}"
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
-            server.starttls()
-            server.login(sender_account, "your_password")
-            server.sendmail(sender_account, reciever_account, message)
+
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+            server.login(sender_account, password="bachetcalin2003")
+            server.sendmail(sender_account, receiver_account, message)
 
     def send_welcome_sms(self, destination_number):
-        sender_number = "+40772093773"
-        account_sid = "ACe49ff3d982fa8beb419253807c8314a2"
-        auth_token = "dee13ecedc920689c09a553114f75879"
-        client = Client(account_sid, auth_token)
         cod = self.generate_random_code()
-        invite_code = InviteCode(invite_code=cod, doctor_id=self.session['doctor'])
-        self.db.add_entity(invite_code)
-        self.update_database()
-        message_body = f"Subject: WELCOME TO OUR CLINIC!!\nYour code is:{cod}"
-        destination_number = "+40" + destination_number
-        client.messages.create(
-            to=destination_number,
-            from_=sender_number,
-            body=message_body)
+        account_sid = 'ACe49ff3d982fa8beb419253807c8314a2'
+        auth_token = '[AuthToken]'
+        client = Client(account_sid, auth_token)
+
+        message = client.messages.create(
+            messaging_service_sid='MGd948badb7bc7e1e7411ece3f10f90f9d',
+            body=f"Subject: WELCOME TO OUR CLINIC!!\nYour code is:{cod}!",
+            to='+40772093773'
+        )
+
+        print(message.sid)
 
     def create_appointment_ad_hoc(self, time, urgency_grade):
         doctor_id = self.session['doctor']
