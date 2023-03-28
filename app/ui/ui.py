@@ -583,7 +583,7 @@ class Routes:
         if "doctor" not in service.session:
             return redirect(url_for('home'))
         medical_history = service.get_consultation_history(patient_id)
-        return render_template('patient-medical-history.html', medical_history=medical_history)
+        return render_template('patient-medical-history.html', patient_id=patient_id, medical_history=medical_history)
 
     @staticmethod
     @app.route('/change-medic')
