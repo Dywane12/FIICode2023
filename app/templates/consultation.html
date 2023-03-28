@@ -45,15 +45,15 @@
                 {% if error %}
                     <p class="error"><strong>Error:</strong> {{ error }}
                       {% endif %}</p>
+                <button onclick="window.history.back()">Go Back</button>
             </div>
 
    </section>
 <script>
     document.getElementById("confirm-btn").addEventListener("click", function(){
   window.location.reload();
-});
-</script>
-  <script>
+});</script>
+   <script>
       window.onunload = function() {
         window.location.reload(true);
       };
@@ -66,6 +66,5 @@
         xhr.send(null);
       });
     </script>
-    </body>
 
 </html>
