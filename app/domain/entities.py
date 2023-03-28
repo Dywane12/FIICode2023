@@ -219,6 +219,21 @@ class InformationSheet(db.Model):
             return "Yes"
         return "No"
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'patient_id': self.patient_id,
+            'weight': self.weight,
+            'height': self.height,
+            'shoe_size': self.shoe_size,
+            'blood_type': self.blood_type,
+            'smoking': self.get_smoking,
+            'drinking': self.get_drinking,
+            'medical_history': [disease.name for disease in self.medical_history],
+            'medications': [medication.name for medication in self.medications],
+            'allergies': [allergy.name for allergy in self.allergies]
+        }
+
 
 class ChronicDisease(db.Model):
     __tablename__ = "chronic_disease"

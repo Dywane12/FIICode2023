@@ -71,6 +71,15 @@ class Service:
     def __init__(self, db, session, choice=False):
         self.session = session
         self.db = db
+        self.diseases = []
+        self.allergies = []
+        self.height = 0
+        self.weight = 0
+        self.shoe_size = 0
+        self.drinking = 0
+        self.smoking = 0
+        self.blood_type = 0
+        self.patient = None
         if choice:
             self.__add_chronic_diseases()
             self.__add_allergies()
@@ -305,7 +314,7 @@ class Service:
         for doctor_in_database in doctors:
             if doctor.username == doctor_in_database.username:
                 raise ValueError("Username already exists")
-        if register_data[PROFILE_PICTURE_DOCTOR].name != '':
+        if register_data[PROFILE_PICTURE_DOCTOR].filename != '':
             profile_picture = register_data[PROFILE_PICTURE_DOCTOR]
             profile_picture.filename = f'{doctor.username}.jpg'
             self.save_file(profile_picture, 'profile_picture_doctor')
@@ -356,7 +365,7 @@ class Service:
 
     def register_patient(self, register_data):
         patient = Patient()
-        self.db.add_entity(patient)
+        self.patient = patient
         for invite_code in self.db.find_all_invite_codes():
             if int(register_data[
                        INVITE_CODE_PATIENT]) == invite_code.invite_code and invite_code.patient_id is not None:
@@ -378,11 +387,10 @@ class Service:
             raise ValueError("Empty fields")
         patient.username = register_data[USERNAME_PATIENT]
         patients = self.get_all_patients()
-        patients.remove(patient)
         for patient_in_database in patients:
             if patient.username == patient_in_database.username:
                 raise ValueError("Username already exists")
-        if register_data[PROFILE_PICTURE_PATIENT].name != '':
+        if register_data[PROFILE_PICTURE_PATIENT].filename != '':
             profile_picture = register_data[PROFILE_PICTURE_PATIENT]
             profile_picture.filename = f'{patient.username}.jpg'
             self.save_file(profile_picture, 'profile_picture_patient')
@@ -437,7 +445,6 @@ class Service:
         patient.gender = register_data[GENDER_PATIENT].title().strip()
         patient.doctor_id = invite_code.doctor_id
         invite_code.patient_id = patient.id
-        return patient.id
 
     def get_all_doctors(self):
         return self.db.find_all_doctors()
@@ -734,9 +741,9 @@ class Service:
                           os.path.abspath(os.path.join(FOLDER, 'consultation', pdf.filename))]
             for pdf_merge in pdfs_merge:
                 merger.append(pdf_merge)
-            merger.write(os.path.abspath(os.path.join(FOLDER,'consultation', consultation.pdf)))
+            merger.write(os.path.abspath(os.path.join(FOLDER, 'consultation', consultation.pdf)))
             merger.close()
-            os.remove(os.path.abspath(os.path.join(FOLDER,'consultation', pdf.filename)))
+            os.remove(os.path.abspath(os.path.join(FOLDER, 'consultation', pdf.filename)))
         else:
             pdf.filename = f'{consultation_id}.pdf'
             self.save_file(pdf, 'consultation')
@@ -789,28 +796,22 @@ class Service:
                 future_consulations.append(consultation)
         return future_consulations
 
-    def register_information_sheet_1(self, form_data, patient_id, diseases):
-        information_sheet = InformationSheet(patient_id=patient_id)
+    def register_information_sheet_1(self, form_data, diseases):
         for disease in diseases:
             if form_data[disease['name']] is not None:
-                information_sheet.medical_history.append(self.db.find_disease_by_name(disease['name']))
-        self.db.add_entity(information_sheet)
-        return information_sheet.id
+                self.diseases.append(self.db.find_disease_by_name(disease['name']))
 
-    def register_information_sheet_2(self, form_data, information_sheet_id, diseases):
-        information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+    def register_information_sheet_2(self, form_data, diseases):
         for disease in diseases:
             if form_data[disease['name']] is not None:
-                information_sheet.medical_history.append(self.db.find_disease_by_name(disease['name']))
+                self.diseases.append(self.db.find_disease_by_name(disease['name']))
 
-    def register_information_sheet_3(self, form_data, information_sheet_id, allergies):
-        information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+    def register_information_sheet_3(self, form_data, allergies):
         for allergy in allergies:
             if form_data[allergy['name']] is not None:
-                information_sheet.allergies.append(self.db.find_allergy_by_name(allergy['name']))
+                self.allergies.append(self.db.find_allergy_by_name(allergy['name']))
 
-    def register_information_sheet_4(self, form_data, information_sheet_id):
-        information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+    def register_information_sheet_4(self, form_data):
         try:
             int(form_data[WEIGHT])
         except ValueError:
@@ -823,21 +824,34 @@ class Service:
             int(form_data[SHOE_SIZE])
         except ValueError:
             raise ValueError("Invalid shoe size")
-        information_sheet.height = form_data[HEIGHT]
-        information_sheet.weight = form_data[WEIGHT]
-        information_sheet.shoe_size = form_data[SHOE_SIZE]
+        self.height = form_data[HEIGHT]
+        self.weight = form_data[WEIGHT]
+        self.shoe_size = form_data[SHOE_SIZE]
         if form_data[DRINKING] is not None:
-            information_sheet.drinking = 1
+            self.drinking = 1
         else:
-            information_sheet.drinking = 0
+            self.drinking = 0
         if form_data[SMOKING] is not None:
-            information_sheet.smoking = 1
+            self.smoking = 1
         else:
-            information_sheet.smoking = 0
+            self.smoking = 0
 
     def link_patient_to_information_sheet(self):
-        information_sheet = self.db.find_information_sheet_by_id(self.session['information_sheet_id'])
-        information_sheet.patient_id = self.session['patient_id']
+        information_sheet = InformationSheet(patient_id=self.patient.id)
+        for disease in self.diseases:
+            information_sheet.medical_history.append(disease)
+        for allergy in self.allergies:
+            information_sheet.allergies.append(allergy)
+        information_sheet.height = self.height
+        information_sheet.weight = self.weight
+        information_sheet.shoe_size = self.shoe_size
+        information_sheet.drinking = self.drinking
+        information_sheet.smoking = self.smoking
+        self.db.add_entity(self.patient)
+        self.db.add_entity(information_sheet)
+        self.db.save_to_database()
+        information_sheet.patient_id = self.patient.id
+        self.db.save_to_database()
 
     def get_information_sheet_by_patient_id(self, patient_id):
         patient = self.db.find_patient_by_id(patient_id)

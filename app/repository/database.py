@@ -93,6 +93,14 @@ class Database:
         self.db.session.query(InviteCode).delete()
         self.db.session.commit()
 
+    def clear_allergy_table(self):
+        self.db.session.query(Allergy).delete()
+        self.db.session.commit()
+
+    def clear_chronic_disease_table(self):
+        self.db.session.query(ChronicDisease).delete()
+        self.db.session.commit()
+
     @staticmethod
     def find_doctor_username(username):
         doctor = Doctor.query.filter_by(username=username).first()

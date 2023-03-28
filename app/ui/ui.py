@@ -1,3 +1,4 @@
+import json
 import os
 
 import flask
@@ -12,13 +13,15 @@ import datetime
 
 with app.app_context():
     db_1 = Database(db)
+    """db_1.clear_chronic_disease_table()
+    db_1.clear_allergy_table()
     db_1.clear_patients_table()
     db_1.clear_consultation_table()
     db_1.clear_doctors_table()
     db_1.clear_hospitalization_table()
     db_1.clear_information_sheet_table()
-    db_1.clear_invite_code_table()
-    service = Service(db_1, session, choice=True)
+    db_1.clear_invite_code_table()"""
+    service = Service(db_1, session, choice=False)
 
 
 class Routes:
@@ -148,11 +151,10 @@ class Routes:
                          request.form['gender'], request.form['occupation'], request.form['password'],
                          request.files['profile_picture'], request.form['invite_code']]
             try:
-                patient_id = service.register_patient(form_data)
+                service.register_patient(form_data)
             except ValueError as exception:
                 error = exception
             else:
-                service.session['register_patient_id'] = patient_id
                 return redirect(url_for('register_patient_2'))
         return render_template('register_patient.html', error=error)
 
@@ -199,14 +201,14 @@ class Routes:
                          'Eye Problems': request.form.get('Eye Problems'),
                          'Fibromyalgia': request.form.get('Fibromyalgia'),
                          'Foot Cramps': request.form.get('Foot Cramps'),
+                         'Gastric Reflux': request.form.get('Gastric Reflux'),
                          'Gout': request.form.get('Gout'),
                          'Headaches': request.form.get('Headaches'),
                          'Heart Attack': request.form.get('Heart Attack'),
                          'Heart Murmur': request.form.get('Heart Murmur')}
-            information_sheet_id = service.register_information_sheet_1(form_data,
-                                                                            service.session['register_patient_id'],
-                                                                            diseases)
-            service.session['information_sheet_id'] = information_sheet_id
+            service.register_information_sheet_1(form_data,
+
+                                                 diseases)
             return redirect(url_for('register_patient_3'))
         return render_template('register_patient_2.html', diseases=diseases, error=error)
 
@@ -279,7 +281,7 @@ class Routes:
                     {'name': 'Thyroid Problems', 'type': 'Type'},
                     {'name': 'Tuberculosis', 'type': ''}, {'name': 'Ulcers (Stomach)', 'type': ''},
                     {'name': 'Varicose Veins', 'type': ''}, {'name': 'Weight loss(unexplained)', 'type': ''},
-                    {'name': 'Pregnant?', 'type': ''}, {'name': 'Breastfeeding?', 'type': ''}
+                    {'name': 'Pregnant', 'type': ''}, {'name': 'Breastfeeding', 'type': ''}
                     ]
         if request.method == 'POST':
             form_data = {'Heart Failure': request.form.get('Heart Failure'),
@@ -307,7 +309,7 @@ class Routes:
                          'Weight loss(unexplained)': request.form.get('Weight loss(unexplained)'),
                          'Pregnant': request.form.get('Pregnant'),
                          'Breastfeeding': request.form.get('Breastfeeding')}
-            service.register_information_sheet_2(form_data, service.session['information_sheet_id'], diseases)
+            service.register_information_sheet_2(form_data, diseases)
             return redirect(url_for('register_patient_4'))
         return render_template('register_patient_3.html', diseases=diseases, error=error)
 
@@ -386,7 +388,7 @@ class Routes:
                          'Betadine': request.form.get('Betadine'),
                          'Codeine': request.form.get('Codeine'),
                          'Steroids': request.form.get('Steroids')}
-            service.register_information_sheet_3(form_data, service.session['information_sheet_id'], allergies)
+            service.register_information_sheet_3(form_data, allergies)
             return redirect(url_for('register_patient_5'))
         return render_template('register_patient_4.html', allergies=allergies, error=error)
 
@@ -432,14 +434,11 @@ class Routes:
                          request.form.get('smoking'),
                          request.form.get('drinking')]
             try:
-                service.register_information_sheet_4(form_data, service.session['information_sheet_id'])
+                service.register_information_sheet_4(form_data)
             except ValueError as exception:
                 error = exception
             else:
                 service.link_patient_to_information_sheet()
-                service.update_database()
-                service.session.pop('register_patient_id')
-                service.session.pop('information_sheet_id')
                 return redirect(url_for('login'))
         return render_template('register_patient_5.html', error=error)
 
@@ -691,5 +690,3 @@ class Routes:
                 flask.flash("Uploaded successfully")
                 return redirect(url_for('consultation', consultation_id=consultation_id))
         return render_template('consultation.html', consultation_pdf=consultation_pdf, error=error)
-
-
