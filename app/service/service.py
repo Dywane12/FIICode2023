@@ -406,6 +406,13 @@ class Service:
             int(register_data[ZIP_CODE_PATIENT])
         except ValueError:
             raise ValueError("Invalid zipcode")
+        try:
+            birth_date = datetime.strptime(register_data[BIRTH_DATE_PATIENT], '%d/%m/%Y')
+            if not (1900 <= birth_date.year <= 2023):
+                raise ValueError("Invalid birth year")
+        except ValueError:
+            raise ValueError("Invalid birth date input. Please use format DD/MM/YYYY")
+        patient.birth_date = register_data[BIRTH_DATE_PATIENT]
         patient.postalcode = register_data[ZIP_CODE_PATIENT]
         patient.city = register_data[CITY_PATIENT].title().strip()
         patient.state = register_data[COUNTY_PATIENT].title().strip()
@@ -579,6 +586,12 @@ class Service:
                 if patient.passport_id == patient_in_database.passport_id:
                     raise ValueError("Passport id already registered")
         if update_data[BIRTH_DATE_PATIENT] != "":
+            try:
+                birth_date = datetime.strptime(update_data[BIRTH_DATE_PATIENT], '%d/%m/%Y')
+                if not (1900 <= birth_date.year <= 2023):
+                    raise ValueError("Invalid birth year")
+            except ValueError:
+                raise ValueError("Invalid birth date")
             patient.birth_date = update_data[BIRTH_DATE_PATIENT]
         if update_data[OCCUPATION_PATIENT] != "":
             patient.occupation = update_data[OCCUPATION_PATIENT].title().strip()
