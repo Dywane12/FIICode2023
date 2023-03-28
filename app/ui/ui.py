@@ -3,10 +3,11 @@ import os
 import flask
 
 from app import app, db
-from flask import render_template, redirect, url_for, request, session, send_from_directory
+from flask import render_template, redirect, url_for, request, session, send_from_directory, send_file
 from app.repository.database import Database
 from app.service.service import Service
 from werkzeug.security import check_password_hash
+from werkzeug.exceptions import BadRequest
 import datetime
 
 with app.app_context():
@@ -488,8 +489,7 @@ class Routes:
     @staticmethod
     @app.route('/consultations/<filename>')
     def uploaded_consultation(filename):
-        return send_from_directory(os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], 'consultation')),
-                                   filename)
+        return send_from_directory(os.path.abspath(os.path.join(app.root_path, 'static/files/consultation')), filename)
 
     @staticmethod
     @app.route('/invite-patient', methods=['GET', 'POST'])
@@ -526,5 +526,23 @@ class Routes:
         information_sheet = service.get_information_sheet_by_patient_id(patient_id)
         return render_template('patient-information-sheet.html', patient=patient, information_sheet=information_sheet)
 
+    @staticmethod
+    @app.route('/approve-transfer/<patient_id>/<doctor_id>', methods=['POST'])
+    def approve_transfer(patient_id, doctor_id):
+        data = request.get_json()
+        confirmed = data['confirmed']
+        if confirmed:
+            service.transfer_patient(patient_id, doctor_id)
+        return 'OK'
 
-
+    @staticmethod
+    @app.route('/create-transfer/<doctor_id>', methods=['POST'])
+    def create_transfer(doctor_id):
+        data = request.get_json()
+        confirmed = data['confirmed']
+        if confirmed:
+            try:
+                service.request_transfer(doctor_id)
+            except Exception as error:
+                return str(error), 400
+        return 'OK', 200
