@@ -72,8 +72,8 @@ class Service:
         self.session = session
         self.db = db
         if choice:
-            # self.__add_chronic_diseases()
-            # self.__add_allergies()
+            self.__add_chronic_diseases()
+            self.__add_allergies()
             self.__add_fake_doctors(5)
             self.__add_fake_patients(10)
             self.__add_fake_consultations(15)

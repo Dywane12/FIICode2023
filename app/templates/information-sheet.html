@@ -45,35 +45,19 @@
                         </tr>
                         <tr>
                             <th>Medications:</th>
-                            {% if information_sheet.medications == [] %}
-                                <td>None</td>
-                            {% else %}
                             <td>{{ information_sheet.medications }}</td>
-                            {% endif %}
                         </tr>
                         <tr>
                             <th>Chronic diseases:</th>
-                            {% if information_sheet.medications == [] %}
-                                <td>None</td>
-                            {% else %}
                             <td>{{ information_sheet.medical_history }}</td>
-                            {% endif %}
                         </tr>
                         <tr>
                             <th>Allergies:</th>
-                            {% if information_sheet.medications == [] %}
-                                <td>None</td>
-                            {% else %}
                             <td>{{ information_sheet.allergies }}</td>
-                            {% endif %}
                         </tr>
                         <tr>
                             <th>Hospitalization:</th>
-                            {% if information_sheet.medications == [] %}
-                                <td>None</td>
-                            {% else %}
                             <td>{{ information_sheet.hospitalization }}</td>
-                            {% endif %}
                         </tr>
                         <tr>
                             <th>Smoking:</th>
