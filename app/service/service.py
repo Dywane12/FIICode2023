@@ -329,7 +329,7 @@ class Service:
                 raise ValueError("Phone number already registered")
         doctor.address = register_data[ADDRESS_DOCTOR].strip()
         try:
-            birth_date = datetime.datetime.strptime(register_data[BIRTH_DATE_DOCTOR], '%d/%m/%Y')
+            birth_date = datetime.strptime(register_data[BIRTH_DATE_DOCTOR], '%d/%m/%Y')
             if not (1900 <= birth_date.year <= 2023):
                 raise ValueError("Invalid birth year")
         except ValueError:
@@ -506,7 +506,7 @@ class Service:
             doctor.state = update_data[COUNTY_DOCTOR].title().strip()
         if update_data[BIRTH_DATE_DOCTOR] != "":
             try:
-                birth_date = datetime.datetime.strptime(update_data[BIRTH_DATE_DOCTOR], '%d/%m/%Y')
+                birth_date = datetime.strptime(update_data[BIRTH_DATE_DOCTOR], '%d/%m/%Y')
                 if not (1900 <= birth_date.year <= 2023):
                     raise ValueError("Invalid birth year")
             except ValueError:
