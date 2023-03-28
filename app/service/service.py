@@ -440,7 +440,7 @@ class Service:
         patient.occupation = register_data[OCCUPATION_PATIENT]
         if register_data[MARITAL_STATUS_PATIENT].lower().strip() not in ('married', 'single', 'divorced', 'widowed'):
             raise ValueError("Invalid marital status")
-        patient.martial_status = register_data[MARITAL_STATUS_PATIENT].title().strip()
+        patient.marital_status = register_data[MARITAL_STATUS_PATIENT]
         patient.set_password(register_data[PASSWORD_PATIENT])
         if register_data[GENDER_PATIENT].strip().lower() not in ("male", "female"):
             raise ValueError("Invalid gender")
