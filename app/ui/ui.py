@@ -14,15 +14,17 @@ import datetime
 
 with app.app_context():
     db_1 = Database(db)
-    """db_1.clear_chronic_disease_table()
+    db_1.clear_chronic_disease_table()
     db_1.clear_allergy_table()
     db_1.clear_patients_table()
     db_1.clear_consultation_table()
     db_1.clear_doctors_table()
     db_1.clear_hospitalization_table()
     db_1.clear_information_sheet_table()
-    db_1.clear_invite_code_table()"""
-    service = Service(db_1, session, choice=False)
+    db_1.clear_invite_code_table()
+    db_1.clear_table_1()
+    db_1.clear_table_2()
+    service = Service(db_1, session, choice=True)
 
 
 class Routes:
@@ -257,6 +259,7 @@ class Routes:
                          'Fibromyalgia': request.form.get('Fibromyalgia'),
                          'Foot Cramps': request.form.get('Foot Cramps'),
                          'Gout': request.form.get('Gout'),
+                         'Gastric Reflux': request.form.get('Gastric Reflux'),
                          'Headaches': request.form.get('Headaches'),
                          'Heart Attack': request.form.get('Heart Attack'),
                          'Heart Murmur': request.form.get('Heart Murmur')}
@@ -307,7 +310,7 @@ class Routes:
                          'Tuberculosis': request.form.get('Tuberculosis'),
                          'Ulcers (Stomach)': request.form.get('Ulcers (Stomach)'),
                          'Varicose Veins': request.form.get('Varicose Veins'),
-                         'Weight loss(unexplained)': request.form.get('Weight loss(unexplained)'),
+                         'Weight loss': request.form.get('Weight loss'),
                          'Pregnant': request.form.get('Pregnant'),
                          'Breastfeeding': request.form.get('Breastfeeding')}
             service.register_information_sheet_2(form_data, diseases)
@@ -331,8 +334,8 @@ class Routes:
                     {'name': 'Stroke', 'type': ''},
                     {'name': 'Thyroid Problems', 'type': 'Type'},
                     {'name': 'Tuberculosis', 'type': ''}, {'name': 'Ulcers (Stomach)', 'type': ''},
-                    {'name': 'Varicose Veins', 'type': ''}, {'name': 'Weight loss(unexplained)', 'type': ''},
-                    {'name': 'Pregnant?', 'type': ''}, {'name': 'Breastfeeding?', 'type': ''}
+                    {'name': 'Varicose Veins', 'type': ''}, {'name': 'Weight loss', 'type': ''},
+                    {'name': 'Pregnant', 'type': ''}, {'name': 'Breastfeeding', 'type': ''}
                     ]
         if request.method == 'POST':
             form_data = {'Heart Failure': request.form.get('Heart Failure'),
@@ -357,11 +360,11 @@ class Routes:
                          'Tuberculosis': request.form.get('Tuberculosis'),
                          'Ulcers (Stomach)': request.form.get('Ulcers (Stomach)'),
                          'Varicose Veins': request.form.get('Varicose Veins'),
-                         'Weight loss(unexplained)': request.form.get('Weight loss(unexplained)'),
+                         'Weight loss': request.form.get('Weight loss'),
                          'Pregnant': request.form.get('Pregnant'),
                          'Breastfeeding': request.form.get('Breastfeeding')}
             service.edit_information_sheet_2(form_data, patient_id, diseases)
-            return redirect(url_for('edit_information_sheet_3'))
+            return redirect(url_for('edit_information_sheet_3',patient_id=patient_id))
         return render_template('edit-information-sheet-2.html', diseases=diseases, error=error, patient_id=patient_id)
 
     @staticmethod
@@ -393,6 +396,7 @@ class Routes:
             return redirect(url_for('register_patient_5'))
         return render_template('register_patient_4.html', allergies=allergies, error=error)
 
+
     @staticmethod
     @app.route('/edit-information-sheet-3/<patient_id>', methods=['GET', 'POST'])
     def edit_information_sheet_3(patient_id):
@@ -419,8 +423,8 @@ class Routes:
                          'Codeine': request.form.get('Codeine'),
                          'Steroids': request.form.get('Steroids')}
             service.edit_information_sheet_3(form_data, patient_id, allergies)
-            return redirect(url_for('edit_information_sheet_3', patient_id=patient_id))
-        return render_template('edit-information-sheet-3', allergies=allergies, error=error)
+            return redirect(url_for('edit_information_sheet_4', patient_id=patient_id))
+        return render_template('edit-information-sheet-3.html', allergies=allergies, error=error)
 
     @staticmethod
     @app.route('/register-patient-5', methods=['GET', 'POST'])
@@ -433,7 +437,8 @@ class Routes:
                          request.form['medications'],
                          request.form['hospitalization'],
                          request.form.get('smoking'),
-                         request.form.get('drinking')]
+                         request.form.get('drinking'),
+                         request.form['blood_type']]
             try:
                 service.register_information_sheet_4(form_data)
             except ValueError as exception:
@@ -442,6 +447,23 @@ class Routes:
                 service.link_patient_to_information_sheet()
                 return redirect(url_for('login'))
         return render_template('register_patient_5.html', error=error)
+
+    @staticmethod
+    @app.route('/edit-information-sheet-4/<patient_id>', methods=['GET', 'POST'])
+    def edit_information_sheet_4(patient_id):
+        error = None
+        if request.method == 'POST':
+            form_data = [request.form['weight'],
+                         request.form['height'],
+                         request.form['shoe_size'],
+                         request.form['medications'],
+                         request.form['hospitalization'],
+                         request.form.get('smoking'),
+                         request.form.get('drinking'),
+                         request.form['blood_type']]
+            service.edit_information_sheet_4(form_data, patient_id)
+            return redirect(url_for('patient_information_sheet', patient_id=patient_id))
+        return render_template('edit-information-sheet-4.html', error=error)
 
     @staticmethod
     @app.route('/choice')

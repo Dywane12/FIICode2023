@@ -1,7 +1,8 @@
 import datetime
+from cgitb import text
 
 from app.domain.entities import Doctor, Patient, Consultation, ChronicDisease, Allergy, \
-    Hospitalization, InformationSheet, InviteCode
+    Hospitalization, InformationSheet, InviteCode, information_sheet_chronic_disease, information_sheet_allergy
 
 
 class Database:
@@ -99,6 +100,14 @@ class Database:
 
     def clear_chronic_disease_table(self):
         self.db.session.query(ChronicDisease).delete()
+        self.db.session.commit()
+
+    def clear_table_1(self):
+        self.db.session.query(information_sheet_chronic_disease).delete()
+        self.db.session.commit()
+
+    def clear_table_2(self):
+        self.db.session.query(information_sheet_allergy).delete()
         self.db.session.commit()
 
     @staticmethod

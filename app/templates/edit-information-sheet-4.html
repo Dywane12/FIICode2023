@@ -16,7 +16,7 @@
         <div class="hero">
             <div class="form-patient">
                 <div class="login-text">
-                    <h2>Sign up Step 4: Information</h2>
+                    <h2>Edit information sheet</h2>
                 </div>
                 <form id="login" class="patient-group" action="" method="post">
                     <input type="text" class="patient-field" placeholder="Weight" name="weight" value="{{request.form.weight}}">
@@ -32,8 +32,8 @@
                     {% if error %}
                     <p class="error"><strong>Error:</strong> {{ error }}
                       {% endif %}</p>
-                <a href="/register-patient-4" class="back-btn">Back</a>
-                <a href="/login" class="back-to-login">Already have an account?</a>
+                <a href="{{ url_for('patient',patient_id=patient_id) }}" class="back-btn">Cancel</a>
+
             </div>
         </div>
     </section>

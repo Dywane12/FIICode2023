@@ -79,6 +79,7 @@ class Service:
         self.drinking = 0
         self.smoking = 0
         self.blood_type = 0
+        self.invite_code = 0
         self.patient = None
         if choice:
             self.__add_chronic_diseases()
@@ -366,11 +367,21 @@ class Service:
     def register_patient(self, register_data):
         patient = Patient()
         self.patient = patient
+        self.diseases = []
+        self.allergies = []
+        self.height = 0
+        self.weight = 0
+        self.shoe_size = 0
+        self.drinking = 0
+        self.smoking = 0
+        self.blood_type = 0
+        self.invite_code = 0
         for invite_code in self.db.find_all_invite_codes():
             if int(register_data[
                        INVITE_CODE_PATIENT]) == invite_code.invite_code and invite_code.patient_id is not None:
                 raise ValueError("Invalid invite code")
         invite_code = self.db.find_invite_code(int(register_data[INVITE_CODE_PATIENT]))
+        self.invite_code = invite_code
         if invite_code.patient_id is not None:
             raise ValueError("Invite code already used")
         if (register_data[USERNAME_PATIENT] == "" or register_data[FIRST_NAME_PATIENT] == "" or register_data[
@@ -438,7 +449,7 @@ class Service:
         patient.occupation = register_data[OCCUPATION_PATIENT]
         if register_data[MARITAL_STATUS_PATIENT].lower().strip() not in ('married', 'single', 'divorced', 'widowed'):
             raise ValueError("Invalid marital status")
-        patient.martial_status = register_data[MARITAL_STATUS_PATIENT].title().strip()
+        patient.marital_status = register_data[MARITAL_STATUS_PATIENT]
         patient.set_password(register_data[PASSWORD_PATIENT])
         if register_data[GENDER_PATIENT].strip().lower() not in ("male", "female"):
             raise ValueError("Invalid gender")
@@ -824,6 +835,9 @@ class Service:
             int(form_data[SHOE_SIZE])
         except ValueError:
             raise ValueError("Invalid shoe size")
+        if form_data[-1] not in ['0', 'A', 'AB', "B"]:
+            raise ValueError("Invalid blood type")
+        self.blood_type = form_data[-1]
         self.height = form_data[HEIGHT]
         self.weight = form_data[WEIGHT]
         self.shoe_size = form_data[SHOE_SIZE]
@@ -837,7 +851,11 @@ class Service:
             self.smoking = 0
 
     def link_patient_to_information_sheet(self):
+        self.db.add_entity(self.patient)
+        self.db.save_to_database()
         information_sheet = InformationSheet(patient_id=self.patient.id)
+        self.db.add_entity(information_sheet)
+        self.db.save_to_database()
         for disease in self.diseases:
             information_sheet.medical_history.append(disease)
         for allergy in self.allergies:
@@ -847,10 +865,10 @@ class Service:
         information_sheet.shoe_size = self.shoe_size
         information_sheet.drinking = self.drinking
         information_sheet.smoking = self.smoking
-        self.db.add_entity(self.patient)
-        self.db.add_entity(information_sheet)
-        self.db.save_to_database()
+        information_sheet.blood_type = self.blood_type
         information_sheet.patient_id = self.patient.id
+        self.patient.doctor_id = self.invite_code.doctor_id
+        self.invite_code.patient_id = self.patient.id
         self.db.save_to_database()
 
     def get_information_sheet_by_patient_id(self, patient_id):
@@ -861,28 +879,31 @@ class Service:
             if sheet.patient_id == patient.id:
                 return sheet
 
-    def edit_information_sheet_1(self, information_sheet_id, form_data, diseases):
-        information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+    def edit_information_sheet_1(self, form_data, patient_id, diseases):
+        information_sheet = self.get_information_sheet_by_patient_id(patient_id)
         information_sheet.medical_history.clear()
         for disease in diseases:
             if form_data[disease['name']] is not None:
                 information_sheet.medical_history.append(self.db.find_disease_by_name(disease['name']))
+        self.update_database()
 
-    def edit_information_sheet_2(self, information_sheet_id, form_data, diseases):
-        information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+    def edit_information_sheet_2(self, form_data, patient_id, diseases):
+        information_sheet = self.get_information_sheet_by_patient_id(patient_id)
         for disease in diseases:
             if form_data[disease['name']] is not None:
                 information_sheet.medical_history.append(self.db.find_disease_by_name(disease['name']))
+        self.update_database()
 
-    def edit_information_sheet_3(self, information_sheet_id, form_data, allergies):
-        information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+    def edit_information_sheet_3(self,  form_data, patient_id, allergies):
+        information_sheet = self.get_information_sheet_by_patient_id(patient_id)
         information_sheet.allergies.clear()
         for allergy in allergies:
             if form_data[allergy['name']] is not None:
-                information_sheet.allergies.append(self.db.find_disease_by_name(allergy['name']))
+                information_sheet.allergies.append(self.db.find_allergy_by_name(allergy['name']))
+        self.update_database()
 
-    def edit_information_sheet_4(self, form_data, information_sheet_id):
-        information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
+    def edit_information_sheet_4(self, form_data, patient_id):
+        information_sheet = self.get_information_sheet_by_patient_id(patient_id)
         try:
             int(form_data[WEIGHT])
         except ValueError:
@@ -895,9 +916,12 @@ class Service:
             int(form_data[SHOE_SIZE])
         except ValueError:
             raise ValueError("Invalid shoe size")
+        if form_data[-1] not in ['0', 'A', 'AB', "B"]:
+            raise ValueError("Invalid blood type")
         information_sheet.height = form_data[HEIGHT]
         information_sheet.weight = form_data[WEIGHT]
         information_sheet.shoe_size = form_data[SHOE_SIZE]
+        information_sheet.blood_type = form_data[-1]
         if form_data[DRINKING] is not None:
             information_sheet.drinking = 1
         else:
@@ -906,6 +930,7 @@ class Service:
             information_sheet.smoking = 1
         else:
             information_sheet.smoking = 0
+        self.update_database()
 
     def request_transfer(self, doctor_id):
         patient = self.get_patient_by_id(self.session['patient'])
