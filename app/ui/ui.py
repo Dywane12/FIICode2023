@@ -157,7 +157,7 @@ class Routes:
         return render_template('register_patient.html', error=error)
 
     @staticmethod
-    @app.route('/register-patient-2')
+    @app.route('/register-patient-2', methods=['GET', 'POST'])
     def register_patient_2():
         error = None
         diseases = [{'name': 'AIDS/HIV', 'type': ''}, {'name': 'Anemia', 'type': ''}, {'name': 'Anxiety', 'type': ''},
@@ -177,45 +177,41 @@ class Routes:
                     {'name': 'Heart Attack', 'type': ''}, {'name': 'Heart Murmur', 'type': ''},
                     ]
         if request.method == 'POST':
-            form_data = {'AIDS/HIV': request.form['AIDS/HIV'],
-                         'Anemia': request.form['Anemia'],
-                         'Anxiety': request.form['Anxiety'],
-                         'Arthritis': request.form['Arthritis'],
-                         'Artificial Heart Valve': request.form['Artificial Heart Valve'],
-                         'Artificial Joint': request.form['Artificial Joint'],
-                         'Asthma': request.form['Asthma'],
-                         'Back Problems': request.form['Back Problems'],
-                         'Bleeding Disorder': request.form['Bleeding Disorder'],
-                         'Bipolar Disorder': request.form['Bipolar Disorder'],
-                         'Bloot Clot/DVT': request.form['Bloot Clot/DVT'],
-                         'Bypass Surgery': request.form['Bypass Surgery'],
-                         'Cancer': request.form['Cancer'],
-                         'Chemical Dependency': request.form['Chemical Dependency'],
-                         'Chest Pain': request.form['Chest Pain'],
-                         'Circulatory Problems': request.form['Circulatory Problems'],
-                         'Depression': request.form['Depression'],
-                         'Diabetes': request.form['Diabetes'],
-                         'Emphysema': request.form['Emphysema'],
-                         'Eye Problems': request.form['Eye Problems'],
-                         'Fibromyalgia': request.form['Fibromyalgia'],
-                         'Foot Cramps': request.form['Foot Cramps'],
-                         'Gout': request.form['Gout'],
-                         'Headaches': request.form['Headaches'],
-                         'Heart Attack': request.form['Heart Attack'],
-                         'Heart Murmur': request.form['Heart Murmur']}
-            try:
-                information_sheet_id = service.register_information_sheet_1(form_data,
+            form_data = {'AIDS/HIV': request.form.get('AIDS/HIV'),
+                         'Anemia': request.form.get('Anemia'),
+                         'Anxiety': request.form.get('Anxiety'),
+                         'Arthritis': request.form.get('Arthritis'),
+                         'Artificial Heart Valve': request.form.get('Artificial Heart Valve'),
+                         'Artificial Joint': request.form.get('Artificial Joint'),
+                         'Asthma': request.form.get('Asthma'),
+                         'Back Problems': request.form.get('Back Problems'),
+                         'Bleeding Disorder': request.form.get('Bleeding Disorder'),
+                         'Bipolar Disorder': request.form.get('Bipolar Disorder'),
+                         'Bloot Clot/DVT': request.form.get('Bloot Clot/DVT'),
+                         'Bypass Surgery': request.form.get('Bypass Surgery'),
+                         'Cancer': request.form.get('Cancer'),
+                         'Chemical Dependency': request.form.get('Chemical Dependency'),
+                         'Chest Pain': request.form.get('Chest Pain'),
+                         'Circulatory Problems': request.form.get('Circulatory Problems'),
+                         'Depression': request.form.get('Depression'),
+                         'Diabetes': request.form.get('Diabetes'),
+                         'Emphysema': request.form.get('Emphysema'),
+                         'Eye Problems': request.form.get('Eye Problems'),
+                         'Fibromyalgia': request.form.get('Fibromyalgia'),
+                         'Foot Cramps': request.form.get('Foot Cramps'),
+                         'Gout': request.form.get('Gout'),
+                         'Headaches': request.form.get('Headaches'),
+                         'Heart Attack': request.form.get('Heart Attack'),
+                         'Heart Murmur': request.form.get('Heart Murmur')}
+            information_sheet_id = service.register_information_sheet_1(form_data,
                                                                             service.session['register_patient_id'],
                                                                             diseases)
-            except ValueError as exception:
-                error = exception
-            else:
-                service.session['information_sheet_id'] = information_sheet_id
-                return redirect(url_for('register_patient_3'))
+            service.session['information_sheet_id'] = information_sheet_id
+            return redirect(url_for('register_patient_3'))
         return render_template('register_patient_2.html', diseases=diseases, error=error)
 
     @staticmethod
-    @app.route('/edit-information-sheet-1/<patient_id>')
+    @app.route('/edit-information-sheet-1/<patient_id>', methods=['GET', 'POST'])
     def edit_information_sheet_1(patient_id):
         error = None
         diseases = [{'name': 'AIDS/HIV', 'type': ''}, {'name': 'Anemia', 'type': ''}, {'name': 'Anxiety', 'type': ''},
@@ -235,42 +231,38 @@ class Routes:
                     {'name': 'Heart Attack', 'type': ''}, {'name': 'Heart Murmur', 'type': ''},
                     ]
         if request.method == 'POST':
-            form_data = {'AIDS/HIV': request.form['AIDS/HIV'],
-                         'Anemia': request.form['Anemia'],
-                         'Anxiety': request.form['Anxiety'],
-                         'Arthritis': request.form['Arthritis'],
-                         'Artificial Heart Valve': request.form['Artificial Heart Valve'],
-                         'Artificial Joint': request.form['Artificial Joint'],
-                         'Asthma': request.form['Asthma'],
-                         'Back Problems': request.form['Back Problems'],
-                         'Bleeding Disorder': request.form['Bleeding Disorder'],
-                         'Bipolar Disorder': request.form['Bipolar Disorder'],
-                         'Bloot Clot/DVT': request.form['Bloot Clot/DVT'],
-                         'Bypass Surgery': request.form['Bypass Surgery'],
-                         'Cancer': request.form['Cancer'],
-                         'Chemical Dependency': request.form['Chemical Dependency'],
-                         'Chest Pain': request.form['Chest Pain'],
-                         'Circulatory Problems': request.form['Circulatory Problems'],
-                         'Depression': request.form['Depression'],
-                         'Diabetes': request.form['Diabetes'],
-                         'Emphysema': request.form['Emphysema'],
-                         'Eye Problems': request.form['Eye Problems'],
-                         'Fibromyalgia': request.form['Fibromyalgia'],
-                         'Foot Cramps': request.form['Foot Cramps'],
-                         'Gout': request.form['Gout'],
-                         'Headaches': request.form['Headaches'],
-                         'Heart Attack': request.form['Heart Attack'],
-                         'Heart Murmur': request.form['Heart Murmur']}
-            try:
-                service.edit_information_sheet_1(form_data, patient_id, diseases)
-            except ValueError as exception:
-                error = exception
-            else:
-                return redirect(url_for('edit_information_sheet_2', patient_id=patient_id))
+            form_data = {'AIDS/HIV': request.form.get('AIDS/HIV'),
+                         'Anemia': request.form.get('Anemia'),
+                         'Anxiety': request.form.get('Anxiety'),
+                         'Arthritis': request.form.get('Arthritis'),
+                         'Artificial Heart Valve': request.form.get('Artificial Heart Valve'),
+                         'Artificial Joint': request.form.get('Artificial Joint'),
+                         'Asthma': request.form.get('Asthma'),
+                         'Back Problems': request.form.get('Back Problems'),
+                         'Bleeding Disorder': request.form.get('Bleeding Disorder'),
+                         'Bipolar Disorder': request.form.get('Bipolar Disorder'),
+                         'Bloot Clot/DVT': request.form.get('Bloot Clot/DVT'),
+                         'Bypass Surgery': request.form.get('Bypass Surgery'),
+                         'Cancer': request.form.get('Cancer'),
+                         'Chemical Dependency': request.form.get('Chemical Dependency'),
+                         'Chest Pain': request.form.get('Chest Pain'),
+                         'Circulatory Problems': request.form.get('Circulatory Problems'),
+                         'Depression': request.form.get('Depression'),
+                         'Diabetes': request.form.get('Diabetes'),
+                         'Emphysema': request.form.get('Emphysema'),
+                         'Eye Problems': request.form.get('Eye Problems'),
+                         'Fibromyalgia': request.form.get('Fibromyalgia'),
+                         'Foot Cramps': request.form.get('Foot Cramps'),
+                         'Gout': request.form.get('Gout'),
+                         'Headaches': request.form.get('Headaches'),
+                         'Heart Attack': request.form.get('Heart Attack'),
+                         'Heart Murmur': request.form.get('Heart Murmur')}
+            service.edit_information_sheet_1(form_data, patient_id, diseases)
+            return redirect(url_for('edit_information_sheet_2', patient_id=patient_id))
         return render_template('edit-information-sheet-1.html', diseases=diseases, error=error, patient_id=patient_id)
 
     @staticmethod
-    @app.route('/register-patient-3')
+    @app.route('/register-patient-3', methods=['GET', 'POST'])
     def register_patient_3():
         error = None
         diseases = [{'name': 'Heart Failure', 'type': ''}, {'name': 'Hemophilia', 'type': ''},
@@ -315,16 +307,12 @@ class Routes:
                          'Weight loss(unexplained)': request.form.get('Weight loss(unexplained)'),
                          'Pregnant': request.form.get('Pregnant'),
                          'Breastfeeding': request.form.get('Breastfeeding')}
-            try:
-                service.register_information_sheet_2(form_data, service.session['information_sheet_id'], diseases)
-            except ValueError as exception:
-                error = exception
-            else:
-                return redirect(url_for('register_patient_4'))
+            service.register_information_sheet_2(form_data, service.session['information_sheet_id'], diseases)
+            return redirect(url_for('register_patient_4'))
         return render_template('register_patient_3.html', diseases=diseases, error=error)
 
     @staticmethod
-    @app.route('/edit-information-sheet-2/<patient_id>')
+    @app.route('/edit-information-sheet-2/<patient_id>', methods=['GET', 'POST'])
     def edit_information_sheet_2(patient_id):
         error = None
         diseases = [{'name': 'Heart Failure', 'type': ''}, {'name': 'Hemophilia', 'type': ''},
@@ -369,16 +357,12 @@ class Routes:
                          'Weight loss(unexplained)': request.form.get('Weight loss(unexplained)'),
                          'Pregnant': request.form.get('Pregnant'),
                          'Breastfeeding': request.form.get('Breastfeeding')}
-            try:
-                service.edit_information_sheet_2(form_data, patient_id, diseases)
-            except ValueError as exception:
-                error = exception
-            else:
-                return redirect(url_for('edit_information_sheet_3'))
+            service.edit_information_sheet_2(form_data, patient_id, diseases)
+            return redirect(url_for('edit_information_sheet_3'))
         return render_template('edit-information-sheet-2.html', diseases=diseases, error=error, patient_id=patient_id)
 
     @staticmethod
-    @app.route('/register-patient-4')
+    @app.route('/register-patient-4', methods=['GET', 'POST'])
     def register_patient_4():
         error = None
         allergies = [
@@ -402,17 +386,12 @@ class Routes:
                          'Betadine': request.form.get('Betadine'),
                          'Codeine': request.form.get('Codeine'),
                          'Steroids': request.form.get('Steroids')}
-            try:
-                service.register_information_sheet_3(form_data, service.session['information_sheet_id'], allergies)
-            except ValueError as exception:
-                error = exception
-            else:
-
-                return redirect(url_for('register_patient_5'))
+            service.register_information_sheet_3(form_data, service.session['information_sheet_id'], allergies)
+            return redirect(url_for('register_patient_5'))
         return render_template('register_patient_4.html', allergies=allergies, error=error)
 
     @staticmethod
-    @app.route('/edit-information-sheet-3/<patient_id>')
+    @app.route('/edit-information-sheet-3/<patient_id>', methods=['GET', 'POST'])
     def edit_information_sheet_3(patient_id):
         error = None
         allergies = [
@@ -436,17 +415,12 @@ class Routes:
                          'Betadine': request.form.get('Betadine'),
                          'Codeine': request.form.get('Codeine'),
                          'Steroids': request.form.get('Steroids')}
-            try:
-                service.edit_information_sheet_3(form_data, patient_id, allergies)
-            except ValueError as exception:
-                error = exception
-            else:
-
-                return redirect(url_for('edit_information_sheet_3', patient_id=patient_id))
+            service.edit_information_sheet_3(form_data, patient_id, allergies)
+            return redirect(url_for('edit_information_sheet_3', patient_id=patient_id))
         return render_template('edit-information-sheet-3', allergies=allergies, error=error)
 
     @staticmethod
-    @app.route('/register-patient-5')
+    @app.route('/register-patient-5', methods=['GET', 'POST'])
     def register_patient_5():
         error = None
         if request.method == 'POST':
@@ -618,7 +592,7 @@ class Routes:
         return render_template('patient-medical-history.html', patient_id=patient_id, medical_history=medical_history)
 
     @staticmethod
-    @app.route('/change-medic')
+    @app.route('/change-medic', methods=['GET', 'POST'])
     def change_medic():
         if "patient" not in service.session:
             return redirect(url_for('home'))
@@ -626,7 +600,9 @@ class Routes:
         patient = service.get_patient_by_id(patient_id)
         current_doctor = service.get_doctor_by_id(patient.doctor_id)
         doctors = service.get_doctors_nearby_patient(patient_id)
-
+        if request.method == "POST":
+            rating = request.form['rating']
+            service.add_rating(rating)
         return render_template('change-medic.html', current_doctor=current_doctor, doctors=doctors, patient=patient)
 
     @staticmethod
@@ -715,3 +691,5 @@ class Routes:
                 flask.flash("Uploaded successfully")
                 return redirect(url_for('consultation', consultation_id=consultation_id))
         return render_template('consultation.html', consultation_pdf=consultation_pdf, error=error)
+
+
