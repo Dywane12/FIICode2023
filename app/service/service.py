@@ -79,6 +79,7 @@ class Service:
         self.drinking = 0
         self.smoking = 0
         self.blood_type = 0
+        self.invite_code = 0
         self.patient = None
         if choice:
             self.__add_chronic_diseases()
@@ -371,6 +372,7 @@ class Service:
                        INVITE_CODE_PATIENT]) == invite_code.invite_code and invite_code.patient_id is not None:
                 raise ValueError("Invalid invite code")
         invite_code = self.db.find_invite_code(int(register_data[INVITE_CODE_PATIENT]))
+        self.invite_code = invite_code
         if invite_code.patient_id is not None:
             raise ValueError("Invite code already used")
         if (register_data[USERNAME_PATIENT] == "" or register_data[FIRST_NAME_PATIENT] == "" or register_data[
@@ -840,8 +842,9 @@ class Service:
             self.smoking = 0
 
     def link_patient_to_information_sheet(self):
-        information_sheet = InformationSheet(patient_id=self.patient.id)
         self.db.add_entity(self.patient)
+        self.db.save_to_database()
+        information_sheet = InformationSheet(patient_id=self.patient.id)
         self.db.add_entity(information_sheet)
         self.db.save_to_database()
         for disease in self.diseases:
@@ -853,7 +856,10 @@ class Service:
         information_sheet.shoe_size = self.shoe_size
         information_sheet.drinking = self.drinking
         information_sheet.smoking = self.smoking
+        information_sheet.blood_type = self.blood_type
         information_sheet.patient_id = self.patient.id
+        self.patient.doctor_id = self.invite_code.doctor_id
+        self.invite_code.patient_id = self.patient.id
         self.db.save_to_database()
 
     def get_information_sheet_by_patient_id(self, patient_id):

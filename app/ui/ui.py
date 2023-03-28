@@ -14,7 +14,7 @@ import datetime
 
 with app.app_context():
     db_1 = Database(db)
-    """db_1.clear_chronic_disease_table()
+    db_1.clear_chronic_disease_table()
     db_1.clear_allergy_table()
     db_1.clear_patients_table()
     db_1.clear_consultation_table()
@@ -23,8 +23,8 @@ with app.app_context():
     db_1.clear_information_sheet_table()
     db_1.clear_invite_code_table()
     db_1.clear_table_1()
-    db_1.clear_table_2()"""
-    service = Service(db_1, session, choice=False)
+    db_1.clear_table_2()
+    service = Service(db_1, session, choice=True)
 
 
 class Routes:
