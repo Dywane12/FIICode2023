@@ -14,4 +14,5 @@ from flask import session
 with app.app_context():
     db_1 = Database(db)
     service = Service(db_1, session)
-    print(service.get_patients_that_want_to_transfer())
+    print(os.path.abspath(os.path.join(app.root_path, 'static/files', 'consultation',
+                                   '1.pdf')))

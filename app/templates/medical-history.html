@@ -34,14 +34,18 @@
                         columns: [
                           { id: 'date', name: 'Date and time' },
                           { id: 'urgency', name: 'Urgency grade' },
-                          { id: 'details', name: 'Details', sort: false,formatter: (_, row) => gridjs.html(`<a href="../static/files/consultation/${row.cells[2].data}.pdf">Details</a>`)}
+                          { id: 'details', name: 'Details', sort: false,formatter: (_, row) => {
+                                    let pdf = row.cells[2].data;
+                                    const pdfURL = `{{ url_for('uploaded_consultation', filename='')}}${pdf}`;
+                             return gridjs.html(`<a href='${pdfURL}'>PDF</a>`);
+                                }}
                         ],
                         data: [
                           {% for consultation in medical_history %}
                             {
                               date: '{{ consultation.date_time }}',
                               urgency: '{{ consultation.urgency_grade }}',
-                              details:  '{{ consultation.pdf }}'
+                              details:  '{{ consultation.pdf }}.pdf'
                             },
                           {% endfor %}
                         ],

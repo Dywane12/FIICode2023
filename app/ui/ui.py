@@ -3,7 +3,7 @@ import os
 import flask
 
 from app import app, db
-from flask import render_template, redirect, url_for, request, session, send_from_directory
+from flask import render_template, redirect, url_for, request, session, send_from_directory, send_file
 from app.repository.database import Database
 from app.service.service import Service
 from werkzeug.security import check_password_hash
@@ -489,8 +489,17 @@ class Routes:
     @staticmethod
     @app.route('/consultations/<filename>')
     def uploaded_consultation(filename):
-        return send_from_directory(os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], 'consultation')),
-                                   filename)
+        path = os.path.abspath(os.path.join(app.root_path, 'static/files/consultation', filename))
+        if os.path.exists(path):
+            return send_from_directory(os.path.abspath(os.path.join(app.root_path, 'static/files/consultation')), filename)
+        else:
+            return render_template('error.html', error_message='File not found'), 404
+
+    @staticmethod
+
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return render_template('error.html', error_message='Page not found'), 404
 
     @staticmethod
     @app.route('/invite-patient', methods=['GET', 'POST'])

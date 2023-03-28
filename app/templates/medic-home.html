@@ -46,6 +46,7 @@
     <script>
 
         const container = document.getElementById('calendar');
+
         const options = {
           defaultView: 'month',
           timezone: {
@@ -70,6 +71,30 @@
           ],
           useDetailPopup: true,
         };
+
+const options = {
+  defaultView: 'month',
+  timezone: {
+    zones: [
+      {
+        timezoneName: 'Europe/Bucharest',
+        displayLabel: 'Bucharest',
+      },
+    ],
+  },
+  calendars: [
+    {
+      id: 'cal1',
+      name: 'Personal',
+      backgroundColor: '#03bd9e',
+    },
+    {
+      id: 'cal2',
+      name: 'Work',
+      backgroundColor: '#00a9ff',
+    },
+  ],
+};
 
 const calendar = new Calendar(container, options);
 calendar.createEvents([
