@@ -15,7 +15,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@event-calendar/build@0.17.0/event-calendar.min.js"></script>
     <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
 <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
-    <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
+      <link rel="stylesheet" href="https://uicdn.toast.com/tui-date-picker/latest/tui-date-picker.css" />
+  <link rel="stylesheet" href="https://uicdn.toast.com/tui-time-picker/latest/tui-time-picker.css" />
 </head>
 <body>
     <section class="header">
@@ -41,12 +42,36 @@
 
             </div>
     </section>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/evo-calendar@1.1.2/evo-calendar/js/evo-calendar.min.js"></script>
     <script>const Calendar = tui.Calendar;</script>
     <script>
 
         const container = document.getElementById('calendar');
+
+        const options = {
+          defaultView: 'month',
+          timezone: {
+            zones: [
+              {
+                timezoneName: 'Europe/Bucharest',
+                displayLabel: 'Bucharest',
+              },
+            ],
+          },
+          calendars: [
+            {
+              id: 'cal1',
+              name: 'Personal',
+              backgroundColor: '#03bd9e',
+            },
+            {
+              id: 'cal2',
+              name: 'Work',
+              backgroundColor: '#00a9ff',
+            },
+          ],
+          useDetailPopup: true,
+        };
+
 const options = {
   defaultView: 'month',
   timezone: {
@@ -97,7 +122,6 @@ calendar.createEvents([
     category: 'allday',
   },
 ]);
-
     </script>
     <script>
       window.onunload = function() {
