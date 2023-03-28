@@ -681,6 +681,5 @@ class Routes:
                 service.add_pdf_to_consultation(consultation_id, pdf)
                 service.update_database()
                 flask.flash("Uploaded successfully")
-                consultation_pdf = service.get_consultation(consultation_id).pdf
-
+                return redirect(url_for('consultation', consultation_id=consultation_id))
         return render_template('consultation.html', consultation_pdf=consultation_pdf, error=error)
