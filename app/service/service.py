@@ -824,6 +824,9 @@ class Service:
             int(form_data[SHOE_SIZE])
         except ValueError:
             raise ValueError("Invalid shoe size")
+        if form_data[-1] not in ['0', 'A', 'AB', "B"]:
+            raise ValueError("Invalid blood type")
+        self.blood_type = form_data[-1]
         self.height = form_data[HEIGHT]
         self.weight = form_data[WEIGHT]
         self.shoe_size = form_data[SHOE_SIZE]
@@ -838,6 +841,9 @@ class Service:
 
     def link_patient_to_information_sheet(self):
         information_sheet = InformationSheet(patient_id=self.patient.id)
+        self.db.add_entity(self.patient)
+        self.db.add_entity(information_sheet)
+        self.db.save_to_database()
         for disease in self.diseases:
             information_sheet.medical_history.append(disease)
         for allergy in self.allergies:
@@ -847,9 +853,6 @@ class Service:
         information_sheet.shoe_size = self.shoe_size
         information_sheet.drinking = self.drinking
         information_sheet.smoking = self.smoking
-        self.db.add_entity(self.patient)
-        self.db.add_entity(information_sheet)
-        self.db.save_to_database()
         information_sheet.patient_id = self.patient.id
         self.db.save_to_database()
 

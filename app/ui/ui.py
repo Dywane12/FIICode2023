@@ -21,7 +21,9 @@ with app.app_context():
     db_1.clear_doctors_table()
     db_1.clear_hospitalization_table()
     db_1.clear_information_sheet_table()
-    db_1.clear_invite_code_table()"""
+    db_1.clear_invite_code_table()
+    db_1.clear_table_1()
+    db_1.clear_table_2()"""
     service = Service(db_1, session, choice=False)
 
 
@@ -433,7 +435,8 @@ class Routes:
                          request.form['medications'],
                          request.form['hospitalization'],
                          request.form.get('smoking'),
-                         request.form.get('drinking')]
+                         request.form.get('drinking'),
+                         request.form['blood_type']]
             try:
                 service.register_information_sheet_4(form_data)
             except ValueError as exception:
