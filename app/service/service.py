@@ -300,8 +300,6 @@ class Service:
                     ZIPCODE_DOCTOR] == ''
                 or register_data[CITY_DOCTOR] == '' or register_data[COUNTY_DOCTOR] == ''):
             raise ValueError("Invalid data")
-        if register_data[GENDER_DOCTOR] != 'M' and register_data[GENDER_DOCTOR] != 'F':
-            raise ValueError("Genders can only be M(male) or F(femmale)")
         doctors = self.get_all_doctors()
         for doctor_in_database in doctors:
             if doctor.username == doctor_in_database.username:
@@ -321,6 +319,8 @@ class Service:
                 raise ValueError("Email already registered")
         try:
             int(register_data[PHONE_NUMBER_DOCTOR])
+            if len(register_data[PHONE_NUMBER_DOCTOR]) < 10:
+                raise ValueError("Phone number must be at least 10 digits long")
         except ValueError:
             raise ValueError("Invalid phone number")
         doctor.phone_number = register_data[PHONE_NUMBER_DOCTOR]
@@ -328,6 +328,13 @@ class Service:
             if doctor.phone_number == doctor_in_database.phone_number:
                 raise ValueError("Phone number already registered")
         doctor.address = register_data[ADDRESS_DOCTOR].strip()
+        try:
+            birth_date = datetime.datetime.strptime(register_data[BIRTH_DATE_DOCTOR], '%d/%m/%Y')
+            if not (1900 <= birth_date.year <= 2023):
+                raise ValueError("Invalid birth year")
+        except ValueError:
+            raise ValueError("Invalid birth date input. Please use format DD/MM/YYYY")
+        doctor.birth_date = register_data[BIRTH_DATE_DOCTOR]
         try:
             int(register_data[ZIPCODE_DOCTOR])
         except ValueError:
@@ -494,9 +501,16 @@ class Service:
             doctor.zipcode = update_data[ZIPCODE_DOCTOR]
         if update_data[CITY_DOCTOR] != '':
             doctor.city = update_data[CITY_DOCTOR].title().strip()
+
         if update_data[COUNTY_DOCTOR] != '':
             doctor.state = update_data[COUNTY_DOCTOR].title().strip()
         if update_data[BIRTH_DATE_DOCTOR] != "":
+            try:
+                birth_date = datetime.datetime.strptime(update_data[BIRTH_DATE_DOCTOR], '%d/%m/%Y')
+                if not (1900 <= birth_date.year <= 2023):
+                    raise ValueError("Invalid birth year")
+            except ValueError:
+                raise ValueError("Invalid birth date")
             doctor.birth_date = update_data[BIRTH_DATE_DOCTOR]
         if update_data[GENDER_DOCTOR] != "":
             if update_data[GENDER_DOCTOR].strip().lower() not in ("male", "female"):
