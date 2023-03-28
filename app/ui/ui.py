@@ -489,7 +489,17 @@ class Routes:
     @staticmethod
     @app.route('/consultations/<filename>')
     def uploaded_consultation(filename):
-        return send_from_directory(os.path.abspath(os.path.join(app.root_path, 'static/files/consultation')), filename)
+        path = os.path.abspath(os.path.join(app.root_path, 'static/files/consultation', filename))
+        if os.path.exists(path):
+            return send_from_directory(os.path.abspath(os.path.join(app.root_path, 'static/files/consultation')), filename)
+        else:
+            return render_template('error.html', error_message='File not found'), 404
+
+    @staticmethod
+
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return render_template('error.html', error_message='Page not found'), 404
 
     @staticmethod
     @app.route('/invite-patient', methods=['GET', 'POST'])
