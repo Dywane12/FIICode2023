@@ -301,6 +301,7 @@ class Service:
                 or register_data[CITY_DOCTOR] == '' or register_data[COUNTY_DOCTOR] == ''):
             raise ValueError("Invalid data")
         doctors = self.get_all_doctors()
+        doctors.remove(doctor)
         for doctor_in_database in doctors:
             if doctor.username == doctor_in_database.username:
                 raise ValueError("Username already exists")
@@ -377,6 +378,7 @@ class Service:
             raise ValueError("Empty fields")
         patient.username = register_data[USERNAME_PATIENT]
         patients = self.get_all_patients()
+        patients.remove(patient)
         for patient_in_database in patients:
             if patient.username == patient_in_database.username:
                 raise ValueError("Username already exists")
@@ -623,6 +625,9 @@ class Service:
 
     def send_welcome_email(self, receiver_account):
         cod = self.generate_random_code()
+        invite_code = InviteCode(doctor_id=self.session['doctor'], invite_code=cod)
+        self.db.add_entity(invite_code)
+        self.db.save_to_database()
         port = 465
         smtp_server = "smtp.gmail.com"
         sender_account = "clinica.fiicode@gmail.com"
@@ -635,6 +640,9 @@ class Service:
 
     def send_welcome_sms(self, destination_number):
         cod = self.generate_random_code()
+        invite_code = InviteCode(doctor_id=self.session['doctor'], invite_code=cod)
+        self.db.add_entity(invite_code)
+        self.db.save_to_database()
         account_sid = 'ACe49ff3d982fa8beb419253807c8314a2'
         auth_token = '[AuthToken]'
         client = Client(account_sid, auth_token)
@@ -892,4 +900,9 @@ class Service:
                 raise ValueError("You already have a transfer request for this doctor")
             raise ValueError("You already have a transfer request for another doctor")
         patient.transfer = doctor_id
+        self.update_database()
+
+    def add_rating(self, rating):
+        patient = self.get_patient_by_id(self.session['patient'])
+        patient.given_rating = rating
         self.update_database()
