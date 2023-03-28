@@ -333,9 +333,10 @@ class Service:
             birth_date = datetime.strptime(register_data[BIRTH_DATE_DOCTOR], '%d/%m/%Y')
             if not (1900 <= birth_date.year <= 2023):
                 raise ValueError("Invalid birth year")
+            birth_date_str = birth_date.strftime('%d/%m/%Y')
+            doctor.birth_date = birth_date_str
         except ValueError:
             raise ValueError("Invalid birth date input. Please use format DD/MM/YYYY")
-        doctor.birth_date = register_data[BIRTH_DATE_DOCTOR]
         try:
             int(register_data[ZIPCODE_DOCTOR])
         except ValueError:
