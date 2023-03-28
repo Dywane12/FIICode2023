@@ -526,5 +526,22 @@ class Routes:
         information_sheet = service.get_information_sheet_by_patient_id(patient_id)
         return render_template('patient-information-sheet.html', patient=patient, information_sheet=information_sheet)
 
+    @staticmethod
+    @app.route('/approve_transfer/<patient_id>/<doctor_id>', methods=['POST'])
+    def approve_transfer(patient_id, doctor_id):
+        data = request.get_json()
+        confirmed = data['confirmed']
+        if confirmed:
+            service.transfer_patient(patient_id, doctor_id)
+        return 'OK'
 
-
+    @staticmethod
+    @app.route('/create_transfer/<doctor_id>', methods=['POST'])
+    def create_transfer(doctor_id):
+        data = request.get_json()
+        confirmed = data['confirmed']
+        if confirmed:
+            patient = service.get_patient_by_id(service.session['patient'])
+            patient.transfer = doctor_id
+            service.update_database()
+        return 'OK'

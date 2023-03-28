@@ -139,7 +139,7 @@ class Service:
             occupation = random_pretentious_job_title(1, number_of_words=2)
             birth_date = self.__random_date(date(1940, 1, 1), date(2008, 12, 30))
             marital_status = random.choice(['Married', 'Divorced', 'Widow', 'Single'])
-            given_rating = randint(1,5)
+            given_rating = randint(1, 5)
             patient.gender = gender
             patient.email = email
             patient.address = address
@@ -201,6 +201,7 @@ class Service:
                                      doctor_id=patient.doctor_id)
             self.db.add_entity(invite_code)
             self.db.save_to_database()
+
     def __add_fake_doctors(self, n):
         for i in range(n):
             gender = random.choice(['Male', 'Female'])
@@ -708,13 +709,12 @@ class Service:
     def transfer_patient(self, patient_id, doctor_id):
         patient = self.get_patient_by_id(patient_id)
         patient.doctor_id = doctor_id
-
-    def request_transfer(self, doctor_id):
-        patient_id = self.get_patient_by_id(self.session['patient'])
+        patient.transfer = None
+        self.db.save_to_database()
 
     def get_patients_that_want_to_transfer(self):
         patients_that_want_to_transfer = []
-        for patient in self.get_all_patients():
+        for patient in self.get_doctor_patients():
             if patient.transfer is not None:
                 patients_that_want_to_transfer.append(patient)
         return patients_that_want_to_transfer
@@ -810,7 +810,6 @@ class Service:
             if sheet.patient_id == patient.id:
                 return sheet
 
-
     def edit_information_sheet_1(self, information_sheet_id, form_data, diseases):
         information_sheet = self.db.find_information_sheet_by_id(information_sheet_id)
         information_sheet.medical_history.clear()
@@ -856,5 +855,3 @@ class Service:
             information_sheet.smoking = 1
         else:
             information_sheet.smoking = 0
-
-
