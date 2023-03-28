@@ -14,7 +14,7 @@ import datetime
 
 with app.app_context():
     db_1 = Database(db)
-    db_1.clear_chronic_disease_table()
+    """db_1.clear_chronic_disease_table()
     db_1.clear_allergy_table()
     db_1.clear_patients_table()
     db_1.clear_consultation_table()
@@ -23,8 +23,8 @@ with app.app_context():
     db_1.clear_information_sheet_table()
     db_1.clear_invite_code_table()
     db_1.clear_table_1()
-    db_1.clear_table_2()
-    service = Service(db_1, session, choice=True)
+    db_1.clear_table_2()"""
+    service = Service(db_1, session, choice=False)
 
 
 class Routes:
@@ -192,7 +192,7 @@ class Routes:
                          'Back Problems': request.form.get('Back Problems'),
                          'Bleeding Disorder': request.form.get('Bleeding Disorder'),
                          'Bipolar Disorder': request.form.get('Bipolar Disorder'),
-                         'Bloot Clot/DVT': request.form.get('Bloot Clot/DVT'),
+                         'Blood Clot/DVT': request.form.get('Bloot Clot/DVT'),
                          'Bypass Surgery': request.form.get('Bypass Surgery'),
                          'Cancer': request.form.get('Cancer'),
                          'Chemical Dependency': request.form.get('Chemical Dependency'),
@@ -224,7 +224,7 @@ class Routes:
                     {'name': 'Artificial Heart Valve', 'type': ''}, {'name': 'Artificial Joint', 'type': ''},
                     {'name': 'Asthma', 'type': ''}, {'name': 'Back Problems', 'type': ''},
                     {'name': 'Bleeding Disorder', 'type': ''}, {'name': 'Bipolar Disorder', 'type': ''},
-                    {'name': 'Bloot Clot/DVT', 'type': ''},
+                    {'name': 'Blood Clot/DVT', 'type': ''},
                     {'name': 'Bypass Surgery', 'type': ''},
                     {'name': 'Cancer', 'type': 'Type'}, {'name': 'Chemical Dependency', 'type': ''},
                     {'name': 'Chest Pain', 'type': ''}, {'name': 'Circulatory Problems', 'type': ''},

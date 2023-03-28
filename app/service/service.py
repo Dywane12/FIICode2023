@@ -84,21 +84,21 @@ class Service:
         if choice:
             self.__add_chronic_diseases()
             self.__add_allergies()
-            self.__add_fake_doctors(5)
-            self.__add_fake_patients(10)
-            self.__add_fake_consultations(15)
+            self.__add_fake_doctors(20)
+            self.__add_fake_patients(50)
+            self.__add_fake_consultations(200)
 
     def __add_chronic_diseases(self):
         chronic_diseases = [
             {'name': 'AIDS/HIV'}, {'name': 'Anemia'}, {'name': 'Anxiety'}, {'name': 'Arthritis'},
             {'name': 'Artificial Heart Valve'}, {'name': 'Artificial Joint'},
             {'name': 'Asthma'}, {'name': 'Back Problems'}, {'name': 'Bleeding Disorder'}, {'name': 'Bipolar Disorder'},
-            {'name': 'Bloot Clot/DVT'},
+            {'name': 'Blood Clot/DVT'},
             {'name': 'Bypass Surgery'},
             {'name': 'Cancer'}, {'name': 'Chemical Dependency'}, {'name': 'Chest Pain'},
             {'name': 'Circulatory Problems'}, {'name': 'Depression'},
             {'name': 'Diabetes' 'How long'}, {'name': 'Emphysema'},
-            {'name': 'Eye Problems'}, {'name': 'Fibromyalgia'}, {'name': 'Fott Cramps'}, {'name': 'Gastric Reflux'},
+            {'name': 'Eye Problems'}, {'name': 'Fibromyalgia'}, {'name': 'Foot Cramps'}, {'name': 'Gastric Reflux'},
             {'name': 'Gout'}, {'name': 'Headaches'},
             {'name': 'Heart Attack'}, {'name': 'Heart Murmur'},
             {'name': 'Heart Failure'}, {'name': 'Hemophilia'}, {'name': 'Hepatitis'}, {'name': 'High Blood Pressure'},
@@ -111,8 +111,8 @@ class Service:
             {'name': 'Shortness of Breath'}, {'name': 'Stroke'},
             {'name': 'Thyroid Problems'},
             {'name': 'Tuberculosis'}, {'name': 'Ulcers (Stomach)'}, {'name': 'Varicose Veins'},
-            {'name': 'Wight loss, unexplained'},
-            {'name': 'Pregnant?'}, {'name': 'Breastfeeding?'}
+            {'name': 'Weight loss'},
+            {'name': 'Pregnant'}, {'name': 'Breastfeeding'}
         ]
         for disease in chronic_diseases:
             given_chronic_disease = ChronicDisease(name=disease['name'])
@@ -311,9 +311,13 @@ class Service:
                 or register_data[CITY_DOCTOR] == '' or register_data[COUNTY_DOCTOR] == ''):
             raise ValueError("Invalid data")
         doctors = self.get_all_doctors()
+        patients = self.get_all_patients()
         doctors.remove(doctor)
         for doctor_in_database in doctors:
             if doctor.username == doctor_in_database.username:
+                raise ValueError("Username already exists")
+        for patient in patients:
+            if doctor.username == patient.username:
                 raise ValueError("Username already exists")
         if register_data[PROFILE_PICTURE_DOCTOR].filename != '':
             profile_picture = register_data[PROFILE_PICTURE_DOCTOR]
@@ -398,6 +402,10 @@ class Service:
             raise ValueError("Empty fields")
         patient.username = register_data[USERNAME_PATIENT]
         patients = self.get_all_patients()
+        doctors = self.get_all_doctors()
+        for doctor_in_database in doctors:
+            if patient.username == doctor_in_database.username:
+                raise ValueError("Username already exists")
         for patient_in_database in patients:
             if patient.username == patient_in_database.username:
                 raise ValueError("Username already exists")
@@ -499,6 +507,10 @@ class Service:
             for doctor_in_database in doctors:
                 if doctor.username == doctor_in_database.username:
                     raise ValueError("Username already exists")
+            patients = self.get_all_patients()
+            for patient in patients:
+                if doctor.username == patient.username:
+                    raise ValueError("Username already exists")
         if update_data[FIRST_NAME_DOCTOR] != "":
             doctor.first_name = update_data[FIRST_NAME_DOCTOR].title().strip()
         if update_data[LAST_NAME_DOCTOR] != "":
@@ -567,6 +579,10 @@ class Service:
             patient.username = update_data[USERNAME_PATIENT]
             for patient_in_database in patients:
                 if patient.username == patient_in_database.username:
+                    raise ValueError("Username already exists")
+            doctors = self.get_all_doctors()
+            for doctor_in_database in doctors:
+                if patient.username == doctor_in_database.username:
                     raise ValueError("Username already exists")
         if update_data[FIRST_NAME_PATIENT] != "":
             patient.first_name = update_data[FIRST_NAME_PATIENT].title().strip()
