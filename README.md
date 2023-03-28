@@ -14,3 +14,5 @@ Our application is also operating with a database that is set to generate a bunc
 us to check teh functionalities at any given time.
 Besides that, the app meets every requirement from the given pdf, has an interesting and minimalistic design,it is mostly responsive 
 and the color theme white+purple is used on almost each page.
+Another aspect to be mentioned is that the sms functionality only works (for now) for numbers that are verified by the app "Twilio", 
+as you need to pay for a subscription in order for it to work on every number possible.(hopefully we happen to have access to the one present in the video).
