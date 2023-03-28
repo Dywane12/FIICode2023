@@ -669,8 +669,8 @@ class Routes:
         return 'OK', 200
 
     @staticmethod
-    @app.route('/consultation<consultation_id>', methods=['GET', 'POST'])
-    def consultation(patient_id,consultation_id):
+    @app.route('/consultation/<consultation_id>', methods=['GET', 'POST'])
+    def consultation(consultation_id):
         consultation_pdf = service.get_consultation(consultation_id).pdf
         error = None
         if request.method == 'POST':
