@@ -215,6 +215,63 @@ class Routes:
         return render_template('register_patient_2.html', diseases=diseases, error=error)
 
     @staticmethod
+    @app.route('/edit-information-sheet-1/<patient_id>')
+    def edit_information_sheet_1(patient_id):
+        error = None
+        diseases = [{'name': 'AIDS/HIV', 'type': ''}, {'name': 'Anemia', 'type': ''}, {'name': 'Anxiety', 'type': ''},
+                    {'name': 'Arthritis', 'type': 'Type'},
+                    {'name': 'Artificial Heart Valve', 'type': ''}, {'name': 'Artificial Joint', 'type': ''},
+                    {'name': 'Asthma', 'type': ''}, {'name': 'Back Problems', 'type': ''},
+                    {'name': 'Bleeding Disorder', 'type': ''}, {'name': 'Bipolar Disorder', 'type': ''},
+                    {'name': 'Bloot Clot/DVT', 'type': ''},
+                    {'name': 'Bypass Surgery', 'type': ''},
+                    {'name': 'Cancer', 'type': 'Type'}, {'name': 'Chemical Dependency', 'type': ''},
+                    {'name': 'Chest Pain', 'type': ''}, {'name': 'Circulatory Problems', 'type': ''},
+                    {'name': 'Depression', 'type': ''},
+                    {'name': 'Diabetes', 'type': 'Type' 'How long'}, {'name': 'Emphysema', 'type': ''},
+                    {'name': 'Eye Problems', 'type': ''}, {'name': 'Fibromyalgia', 'type': ''},
+                    {'name': 'Foot Cramps', 'type': ''}, {'name': 'Gastric Reflux', 'type': ''},
+                    {'name': 'Gout', 'type': ''}, {'name': 'Headaches', 'type': ''},
+                    {'name': 'Heart Attack', 'type': ''}, {'name': 'Heart Murmur', 'type': ''},
+                    ]
+        if request.method == 'POST':
+            form_data = {'AIDS/HIV': request.form['AIDS/HIV'],
+                         'Anemia': request.form['Anemia'],
+                         'Anxiety': request.form['Anxiety'],
+                         'Arthritis': request.form['Arthritis'],
+                         'Artificial Heart Valve': request.form['Artificial Heart Valve'],
+                         'Artificial Joint': request.form['Artificial Joint'],
+                         'Asthma': request.form['Asthma'],
+                         'Back Problems': request.form['Back Problems'],
+                         'Bleeding Disorder': request.form['Bleeding Disorder'],
+                         'Bipolar Disorder': request.form['Bipolar Disorder'],
+                         'Bloot Clot/DVT': request.form['Bloot Clot/DVT'],
+                         'Bypass Surgery': request.form['Bypass Surgery'],
+                         'Cancer': request.form['Cancer'],
+                         'Chemical Dependency': request.form['Chemical Dependency'],
+                         'Chest Pain': request.form['Chest Pain'],
+                         'Circulatory Problems': request.form['Circulatory Problems'],
+                         'Depression': request.form['Depression'],
+                         'Diabetes': request.form['Diabetes'],
+                         'Emphysema': request.form['Emphysema'],
+                         'Eye Problems': request.form['Eye Problems'],
+                         'Fibromyalgia': request.form['Fibromyalgia'],
+                         'Foot Cramps': request.form['Foot Cramps'],
+                         'Gout': request.form['Gout'],
+                         'Headaches': request.form['Headaches'],
+                         'Heart Attack': request.form['Heart Attack'],
+                         'Heart Murmur': request.form['Heart Murmur']}
+            try:
+                information_sheet_id = service.edit_information_sheet_1(form_data,
+                                                                            patient_id,
+                                                                            diseases)
+            except ValueError as exception:
+                error = exception
+            else:
+                return redirect(url_for('edit_information_sheet_2', patient_id=patient_id))
+        return render_template('edit-information-sheet-1.html', diseases=diseases, error=error, patient_id=patient_id)
+
+    @staticmethod
     @app.route('/register-patient-3')
     def register_patient_3():
         error = None
@@ -267,6 +324,60 @@ class Routes:
             else:
                 return redirect(url_for('register_patient_4'))
         return render_template('register_patient_3.html', diseases=diseases, error=error)
+
+    @staticmethod
+    @app.route('/edit-information-sheet-2/<patient_id>')
+    def edit_information_sheet_2(patient_id):
+        error = None
+        diseases = [{'name': 'Heart Failure', 'type': ''}, {'name': 'Hemophilia', 'type': ''},
+                    {'name': 'Hepatitis', 'type': ''}, {'name': 'High Blood Pressure', 'type': ''},
+                    {'name': 'Kidney Problems', 'type': ''},
+                    {'name': 'Leg Cramps', 'type': ''},
+                    {'name': 'Liver Disease', 'type': ''}, {'name': 'Low Blood Pressure', 'type': ''},
+                    {'name': 'Mental Illness', 'type': ''}, {'name': 'Neuropathy', 'type': ''},
+                    {'name': 'Pacemaker', 'type': ''},
+                    {'name': 'Paralysis', 'type': ''}, {'name': 'Phlebitis', 'type': ''},
+                    {'name': 'Psoriasis', 'type': ''}, {'name': 'Rheumatic Fever', 'type': ''},
+                    {'name': 'Schizophrenia', 'type': ''}, {'name': 'Shortness of Breath', 'type': ''},
+                    {'name': 'Stroke', 'type': ''},
+                    {'name': 'Thyroid Problems', 'type': 'Type'},
+                    {'name': 'Tuberculosis', 'type': ''}, {'name': 'Ulcers (Stomach)', 'type': ''},
+                    {'name': 'Varicose Veins', 'type': ''}, {'name': 'Weight loss(unexplained)', 'type': ''},
+                    {'name': 'Pregnant?', 'type': ''}, {'name': 'Breastfeeding?', 'type': ''}
+                    ]
+        if request.method == 'POST':
+            form_data = {'Heart Failure': request.form.get('Heart Failure'),
+                         'Hemophilia': request.form.get('Hemophilia'),
+                         'Hepatitis': request.form.get('Hepatitis'),
+                         'High Blood Pressure': request.form.get('High Blood Pressure'),
+                         'Kidney Problems': request.form.get('Kidney Problems'),
+                         'Leg Cramps': request.form.get('Leg Cramps'),
+                         'Liver Disease': request.form.get('Liver Disease'),
+                         'Low Blood Pressure': request.form.get('Low Blood Pressure'),
+                         'Mental Illness': request.form.get('Mental Illness'),
+                         'Neuropathy': request.form.get('Neuropathy'),
+                         'Pacemaker': request.form.get('Pacemaker'),
+                         'Paralysis': request.form.get('Paralysis'),
+                         'Phlebitis': request.form.get('Phlebitis'),
+                         'Psoriasis': request.form.get('Psoriasis'),
+                         'Rheumatic Fever': request.form.get('Rheumatic Fever'),
+                         'Schizophrenia': request.form.get('Schizophrenia'),
+                         'Shortness of Breath': request.form.get('Shortness of Breath'),
+                         'Stroke': request.form.get('Stroke'),
+                         'Thyroid Problems': request.form.get('Thyroid Problems'),
+                         'Tuberculosis': request.form.get('Tuberculosis'),
+                         'Ulcers (Stomach)': request.form.get('Ulcers (Stomach)'),
+                         'Varicose Veins': request.form.get('Varicose Veins'),
+                         'Weight loss(unexplained)': request.form.get('Weight loss(unexplained)'),
+                         'Pregnant': request.form.get('Pregnant'),
+                         'Breastfeeding': request.form.get('Breastfeeding')}
+            try:
+                service.edit_information_sheet_2(form_data, patient_id, diseases)
+            except ValueError as exception:
+                error = exception
+            else:
+                return redirect(url_for('edit_information_sheet_3'))
+        return render_template('edit-information-sheet-2.html', diseases=diseases, error=error, patient_id=patient_id)
 
     @staticmethod
     @app.route('/register-patient-4')
@@ -496,7 +607,6 @@ class Routes:
             return render_template('error.html', error_message='File not found'), 404
 
     @staticmethod
-
     @app.errorhandler(404)
     def not_found_error(error):
         return render_template('error.html', error_message='Page not found'), 404
