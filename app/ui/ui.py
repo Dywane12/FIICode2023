@@ -157,7 +157,7 @@ class Routes:
         return render_template('register_patient.html', error=error)
 
     @staticmethod
-    @app.route('/register-patient-2')
+    @app.route('/register-patient-2', methods=['GET', 'POST'])
     def register_patient_2():
         error = None
         diseases = [{'name': 'AIDS/HIV', 'type': ''}, {'name': 'Anemia', 'type': ''}, {'name': 'Anxiety', 'type': ''},
@@ -203,19 +203,15 @@ class Routes:
                          'Headaches': request.form['Headaches'],
                          'Heart Attack': request.form['Heart Attack'],
                          'Heart Murmur': request.form['Heart Murmur']}
-            try:
-                information_sheet_id = service.register_information_sheet_1(form_data,
+            information_sheet_id = service.register_information_sheet_1(form_data,
                                                                             service.session['register_patient_id'],
                                                                             diseases)
-            except ValueError as exception:
-                error = exception
-            else:
-                service.session['information_sheet_id'] = information_sheet_id
-                return redirect(url_for('register_patient_3'))
+            service.session['information_sheet_id'] = information_sheet_id
+            return redirect(url_for('register_patient_3'))
         return render_template('register_patient_2.html', diseases=diseases, error=error)
 
     @staticmethod
-    @app.route('/edit-information-sheet-1/<patient_id>')
+    @app.route('/edit-information-sheet-1/<patient_id>', methods=['GET', 'POST'])
     def edit_information_sheet_1(patient_id):
         error = None
         diseases = [{'name': 'AIDS/HIV', 'type': ''}, {'name': 'Anemia', 'type': ''}, {'name': 'Anxiety', 'type': ''},
@@ -235,7 +231,7 @@ class Routes:
                     {'name': 'Heart Attack', 'type': ''}, {'name': 'Heart Murmur', 'type': ''},
                     ]
         if request.method == 'POST':
-            form_data = {'AIDS/HIV': request.form['AIDS/HIV'],
+            form_data = {'AIDS/HIV': request.form.get('AIDS/HIV'),
                          'Anemia': request.form['Anemia'],
                          'Anxiety': request.form['Anxiety'],
                          'Arthritis': request.form['Arthritis'],
@@ -261,16 +257,12 @@ class Routes:
                          'Headaches': request.form['Headaches'],
                          'Heart Attack': request.form['Heart Attack'],
                          'Heart Murmur': request.form['Heart Murmur']}
-            try:
-                service.edit_information_sheet_1(form_data, patient_id, diseases)
-            except ValueError as exception:
-                error = exception
-            else:
-                return redirect(url_for('edit_information_sheet_2', patient_id=patient_id))
+            service.edit_information_sheet_1(form_data, patient_id, diseases)
+            return redirect(url_for('edit_information_sheet_2', patient_id=patient_id))
         return render_template('edit-information-sheet-1.html', diseases=diseases, error=error, patient_id=patient_id)
 
     @staticmethod
-    @app.route('/register-patient-3')
+    @app.route('/register-patient-3', methods=['GET', 'POST'])
     def register_patient_3():
         error = None
         diseases = [{'name': 'Heart Failure', 'type': ''}, {'name': 'Hemophilia', 'type': ''},
@@ -315,16 +307,12 @@ class Routes:
                          'Weight loss(unexplained)': request.form.get('Weight loss(unexplained)'),
                          'Pregnant': request.form.get('Pregnant'),
                          'Breastfeeding': request.form.get('Breastfeeding')}
-            try:
-                service.register_information_sheet_2(form_data, service.session['information_sheet_id'], diseases)
-            except ValueError as exception:
-                error = exception
-            else:
-                return redirect(url_for('register_patient_4'))
+            service.register_information_sheet_2(form_data, service.session['information_sheet_id'], diseases)
+            return redirect(url_for('register_patient_4'))
         return render_template('register_patient_3.html', diseases=diseases, error=error)
 
     @staticmethod
-    @app.route('/edit-information-sheet-2/<patient_id>')
+    @app.route('/edit-information-sheet-2/<patient_id>', methods=['GET', 'POST'])
     def edit_information_sheet_2(patient_id):
         error = None
         diseases = [{'name': 'Heart Failure', 'type': ''}, {'name': 'Hemophilia', 'type': ''},
@@ -369,16 +357,12 @@ class Routes:
                          'Weight loss(unexplained)': request.form.get('Weight loss(unexplained)'),
                          'Pregnant': request.form.get('Pregnant'),
                          'Breastfeeding': request.form.get('Breastfeeding')}
-            try:
-                service.edit_information_sheet_2(form_data, patient_id, diseases)
-            except ValueError as exception:
-                error = exception
-            else:
-                return redirect(url_for('edit_information_sheet_3'))
+            service.edit_information_sheet_2(form_data, patient_id, diseases)
+            return redirect(url_for('edit_information_sheet_3'))
         return render_template('edit-information-sheet-2.html', diseases=diseases, error=error, patient_id=patient_id)
 
     @staticmethod
-    @app.route('/register-patient-4')
+    @app.route('/register-patient-4', methods=['GET', 'POST'])
     def register_patient_4():
         error = None
         allergies = [
@@ -402,17 +386,12 @@ class Routes:
                          'Betadine': request.form.get('Betadine'),
                          'Codeine': request.form.get('Codeine'),
                          'Steroids': request.form.get('Steroids')}
-            try:
-                service.register_information_sheet_3(form_data, service.session['information_sheet_id'], allergies)
-            except ValueError as exception:
-                error = exception
-            else:
-
-                return redirect(url_for('register_patient_5'))
+            service.register_information_sheet_3(form_data, service.session['information_sheet_id'], allergies)
+            return redirect(url_for('register_patient_5'))
         return render_template('register_patient_4.html', allergies=allergies, error=error)
 
     @staticmethod
-    @app.route('/edit-information-sheet-3/<patient_id>')
+    @app.route('/edit-information-sheet-3/<patient_id>', methods=['GET', 'POST'])
     def edit_information_sheet_3(patient_id):
         error = None
         allergies = [
@@ -436,17 +415,12 @@ class Routes:
                          'Betadine': request.form.get('Betadine'),
                          'Codeine': request.form.get('Codeine'),
                          'Steroids': request.form.get('Steroids')}
-            try:
-                service.edit_information_sheet_3(form_data, patient_id, allergies)
-            except ValueError as exception:
-                error = exception
-            else:
-
-                return redirect(url_for('edit_information_sheet_3', patient_id=patient_id))
+            service.edit_information_sheet_3(form_data, patient_id, allergies)
+            return redirect(url_for('edit_information_sheet_3', patient_id=patient_id))
         return render_template('edit-information-sheet-3', allergies=allergies, error=error)
 
     @staticmethod
-    @app.route('/register-patient-5')
+    @app.route('/register-patient-5', methods=['GET', 'POST'])
     def register_patient_5():
         error = None
         if request.method == 'POST':
