@@ -901,3 +901,8 @@ class Service:
             raise ValueError("You already have a transfer request for another doctor")
         patient.transfer = doctor_id
         self.update_database()
+
+    def add_rating(self, rating):
+        patient = self.get_patient_by_id(self.session['patient'])
+        patient.given_rating = rating
+        self.update_database()

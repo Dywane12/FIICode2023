@@ -592,7 +592,7 @@ class Routes:
         return render_template('patient-medical-history.html', patient_id=patient_id, medical_history=medical_history)
 
     @staticmethod
-    @app.route('/change-medic')
+    @app.route('/change-medic', methods=['GET', 'POST'])
     def change_medic():
         if "patient" not in service.session:
             return redirect(url_for('home'))
@@ -600,7 +600,9 @@ class Routes:
         patient = service.get_patient_by_id(patient_id)
         current_doctor = service.get_doctor_by_id(patient.doctor_id)
         doctors = service.get_doctors_nearby_patient(patient_id)
-
+        if request.method == "POST":
+            rating = request.form['rating']
+            service.add_rating(rating)
         return render_template('change-medic.html', current_doctor=current_doctor, doctors=doctors, patient=patient)
 
     @staticmethod
@@ -689,3 +691,5 @@ class Routes:
                 flask.flash("Uploaded successfully")
                 return redirect(url_for('consultation', consultation_id=consultation_id))
         return render_template('consultation.html', consultation_pdf=consultation_pdf, error=error)
+
+
