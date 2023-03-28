@@ -103,7 +103,7 @@
 
 .contact-btn {
   position: relative;
-  top: 40px;
+  top: 18px;
   border: none;
   outline: 0;
   display: inline-block;
@@ -371,5 +371,11 @@ button:hover, a:hover {
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.2s ease;
+}
+
+.back-in-btn{
+    color: #fff;
+    background-color: #000;
+    font-size: 16px;
 }
 
