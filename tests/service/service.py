@@ -14,22 +14,4 @@ from flask import session
 with app.app_context():
     db_1 = Database(db)
     service = Service(db_1, session)
-    print(service.get_doctors_nearby_patient(1))
-
-
-    # calling the Nominatim tool
-    loc = Nominatim(user_agent="GetLoc")
-    """
-    Latitude =  47.6472668 
-    
-    Longitude =  23.552609
-    """
-    # entering the location name
-    getLoc = loc.geocode("Baia mare Garii")
-
-    # printing address
-    print(getLoc.address)
-
-    # printing latitude and longitude
-    print("Latitude = ", getLoc.latitude, "\n")
-    print("Longitude = ", getLoc.longitude)
+    print(service.get_patients_that_want_to_transfer())

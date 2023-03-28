@@ -647,7 +647,8 @@ class Service:
             if distance_doctor_to_patient < 30:
                 doctors_nearby.append(doctor)
         doctor = self.get_doctor_by_id(patient.doctor_id)
-        doctors_nearby.remove(doctor)
+        if doctor in doctors_nearby:
+            doctors_nearby.remove(doctor)
         return doctors_nearby
 
     @staticmethod
@@ -716,7 +717,7 @@ class Service:
 
     def get_patients_that_want_to_transfer(self):
         patients_that_want_to_transfer = []
-        for patient in self.get_doctor_patients():
+        for patient in self.get_all_patients():
             if patient.transfer is not None:
                 patients_that_want_to_transfer.append(patient)
         return patients_that_want_to_transfer

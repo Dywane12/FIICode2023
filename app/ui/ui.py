@@ -11,13 +11,13 @@ import datetime
 
 with app.app_context():
     db_1 = Database(db)
-    db_1.clear_patients_table()
+    """db_1.clear_patients_table()
     db_1.clear_consultation_table()
     db_1.clear_doctors_table()
     db_1.clear_hospitalization_table()
     db_1.clear_information_sheet_table()
-    db_1.clear_invite_code_table()
-    service = Service(db_1, session, choice=True)
+    db_1.clear_invite_code_table()"""
+    service = Service(db_1, session, choice=False)
 
 
 class Routes:
@@ -459,6 +459,8 @@ class Routes:
     @staticmethod
     @app.route('/consultation-history')
     def patient_medical_history():
+        if "patient" not in service.session:
+            return redirect(url_for('home'))
         patient_id = service.session['patient']
         medical_history = service.get_consultation_history(patient_id)
         return render_template('medical-history.html', medical_history=medical_history)
@@ -466,6 +468,8 @@ class Routes:
     @staticmethod
     @app.route('/change-medic')
     def change_medic():
+        if "patient" not in service.session:
+            return redirect(url_for('home'))
         patient_id = service.session['patient']
         patient = service.get_patient_by_id(patient_id)
         current_doctor = service.get_doctor_by_id(patient.doctor_id)
@@ -498,6 +502,8 @@ class Routes:
     @staticmethod
     @app.route('/information-sheet')
     def information_sheet_function():
+        if "doctor" not in service.session :
+            return redirect(url_for('home'))
         patient_id = service.session['patient']
         patient = service.get_patient_by_id(patient_id)
         information_sheet = service.get_information_sheet_by_patient_id(service.session['patient'])
