@@ -460,7 +460,11 @@ class Routes:
     def patient_home():
         if "patient" not in service.session:
             return redirect(url_for('home'))
-        return render_template('patient-home.html')
+        patient_id = service.session['patient']
+        patient = service.get_patient_by_id(patient_id)
+        doctor_id = patient.doctor_id
+        doctor = service.get_doctor_by_id(doctor_id)
+        return render_template('patient-home.html', doctor=doctor)
 
     @staticmethod
     @app.route('/patient-list')
