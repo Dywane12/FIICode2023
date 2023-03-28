@@ -484,7 +484,7 @@ class Routes:
         current_doctor = service.get_doctor_by_id(patient.doctor_id)
         doctors = service.get_doctors_nearby_patient(patient_id)
 
-        return render_template('change-medic.html', current_doctor=current_doctor, doctors=doctors)
+        return render_template('change-medic.html', current_doctor=current_doctor, doctors=doctors, patient=patient)
 
     @staticmethod
     @app.route('/consultations/<filename>')

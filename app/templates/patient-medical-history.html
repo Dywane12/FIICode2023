@@ -47,7 +47,12 @@
                                     let pdf = row.cells[2].data;
                                     const pdfURL = `{{ url_for('uploaded_consultation', filename='')}}${pdf}`;
                              return gridjs.html(`<a href='${pdfURL}'>PDF</a>`);
-                                }}
+                                }
+                          },
+                          { id: 'new_pdf', name: 'Add Pdf', sort: false, formatter: (_, row) => {
+                                return gridjs.html(`<input type="file" placeholder="PDF">`);
+                                }
+                          }
                         ],
                         data: [
                           {% for consultation in medical_history %}
