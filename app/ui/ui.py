@@ -3,7 +3,7 @@ import os
 import flask
 
 from app import app, db
-from flask import render_template, redirect, url_for, request, session, send_from_directory, send_file
+from flask import render_template, redirect, url_for, request, session, send_from_directory, send_file, flash
 from app.repository.database import Database
 from app.service.service import Service
 from werkzeug.security import check_password_hash
@@ -263,8 +263,8 @@ class Routes:
                          'Heart Murmur': request.form['Heart Murmur']}
             try:
                 information_sheet_id = service.edit_information_sheet_1(form_data,
-                                                                            patient_id,
-                                                                            diseases)
+                                                                        patient_id,
+                                                                        diseases)
             except ValueError as exception:
                 error = exception
             else:
@@ -598,11 +598,12 @@ class Routes:
         return render_template('change-medic.html', current_doctor=current_doctor, doctors=doctors, patient=patient)
 
     @staticmethod
-    @app.route('/consultations/<filename>')
+    @app.route('/consultation/file/<filename>')
     def uploaded_consultation(filename):
         path = os.path.abspath(os.path.join(app.root_path, 'static/files/consultation', filename))
         if os.path.exists(path):
-            return send_from_directory(os.path.abspath(os.path.join(app.root_path, 'static/files/consultation')), filename)
+            return send_from_directory(os.path.abspath(os.path.join(app.root_path, 'static/files/consultation')),
+                                       filename)
         else:
             return render_template('error.html', error_message='File not found'), 404
 
@@ -666,3 +667,20 @@ class Routes:
             except Exception as error:
                 return str(error), 400
         return 'OK', 200
+
+    @staticmethod
+    @app.route('/consultation/<consultation_id>', methods=['GET', 'POST'])
+    def consultation(consultation_id):
+        consultation_pdf = service.get_consultation(consultation_id).pdf
+        error = None
+        if request.method == 'POST':
+            pdf = request.files['pdf']
+            if pdf.filename == "":
+                error = "File not uploaded"
+            else:
+                service.add_pdf_to_consultation(consultation_id, pdf)
+                service.update_database()
+                flask.flash("Uploaded successfully")
+                consultation_pdf = service.get_consultation(consultation_id).pdf
+
+        return render_template('consultation.html', consultation_pdf=consultation_pdf, error=error)

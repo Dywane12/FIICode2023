@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html>
+  <head>
     <meta name="viewport" content="with=device-width, initial-scale=1.0">
     <title>FIICode2023 Challenge</title>
     <link rel="stylesheet" href="../static/main-style.css">
@@ -8,10 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
 </head>
-<body>
-    <section class="header">
+   <body>
+  <section class="header">
             <!-- The navigation menu -->
             <div class="navbar">
                 <a href="/medic-home">Calendar</a>
@@ -30,44 +29,31 @@
             </div>
             <div class="main-box">
                 <div>
-                    <h1 class="name">Consultation history</h1>
+                    <h1 class="name">Consultation PDF</h1>
                     <hr>
-                    <div id="table"></div>
-                </div>
+                    <p>
+                        {% if consultation_pdf!=None %}
+                        <a href="{{ url_for('uploaded_consultation', filename=consultation_pdf) }}">See current consultation PDF</a>
+                     {% endif %}
+                </p>
+               <form method="POST" action="" enctype="multipart/form-data">
+                  <label for="pdf">Upload a new PDF to consultation:</label>
+                  <input type="file" id="pdf" name="pdf">
+                  <input type="submit" value="Upload">
+                </form>
+                            </div>
+                {% if error %}
+                    <p class="error"><strong>Error:</strong> {{ error }}
+                      {% endif %}</p>
             </div>
 
-    </section>
-    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
-        <script>
-          const grid = new gridjs.Grid({
-            columns: [
-              { id: 'date', name: 'Date and time' },
-              { id: 'urgency', name: 'Urgency grade' },
-              { id: 'details', name: 'PDF consultation', sort: false,formatter: (_, row) => {
-                 let consultation_id = row.cells[2].data;
-                                    const consultation_url = `{{ url_for('consultation', consultation_id='')}}${consultation_id}`;
-                return gridjs.html(`<a href='${consultation_url}'>Details</a>`);
-              }},
-         ],
-            data: [
-              {% for consultation in medical_history %}
-                {
-                  date: '{{ consultation.date_time }}',
-                  urgency: '{{ consultation.urgency_grade }}',
-                  details:  '{{ consultation.id }}'
-                },
-              {% endfor %}
-            ],
-            search: {
-              selector: (cell, rowIndex, cellIndex) => [0, 1, 2].includes(cellIndex) ? cell : null,
-            },
-            sort: true,
-            pagination: true,
-          });
-
-          grid.render(document.getElementById('table'));
-        </script>
-     <script>
+   </section>
+<script>
+    document.getElementById("confirm-btn").addEventListener("click", function(){
+  window.location.reload();
+});
+</script>
+  <script>
       window.onunload = function() {
         window.location.reload(true);
       };
@@ -80,6 +66,6 @@
         xhr.send(null);
       });
     </script>
-</body>
+    </body>
 
 </html>

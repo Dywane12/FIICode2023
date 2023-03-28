@@ -4,7 +4,7 @@ from datetime import date, timedelta, datetime
 import names
 import random_address
 from randomtimestamp import randomtimestamp
-from PyPDF2 import PdfFileMerger
+from PyPDF2 import PdfFileMerger, PdfMerger
 from RandomDataGenerators import *
 from random import randint
 from geopy.geocoders import Nominatim
@@ -242,9 +242,8 @@ class Service:
             patient = random.choice(self.get_all_patients())
             doctor_id = patient.doctor_id
             time = randomtimestamp(start_year=2010).replace(second=0)
-            pdf = randint(100, 1000 - 1)
             urgency_grade = randint(1, 5)
-            consultation = Consultation(patient_id=patient.id, doctor_id=doctor_id, time=time, pdf=pdf,
+            consultation = Consultation(patient_id=patient.id, doctor_id=doctor_id, time=time,
                                         urgency_grade=urgency_grade)
             self.db.add_entity(consultation)
         self.db.save_to_database()
@@ -721,17 +720,19 @@ class Service:
         if consultation.pdf is not None:
             pdf.filename = f'{consultation_id}_extension.pdf'
             self.save_file(pdf, 'consultation')
-            merger = PdfFileMerger()
-            pdfs_merge = [os.path.abspath(os.path.join(FOLDER, consultation.pdf)),
-                          os.path.abspath(os.path.join(FOLDER, pdf.filename))]
+            merger = PdfMerger()
+            pdfs_merge = [os.path.abspath(os.path.join(FOLDER, 'consultation', consultation.pdf)),
+                          os.path.abspath(os.path.join(FOLDER, 'consultation', pdf.filename))]
             for pdf_merge in pdfs_merge:
                 merger.append(pdf_merge)
-            merger.write(os.path.abspath(os.path.join(FOLDER, consultation.pdf)))
+            merger.write(os.path.abspath(os.path.join(FOLDER,'consultation', consultation.pdf)))
             merger.close()
-            os.remove(os.path.abspath(os.path.join(FOLDER, pdf.filename)))
+            os.remove(os.path.abspath(os.path.join(FOLDER,'consultation', pdf.filename)))
         else:
             pdf.filename = f'{consultation_id}.pdf'
             self.save_file(pdf, 'consultation')
+            consultation.pdf = pdf.filename
+            self.update_database()
 
     def transfer_patient(self, patient_id, doctor_id):
         patient = self.get_patient_by_id(patient_id)
